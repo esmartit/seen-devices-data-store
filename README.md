@@ -1,3 +1,3 @@
 # seen-devices-data-store
 
-testing 6
+testing 7
