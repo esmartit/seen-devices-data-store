@@ -39,7 +39,7 @@ spec:
             - name: "MONGODB_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key:  postgresql-password
+                  key:  mongodb-root-password
                   name: {{ .Values.app.mongodb.passwordKeyref }}
           ports:
             - name: http
