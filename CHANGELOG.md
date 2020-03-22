@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.0.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.0...v1.0.1) (2020-03-22)
+
+
+### Bug Fixes
+
+* adding env variables ([c727032](https://github.com/esmartit/seen-devices-data-store/commit/c727032d64e6d8964b1156619054e92ce828ebb1))
+
 # 1.0.0 (2020-03-22)
 
 
