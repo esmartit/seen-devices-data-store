@@ -7,3 +7,10 @@ spring:
       username: "${MONGODB_USER:root}"
       password: "${MONGODB_PASSWORD}"
       database: smartpoke
+  cloud.stream:
+    kafka:
+      binder:
+        brokers: "${KAFKA_BROKER_HOST}"
+    bindings:
+      input:
+        destination: "${KAFKA_TOPIC}"
