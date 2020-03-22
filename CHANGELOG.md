@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.1.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.17...v1.1.0) (2020-03-22)
+
+
+### Features
+
+* adding logging consumer ([2b5cdc6](https://github.com/esmartit/seen-devices-data-store/commit/2b5cdc6efec11554e34ff0f9e2096bbe5773908b))
+
 ## [1.0.17](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.16...v1.0.17) (2020-03-22)
 
 
