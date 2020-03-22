@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.0.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.1...v1.0.2) (2020-03-22)
+
+
+### Bug Fixes
+
+* jenkins build ([e711dd6](https://github.com/esmartit/seen-devices-data-store/commit/e711dd6fae201d0b35d666d554e97d0de0d22a97))
+
 ## [1.0.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.0...v1.0.1) (2020-03-22)
 
 
