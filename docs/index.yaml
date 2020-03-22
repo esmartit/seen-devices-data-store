@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  seen-devices-data-store:
+  - apiVersion: v2
+    appVersion: 1.0.17
+    created: "2020-03-22T23:14:55.367140282Z"
+    description: A Helm chart for Kubernetes
+    digest: 7057fa7bf4f5d18484ea90a7b0eea820d9bf8abe3217ea4ed8080bc3f35a5a55
+    name: seen-devices-data-store
+    type: application
+    urls:
+    - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.0.17.tgz
+    version: 1.0.17
+generated: "2020-03-22T23:14:55.366325511Z"
