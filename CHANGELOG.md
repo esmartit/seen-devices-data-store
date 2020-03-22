@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.0.11](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.10...v1.0.11) (2020-03-22)
+
+
+### Bug Fixes
+
+* mongodb password ([662c4de](https://github.com/esmartit/seen-devices-data-store/commit/662c4deb818e9b1bd07cb27972f0c058e90e9c86))
+
 ## [1.0.10](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.9...v1.0.10) (2020-03-22)
 
 
