@@ -1,1 +1,9 @@
 
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      host: "${MONGODB_HOST}"
+      username: "${MONGODB_USER}"
+      password: "${MONGODB_PASSWORD}"
+      database: smartpoke
