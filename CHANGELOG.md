@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.0.14](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.13...v1.0.14) (2020-03-22)
+
+
+### Bug Fixes
+
+* server port ([b234d9d](https://github.com/esmartit/seen-devices-data-store/commit/b234d9d308adb6f21a8d5cf40755915364b3df82))
+
 ## [1.0.13](https://github.com/esmartit/seen-devices-data-store/compare/v1.0.12...v1.0.13) (2020-03-22)
 
 
