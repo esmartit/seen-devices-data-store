@@ -14,4 +14,4 @@ spring:
     bindings:
       input:
         destination: "${KAFKA_TOPIC}"
-        group: "smartpoke.seen-devices.data-store.1"
+        group: "smartpoke.seen-devices.data-store"
