@@ -4,14 +4,17 @@ import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @EnableBinding(Sink::class)
 class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
+    private val scheduler = Schedulers.newBoundedElastic(100, Int.MAX_VALUE, "bounded-consumer")
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: DeviceSeenEvent) {
         Mono.just(seenDevice)
             .map { createSensorActivity(it) }
             .flatMap { repository.save(it) }
+            .subscribeOn(scheduler)
             .subscribe()
     }
 
