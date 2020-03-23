@@ -36,11 +36,11 @@ spec:
               value: {{ .Values.app.mongodb.host }}
             - name: "MONGODB_USER"
               value: {{ .Values.app.mongodb.user }}
-            - name: "MONGODB_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  key:  mongodb-root-password
-                  name: {{ .Values.app.mongodb.passwordKeyref }}
+{{/*            - name: "MONGODB_PASSWORD"*/}}
+{{/*              valueFrom:*/}}
+{{/*                secretKeyRef:*/}}
+{{/*                  key:  mongodb-root-password*/}}
+{{/*                  name: {{ .Values.app.mongodb.passwordKeyref }}*/}}
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
