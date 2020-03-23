@@ -1,7 +1,7 @@
 server.port: 9000
 spring:
   data:
-    mongodb:git pull
+    mongodb:
       uri: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017/smartpoke"
   cloud.stream:
     kafka:
