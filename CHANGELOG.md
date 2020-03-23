@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.2.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.1.11...v1.2.0) (2020-03-23)
+
+
+### Features
+
+* adding sensor activity ([b118f97](https://github.com/esmartit/seen-devices-data-store/commit/b118f97b06b0bf471acae8746cee0883ac517540))
+
 ## [1.1.11](https://github.com/esmartit/seen-devices-data-store/compare/v1.1.10...v1.1.11) (2020-03-23)
 
 
