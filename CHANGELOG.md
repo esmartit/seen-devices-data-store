@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.1.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.1.2...v1.1.3) (2020-03-23)
+
+
+### Bug Fixes
+
+* storing in repository ([59ddec8](https://github.com/esmartit/seen-devices-data-store/commit/59ddec8ba29383a2a654d459b7a7e8732f838fe9))
+
 ## [1.1.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.1.1...v1.1.2) (2020-03-23)
 
 
