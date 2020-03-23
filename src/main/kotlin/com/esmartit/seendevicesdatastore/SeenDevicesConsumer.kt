@@ -9,6 +9,6 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
 
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: DeviceSeenEvent) {
-        repository.save(DeviceStat(seenDevice = seenDevice)).subscribe()
+        repository.save(DeviceStat(seenDevice = seenDevice))
     }
 }
