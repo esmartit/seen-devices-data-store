@@ -5,7 +5,7 @@ spring:
       authentication-database: admin
       host: "${MONGODB_HOST:localhost}"
       username: "${MONGODB_USER:root}"
-#      password: "${MONGODB_PASSWORD}"
+      password: "${MONGODB_PASSWORD}"
       database: smartpoke
   cloud.stream:
     kafka:

@@ -36,7 +36,7 @@ app:
     topic: "test"
   mongodb:
     host: "mongo-test-mongodb.default.svc.cluster.local"
-    user: "spring"
+    user: "root"
     passwordKeyref: "mongo-test-mongodb"
 
 service:
