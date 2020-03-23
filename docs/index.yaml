@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   seen-devices-data-store:
   - apiVersion: v2
+    appVersion: 1.1.9
+    created: "2020-03-23T08:06:53.339968831Z"
+    description: A Helm chart for Kubernetes
+    digest: cacb351f7b2061dae11eee3083a587f3901a01bda986f85f6bd07bf0f99f8799
+    name: seen-devices-data-store
+    type: application
+    urls:
+    - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.1.9.tgz
+    version: 1.1.9
+  - apiVersion: v2
     appVersion: 1.1.8
-    created: "2020-03-23T08:02:37.403956991Z"
+    created: "2020-03-23T08:06:53.339270912Z"
     description: A Helm chart for Kubernetes
     digest: aa436c194652844b4627f5c13bc28ed691124788e85e2dfce8537b9fe4a929a0
     name: seen-devices-data-store
@@ -13,7 +23,7 @@ entries:
     version: 1.1.8
   - apiVersion: v2
     appVersion: 1.1.7
-    created: "2020-03-23T08:02:37.403279435Z"
+    created: "2020-03-23T08:06:53.338556282Z"
     description: A Helm chart for Kubernetes
     digest: c12137e2402ad6cc6105f85fcdbd9a778c53653c852f0814dfe5bd3917065cb1
     name: seen-devices-data-store
@@ -23,7 +33,7 @@ entries:
     version: 1.1.7
   - apiVersion: v2
     appVersion: 1.1.6
-    created: "2020-03-23T08:02:37.402526719Z"
+    created: "2020-03-23T08:06:53.33781516Z"
     description: A Helm chart for Kubernetes
     digest: 0e059c964def6a3428f9813f988f1009aec4c3a09b412819bf58144bafeef291
     name: seen-devices-data-store
@@ -33,7 +43,7 @@ entries:
     version: 1.1.6
   - apiVersion: v2
     appVersion: 1.1.5
-    created: "2020-03-23T08:02:37.401864028Z"
+    created: "2020-03-23T08:06:53.337169141Z"
     description: A Helm chart for Kubernetes
     digest: fcd2e647777d9b881157f1dc16882b16062b1f120ac641d3e8b5d6fa4120f31b
     name: seen-devices-data-store
@@ -43,7 +53,7 @@ entries:
     version: 1.1.5
   - apiVersion: v2
     appVersion: 1.1.4
-    created: "2020-03-23T08:02:37.401199469Z"
+    created: "2020-03-23T08:06:53.336515009Z"
     description: A Helm chart for Kubernetes
     digest: 95741045556b4b616669671b61bf1a46e37c97d1b517ecb71d8b42d30cef81e0
     name: seen-devices-data-store
@@ -53,7 +63,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.1.3
-    created: "2020-03-23T08:02:37.400548121Z"
+    created: "2020-03-23T08:06:53.333921645Z"
     description: A Helm chart for Kubernetes
     digest: e8899c5946ef43495d96f9fa3a98f8f957d2781d705d808c5551a41f6e6a0f4d
     name: seen-devices-data-store
@@ -63,7 +73,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.1.2
-    created: "2020-03-23T08:02:37.398225548Z"
+    created: "2020-03-23T08:06:53.333292487Z"
     description: A Helm chart for Kubernetes
     digest: 7364b0d45e52bc83c6ca0df5645850155fac31158b9251fa12a7485694438261
     name: seen-devices-data-store
@@ -73,7 +83,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2020-03-23T08:02:37.392427085Z"
+    created: "2020-03-23T08:06:53.332642166Z"
     description: A Helm chart for Kubernetes
     digest: 5cd57a8115ddd8b4294f5a0e3b0fc51e642b71205ba570c553f0c367fb3a6eeb
     name: seen-devices-data-store
@@ -83,7 +93,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.1.0
-    created: "2020-03-23T08:02:37.391478766Z"
+    created: "2020-03-23T08:06:53.331933628Z"
     description: A Helm chart for Kubernetes
     digest: 74bb8d5976df4b36c282c93f1a0065de4686f45e49634b781864dd00659890bb
     name: seen-devices-data-store
@@ -93,7 +103,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.0.17
-    created: "2020-03-23T08:02:37.390481366Z"
+    created: "2020-03-23T08:06:53.331329962Z"
     description: A Helm chart for Kubernetes
     digest: 7057fa7bf4f5d18484ea90a7b0eea820d9bf8abe3217ea4ed8080bc3f35a5a55
     name: seen-devices-data-store
@@ -101,4 +111,4 @@ entries:
     urls:
     - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.0.17.tgz
     version: 1.0.17
-generated: "2020-03-23T08:02:37.389203721Z"
+generated: "2020-03-23T08:06:53.330464471Z"
