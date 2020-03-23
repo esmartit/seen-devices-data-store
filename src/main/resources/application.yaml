@@ -2,7 +2,7 @@ server.port: 9000
 spring:
   data:
     mongodb:
-      uri: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017/smartpoke"
+      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke"
   cloud.stream:
     kafka:
       binder:
