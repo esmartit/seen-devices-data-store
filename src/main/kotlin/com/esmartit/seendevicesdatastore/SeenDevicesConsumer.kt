@@ -10,6 +10,8 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
     private val logger = LoggerFactory.getLogger(SeenDevicesConsumer::class.java)
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: DeviceSeenEvent) {
-        logger.info(seenDevice.toString())
+        repository.save(DeviceStat(seenDevice = seenDevice))
+            .log()
+            .subscribe()
     }
 }
