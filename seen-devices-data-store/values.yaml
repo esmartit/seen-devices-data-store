@@ -36,8 +36,10 @@ app:
     topic: "test"
   mongodb:
     host: "mongo-test-mongodb.default.svc.cluster.local"
-    user: "root"
-    passwordKeyref: "mongo-test-mongodb"
+    user: "spring"
+    passwordKeyref: "mongodb-user-secret"
+
+#  kubectl create secret generic mongodb-user-secret --from-literal=password=password
 
 service:
   type: ClusterIP
