@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.2.4](https://github.com/esmartit/seen-devices-data-store/compare/v1.2.3...v1.2.4) (2020-03-23)
+
+
+### Bug Fixes
+
+* adding mongo credentials ([3b6df1c](https://github.com/esmartit/seen-devices-data-store/commit/3b6df1c2f831120549bd86e426ae9e8f726b75d1))
+
 ## [1.2.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.2.2...v1.2.3) (2020-03-23)
 
 
