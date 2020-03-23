@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux
 @RequestMapping("/sensor-activity")
 class SensorActivityController(private val repository: DeviceStatRepository) {
 
-    @GetMapping(produces = [MediaType.APPLICATION_STREAM_JSON_VALUE])
+    @GetMapping(produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAllSensorActivity(): Flux<SensorActivity> {
         return repository.findAll()
     }
