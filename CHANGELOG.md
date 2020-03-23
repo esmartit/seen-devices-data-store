@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.3.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.2...v1.3.3) (2020-03-23)
+
+
+### Bug Fixes
+
+* adding sensor activity controller ([e0377d3](https://github.com/esmartit/seen-devices-data-store/commit/e0377d38a23983b7955a106597b4741cdacfd130))
+
 ## [1.3.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.1...v1.3.2) (2020-03-23)
 
 
