@@ -1,12 +1,8 @@
 server.port: 9000
 spring:
   data:
-    mongodb:
-#      authentication-database: admin
-      host: "${MONGODB_HOST:localhost}"
-      username: "${MONGODB_USER:spring}"
-      password: "${MONGODB_PASSWORD}"
-      database: smartpoke
+    mongodb:git pull
+      uri: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017/smartpoke"
   cloud.stream:
     kafka:
       binder:
