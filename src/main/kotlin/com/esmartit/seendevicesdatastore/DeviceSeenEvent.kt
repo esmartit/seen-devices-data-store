@@ -1,5 +1,7 @@
 package com.esmartit.seendevicesdatastore
 
+import java.time.Instant
+
 data class DeviceSeenEvent(val apMac: String,
                            val groupName:String,
                            val hotSpot:String,
@@ -16,7 +18,7 @@ data class DeviceSeen(val clientMac: String,
                       val os: String?,
                       val rssi: Int,
                       val seenEpoch: Int,
-                      val seenTime: String,
+                      val seenTime: Instant,
                       val ssid: String?)
 
 data class DeviceLocation(
