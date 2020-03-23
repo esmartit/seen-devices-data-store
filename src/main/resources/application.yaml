@@ -2,10 +2,10 @@ server.port: 9000
 spring:
   data:
     mongodb:
-      authentication-database: admin
+#      authentication-database: admin
       host: "${MONGODB_HOST:localhost}"
-      username: "${MONGODB_USER:root}"
-      password: "${MONGODB_PASSWORD}"
+#      username: "${MONGODB_USER:root}"
+#      password: "${MONGODB_PASSWORD}"
       database: smartpoke
   cloud.stream:
     kafka:
