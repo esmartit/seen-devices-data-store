@@ -8,8 +8,8 @@ data class SensorActivity(
     val id: String? = null,
     val accessPoint: AccessPoint,
     val device: Device,
-    val seenTime: Instant? = null,
-    val rssi: String? = null,
+    val seenTime: Instant,
+    val rssi: Int,
     val location: Location
 )
 
@@ -23,7 +23,7 @@ data class AccessPoint(
 )
 
 data class Device(
-    val macAddress: String? = null,
+    val macAddress: String,
     val ipv4: String? = null,
     val ipv6: String? = null,
     val os: String? = null,
