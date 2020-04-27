@@ -1,4 +1,7 @@
 server.port: 9000
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
 spring:
   data:
     mongodb:

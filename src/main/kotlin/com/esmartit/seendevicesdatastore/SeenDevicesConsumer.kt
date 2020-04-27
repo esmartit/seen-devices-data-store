@@ -3,26 +3,31 @@ package com.esmartit.seendevicesdatastore
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
+import java.time.temporal.ChronoUnit
 
 @EnableBinding(Sink::class)
 class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
-//    private val scheduler = Schedulers.newBoundedElastic(100, Int.MAX_VALUE, "bounded-consumer")
+
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: DeviceSeenEvent) {
-        Mono.just(seenDevice)
-            .map { createSensorActivity(it) }
-            .flatMap { repository.save(it) }
-            .block()
+
+        val incomingSensorActivity = createSensorActivity(seenDevice)
+        val existingRssi = repository.findByDeviceMacAddressAndSeenTime(
+            incomingSensorActivity.device.macAddress,
+            incomingSensorActivity.seenTime
+        )?.rssi ?: -1
+
+        if (incomingSensorActivity.rssi > existingRssi) {
+            repository.save(incomingSensorActivity)
+        }
     }
 
     private fun createSensorActivity(it: DeviceSeenEvent): SensorActivity {
         return SensorActivity(
             accessPoint = createAccessPoint(it),
             device = createDevice(it),
-            rssi = it.device.rssi.toString(),
-            seenTime = it.device.seenTime,
+            rssi = it.device.rssi,
+            seenTime = it.device.seenTime.truncatedTo(ChronoUnit.HOURS),
             location = createLocation(it)
         )
     }
