@@ -14,10 +14,5 @@ interface DeviceStatReactiveRepository : ReactiveMongoRepository<SensorActivity,
 
 @Repository
 interface DeviceStatRepository : MongoRepository<SensorActivity, String> {
-    fun findByDeviceMacAddressAndSeenTime(macAddress: String, seenTime: Instant): SensorActivity?
-    fun findByAccessPointAndDeviceMacAddressAndSeenTime(
-        accessPoint: AccessPoint,
-        macAddress: String,
-        seenTime: Instant
-    ): SensorActivity?
+    fun findByDeviceMacAddressAndSeenTime(macAddress: String,seenTime: Instant): SensorActivity?
 }
