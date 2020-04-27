@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+## [1.3.4](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.3...v1.3.4) (2020-04-27)
+
+
+### Bug Fixes
+
+* adding mongo repository ([f3df3fe](https://github.com/esmartit/seen-devices-data-store/commit/f3df3fe3b5970c8f992ebd1f2efb584674db98a6))
+* adding mongo repository ([0e3c918](https://github.com/esmartit/seen-devices-data-store/commit/0e3c918f76848f4089fad5887b0fda5012117a85))
+
 ## [1.3.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.2...v1.3.3) (2020-03-23)
 
 
