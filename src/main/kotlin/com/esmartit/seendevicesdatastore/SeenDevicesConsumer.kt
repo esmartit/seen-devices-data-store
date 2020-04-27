@@ -12,12 +12,11 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
     fun handle(seenDevice: DeviceSeenEvent) {
 
         val incomingSensorActivity = createSensorActivity(seenDevice)
-        val existingSensorActivity = repository.findByAccessPointAndDeviceMacAddressAndSeenTime(
-            incomingSensorActivity.accessPoint,
+        val existingSensorActivity = repository.findByDeviceMacAddressAndSeenTime(
             incomingSensorActivity.device.macAddress,
             incomingSensorActivity.seenTime
         )
-        val existingRSSI = existingSensorActivity?.rssi ?: -1
+        val existingRSSI = existingSensorActivity?.rssi ?: -1000
 
         if (incomingSensorActivity.rssi > existingRSSI) {
             repository.save(incomingSensorActivity.copy(id = existingSensorActivity?.id))
@@ -28,7 +27,7 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
         return SensorActivity(
             accessPoint = createAccessPoint(it),
             device = createDevice(it),
-            rssi = it.device.rssi,
+            rssi = it.device.rssi -95,
             seenTime = it.device.seenTime.truncatedTo(ChronoUnit.HOURS),
             location = createLocation(it)
         )
