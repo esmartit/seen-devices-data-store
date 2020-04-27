@@ -9,17 +9,10 @@ import java.time.Instant
 @Repository
 interface DeviceStatReactiveRepository : ReactiveMongoRepository<SensorActivity, String> {
 
-    fun findBySeenTimeAfter(time: Instant): Flux<SensorActivity>
-
     fun findBySeenTimeBetween(start: Instant, end: Instant): Flux<SensorActivity>
-
-    fun findBySeenTimeBetweenAndSeenTimeBetween(
-        startDate: Instant,
-        endDate: Instant,
-        startHour: Instant,
-        endHour: Instant
-    ): Flux<SensorActivity>
 }
 
 @Repository
-interface DeviceStatRepository : MongoRepository<SensorActivity, String>
+interface DeviceStatRepository : MongoRepository<SensorActivity, String> {
+    fun findByDeviceMacAddressAndSeenTime(macAddress: String, seenTime: Instant): SensorActivity?
+}

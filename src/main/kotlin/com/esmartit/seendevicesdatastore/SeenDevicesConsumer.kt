@@ -3,13 +3,23 @@ package com.esmartit.seendevicesdatastore
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
+import java.time.temporal.ChronoUnit
 
 @EnableBinding(Sink::class)
 class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
 
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: DeviceSeenEvent) {
-        createSensorActivity(seenDevice).run { repository.save(this) }
+
+        val incomingSensorActivity = createSensorActivity(seenDevice)
+        val existingRssi = repository.findByDeviceMacAddressAndSeenTime(
+            incomingSensorActivity.device.macAddress,
+            incomingSensorActivity.seenTime
+        )?.rssi ?: -1
+
+        if (incomingSensorActivity.rssi > existingRssi) {
+            repository.save(incomingSensorActivity)
+        }
     }
 
     private fun createSensorActivity(it: DeviceSeenEvent): SensorActivity {
@@ -17,7 +27,7 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
             accessPoint = createAccessPoint(it),
             device = createDevice(it),
             rssi = it.device.rssi,
-            seenTime = it.device.seenTime,
+            seenTime = it.device.seenTime.truncatedTo(ChronoUnit.HOURS),
             location = createLocation(it)
         )
     }
