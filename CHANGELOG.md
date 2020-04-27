@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+## [1.4.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.4.0...v1.4.1) (2020-04-27)
+
+
+### Bug Fixes
+
+* saving negative rssi ([947c745](https://github.com/esmartit/seen-devices-data-store/commit/947c7457c63b36fc18c359dcee7fcbbd0793a322))
+* saving negative rssi compile error ([e0dcc6f](https://github.com/esmartit/seen-devices-data-store/commit/e0dcc6f524275cfe7cc51e6fe70985a91b176f3c))
+
 # [1.4.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.4...v1.4.0) (2020-04-27)
 
 
