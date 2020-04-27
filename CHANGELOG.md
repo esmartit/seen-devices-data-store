@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.4.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.4...v1.4.0) (2020-04-27)
+
+
+### Features
+
+* saving device by hour ([0d954a1](https://github.com/esmartit/seen-devices-data-store/commit/0d954a1f15bcfac9dfed4abc85bc67ad4a869dd9))
+
 ## [1.3.4](https://github.com/esmartit/seen-devices-data-store/compare/v1.3.3...v1.3.4) (2020-04-27)
 
 
