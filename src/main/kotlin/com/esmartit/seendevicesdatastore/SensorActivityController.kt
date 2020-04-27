@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore
 
+import org.springframework.data.domain.PageRequest
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +38,7 @@ class SensorActivityController(
     ): Flux<*> {
 
         val truncatedTime = Instant.now().truncatedTo(ChronoUnit.HOURS)
-
+        val p = repo.findByAccessPointAndDeviceMacAddressAndSeenTime(repo.findAll(PageRequest.of(1,10)).first().accessPoint,"cc:44:63:9a:da:67", Instant.parse("2020-03-13T20:33:13Z"))
         return reactiveRepository.findBySeenTimeBetween(startDate.toInstant(), endDate.toInstant())
             .map { presence(it) }
             .window(Duration.ofMillis(100))

@@ -12,13 +12,15 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
     fun handle(seenDevice: DeviceSeenEvent) {
 
         val incomingSensorActivity = createSensorActivity(seenDevice)
-        val existingRssi = repository.findByDeviceMacAddressAndSeenTime(
+        val existingSensorActivity = repository.findByAccessPointAndDeviceMacAddressAndSeenTime(
+            incomingSensorActivity.accessPoint,
             incomingSensorActivity.device.macAddress,
             incomingSensorActivity.seenTime
-        )?.rssi ?: -1
+        )
+        val existingRSSI = existingSensorActivity?.rssi ?: -1
 
-        if (incomingSensorActivity.rssi > existingRssi) {
-            repository.save(incomingSensorActivity)
+        if (incomingSensorActivity.rssi > existingRSSI) {
+            repository.save(incomingSensorActivity.copy(id = existingSensorActivity?.id))
         }
     }
 
