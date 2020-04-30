@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.5.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.4.1...v1.5.0) (2020-04-30)
+
+
+### Features
+
+* switching topics ([#5](https://github.com/esmartit/seen-devices-data-store/issues/5)) ([7e624cc](https://github.com/esmartit/seen-devices-data-store/commit/7e624cca6c55a84288236ea1f53db5e0faeba089))
+
 ## [1.4.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.4.0...v1.4.1) (2020-04-27)
 
 
