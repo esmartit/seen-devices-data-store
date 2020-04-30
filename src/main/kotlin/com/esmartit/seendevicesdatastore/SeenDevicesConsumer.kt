@@ -27,7 +27,7 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
         return SensorActivity(
             accessPoint = createAccessPoint(it),
             device = createDevice(it),
-            rssi = it.device.rssi -95,
+            rssi = it.device.rssi,
             seenTime = it.device.seenTime.truncatedTo(ChronoUnit.HOURS),
             location = createLocation(it)
         )

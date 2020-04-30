@@ -12,5 +12,5 @@ spring:
         brokers: "${KAFKA_BROKER_HOST}"
     bindings:
       input:
-        destination: "${KAFKA_TOPIC}"
-        group: "smartpoke.sensor-activity.data-store.4"
+        destination: "smartpoke-device-presence"
+        group: "smartpoke.sensor-activity.data-store"

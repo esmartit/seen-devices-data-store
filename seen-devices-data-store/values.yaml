@@ -33,7 +33,6 @@ securityContext: {}
 app:
   kafka:
     host: "test-kafka.default.svc.cluster.local:9092"
-    topic: "test"
   mongodb:
     host: "mongo-test-mongodb.default.svc.cluster.local"
     user: "spring"
