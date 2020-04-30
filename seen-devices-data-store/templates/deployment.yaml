@@ -30,8 +30,6 @@ spec:
           env:
             - name: "KAFKA_BROKER_HOST"
               value: {{ .Values.app.kafka.host }}
-            - name: "KAFKA_TOPIC"
-              value: {{ .Values.app.kafka.topic }}
             - name: "MONGODB_HOST"
               value: {{ .Values.app.mongodb.host }}
             - name: "MONGODB_USER"
@@ -49,13 +47,13 @@ spec:
             httpGet:
               path: /actuator/health
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 120
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 120
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
