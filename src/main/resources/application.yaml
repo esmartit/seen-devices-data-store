@@ -1,11 +1,12 @@
-server.port: 9000
+server.port: 9001
 logging:
   level:
     org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
 spring:
   data:
     mongodb:
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke"
+      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartPoke?authSource=admin&authMechanism=SCRAM-SHA-1"
+#      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke"
   cloud.stream:
     kafka:
       binder:
@@ -13,4 +14,7 @@ spring:
     bindings:
       input:
         destination: "smartpoke-device-presence"
+        group: "smartpoke.sensor-activity.data-store"
+      unique-devices-detected-count-input:
+        destination: "unique-devices-detected-count"
         group: "smartpoke.sensor-activity.data-store"

@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore
+package com.esmartit.seendevicesdatastore.repository
 
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository

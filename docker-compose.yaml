@@ -9,7 +9,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:1:1"
+      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:2:1,unique-devices-detected-count:2:1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     depends_on:
       - zookeeper
@@ -24,5 +24,5 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: spring
+      MONGO_INITDB_ROOT_PASSWORD: password

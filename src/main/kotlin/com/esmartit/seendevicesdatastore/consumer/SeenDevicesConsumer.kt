@@ -1,5 +1,10 @@
-package com.esmartit.seendevicesdatastore
+package com.esmartit.seendevicesdatastore.consumer
 
+import com.esmartit.seendevicesdatastore.repository.AccessPoint
+import com.esmartit.seendevicesdatastore.repository.Device
+import com.esmartit.seendevicesdatastore.repository.DeviceStatRepository
+import com.esmartit.seendevicesdatastore.repository.Location
+import com.esmartit.seendevicesdatastore.repository.SensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
@@ -33,22 +38,24 @@ class SeenDevicesConsumer(private val repository: DeviceStatRepository) {
         )
     }
 
-    private fun createDevice(it: DeviceSeenEvent) = Device(
-        macAddress = it.device.clientMac,
-        ipv4 = it.device.ipv4,
-        ipv6 = it.device.ipv6,
-        os = it.device.os,
-        manufacturer = it.device.manufacturer
-    )
+    private fun createDevice(it: DeviceSeenEvent) =
+        Device(
+            macAddress = it.device.clientMac,
+            ipv4 = it.device.ipv4,
+            ipv6 = it.device.ipv6,
+            os = it.device.os,
+            manufacturer = it.device.manufacturer
+        )
 
-    private fun createAccessPoint(it: DeviceSeenEvent) = AccessPoint(
-        macAddress = it.apMac,
-        groupName = it.groupName,
-        sensorName = it.sensorName,
-        spotId = it.spotId,
-        hotSpot = it.hotSpot,
-        floors = it.apFloors
-    )
+    private fun createAccessPoint(it: DeviceSeenEvent) =
+        AccessPoint(
+            macAddress = it.apMac,
+            groupName = it.groupName,
+            sensorName = it.sensorName,
+            spotId = it.spotId,
+            hotSpot = it.hotSpot,
+            floors = it.apFloors
+        )
 
     private fun createLocation(it: DeviceSeenEvent) = with(it.device.location) {
         Location(position = listOf(lat, lng), unc = unc)
