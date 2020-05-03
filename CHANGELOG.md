@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.6.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.5.2...v1.6.0) (2020-05-03)
+
+
+### Features
+
+* adding re stream endpoint ([a3ec337](https://github.com/esmartit/seen-devices-data-store/commit/a3ec3376c1252ce81c90bdde98be07e3ebcd5ba4))
+
 ## [1.5.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.5.1...v1.5.2) (2020-05-03)
 
 
