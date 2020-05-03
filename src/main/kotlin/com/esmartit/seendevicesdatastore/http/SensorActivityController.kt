@@ -1,6 +1,8 @@
-package com.esmartit.seendevicesdatastore
+package com.esmartit.seendevicesdatastore.http
 
-import org.springframework.data.domain.PageRequest
+import com.esmartit.seendevicesdatastore.repository.DeviceStatReactiveRepository
+import com.esmartit.seendevicesdatastore.repository.DeviceStatRepository
+import com.esmartit.seendevicesdatastore.repository.SensorActivity
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -46,7 +48,12 @@ class SensorActivityController(
                 w.groupBy { it.macAddress }
                     .flatMap { group ->
                         group.max { stat, stat2 -> stat.position.value.compareTo(stat2.position.value) }
-                            .map { DeviceState(it.macAddress, it.position) }
+                            .map {
+                                DeviceState(
+                                    it.macAddress,
+                                    it.position
+                                )
+                            }
                     }
             }
             .scan(DailyStat(ZonedDateTime.now()), ::scanDailyStat)
@@ -84,7 +91,12 @@ class SensorActivityController(
         }
 
         val seenTime = sensorActivity.seenTime.atZone(ZoneOffset.UTC)
-        return Stat(sensorActivity.device.macAddress, position, seenTime.hour, seenTime)
+        return Stat(
+            sensorActivity.device.macAddress,
+            position,
+            seenTime.hour,
+            seenTime
+        )
     }
 }
 
