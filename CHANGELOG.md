@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.8.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.8.0...v1.8.1) (2020-05-13)
+
+
+### Bug Fixes
+
+* adding chart logo ([#12](https://github.com/esmartit/seen-devices-data-store/issues/12)) ([420de75](https://github.com/esmartit/seen-devices-data-store/commit/420de75906a83c274919f448c5d7b99df8025001))
+
 # [1.8.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.7.0...v1.8.0) (2020-05-13)
 
 
