@@ -2,8 +2,26 @@ apiVersion: v1
 entries:
   seen-devices-data-store:
   - apiVersion: v2
+    appVersion: 1.8.1
+    created: "2020-05-13T20:41:05.541026218Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - seen-devices-data-store-database
+      version: 7.14.0
+    description: A Helm chart for Kubernetes
+    digest: eea772f171b24f1434f530cd36f00faeeba3902227eb46cfca906196e7109740
+    icon: https://esmartit.github.io/seen-devices-data-store/docs/smartpoke.png
+    name: seen-devices-data-store
+    type: application
+    urls:
+    - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.8.1.tgz
+    version: 1.8.1
+  - apiVersion: v2
     appVersion: 1.8.0
-    created: "2020-05-13T12:34:39.807670577Z"
+    created: "2020-05-13T20:41:05.535851958Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -20,7 +38,7 @@ entries:
     version: 1.8.0
   - apiVersion: v2
     appVersion: 1.6.1
-    created: "2020-05-13T12:34:39.803094078Z"
+    created: "2020-05-13T20:41:05.533269158Z"
     description: A Helm chart for Kubernetes
     digest: 8b73c9fea7de7857464d21f0a1b0a2be1609e211f12a4d957129fc9a1bdead69
     name: seen-devices-data-store
@@ -30,7 +48,7 @@ entries:
     version: 1.6.1
   - apiVersion: v2
     appVersion: 1.6.0
-    created: "2020-05-13T12:34:39.802595649Z"
+    created: "2020-05-13T20:41:05.532737958Z"
     description: A Helm chart for Kubernetes
     digest: 1e1de69651fc70bbf47824633e8f3dd2cd17a16838dcda7bd80eaf25cff5a6c9
     name: seen-devices-data-store
@@ -40,7 +58,7 @@ entries:
     version: 1.6.0
   - apiVersion: v2
     appVersion: 1.5.2
-    created: "2020-05-13T12:34:39.802071791Z"
+    created: "2020-05-13T20:41:05.530471478Z"
     description: A Helm chart for Kubernetes
     digest: fc56381ab832fbbfe42f1755b780ffb248d993523a552dfa705a4fd4c078ecdb
     name: seen-devices-data-store
@@ -50,7 +68,7 @@ entries:
     version: 1.5.2
   - apiVersion: v2
     appVersion: 1.5.1
-    created: "2020-05-13T12:34:39.80159665Z"
+    created: "2020-05-13T20:41:05.52993567Z"
     description: A Helm chart for Kubernetes
     digest: 4a65b790713f471cc1fd2df073fd09afede9a89612b1eddb525380f42ac1c525
     name: seen-devices-data-store
@@ -60,7 +78,7 @@ entries:
     version: 1.5.1
   - apiVersion: v2
     appVersion: 1.5.0
-    created: "2020-05-13T12:34:39.801124021Z"
+    created: "2020-05-13T20:41:05.528163631Z"
     description: A Helm chart for Kubernetes
     digest: 1e2c104b4b2f1910dea65c22c123914c22d887afc36efb56c2de1bfc3d6b8694
     name: seen-devices-data-store
@@ -328,4 +346,4 @@ entries:
     urls:
     - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.0.17.tgz
     version: 1.0.17
-generated: "2020-05-13T12:34:39.776050619Z"
+generated: "2020-05-13T20:41:05.5274585Z"
