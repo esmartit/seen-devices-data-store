@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+# [1.7.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.6.1...v1.7.0) (2020-05-13)
+
+
+### Features
+
+* adding mongodb ([#9](https://github.com/esmartit/seen-devices-data-store/issues/9)) ([5db9f0b](https://github.com/esmartit/seen-devices-data-store/commit/5db9f0bae6e4697fa6dd4c2e158ce703c65d782e))
+* adding mongodb dependency and mongobee ([3b674c8](https://github.com/esmartit/seen-devices-data-store/commit/3b674c855a7f3bc98b444fa4073886057293dd80))
+
 ## [1.6.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.6.0...v1.6.1) (2020-05-03)
 
 
