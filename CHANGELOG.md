@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.6.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.6.0...v1.6.1) (2020-05-03)
+
+
+### Bug Fixes
+
+* mongo url ([a817f12](https://github.com/esmartit/seen-devices-data-store/commit/a817f12f3aa6b8bcfd174e36464cf902c7d713e0))
+
 # [1.6.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.5.2...v1.6.0) (2020-05-03)
 
 
