@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.8.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.7.0...v1.8.0) (2020-05-13)
+
+
+### Features
+
+* adding mongodb dependency ([#11](https://github.com/esmartit/seen-devices-data-store/issues/11)) ([dde8cc5](https://github.com/esmartit/seen-devices-data-store/commit/dde8cc5e38634f7175c2c6a3f9ca5adbcf1949af))
+
 # [1.7.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.6.1...v1.7.0) (2020-05-13)
 
 
