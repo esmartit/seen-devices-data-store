@@ -20,9 +20,9 @@ services:
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
   mongo:
-    image: mongo
+    image: mongo:4.0
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: spring
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example

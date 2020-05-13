@@ -37,6 +37,8 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-stream")
 	implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
 	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.javassist:javassist:3.18.2-GA")
+	implementation("com.github.mongobee:mongobee:0.13")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")

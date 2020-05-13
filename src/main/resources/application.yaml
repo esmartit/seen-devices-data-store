@@ -5,7 +5,7 @@ logging:
 spring:
   data:
     mongodb:
-#      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartPoke?authSource=admin&authMechanism=SCRAM-SHA-1"
+#      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:example}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
       uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke"
   cloud.stream:
     kafka:
@@ -16,7 +16,7 @@ spring:
         destination: "smartpoke-device-presence"
         group: "smartpoke.sensor-activity.data-store"
       unique-devices-detected-count-input:
-        destination: "unique-devices-detected-count"
+        destination: "smartpoke-unique-devices-detected-count"
         group: "smartpoke.sensor-activity.data-store"
       restream-output:
         destination: "smartpoke-device-presence"

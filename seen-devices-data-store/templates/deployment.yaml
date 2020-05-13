@@ -37,8 +37,8 @@ spec:
             - name: "MONGODB_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key:  password
-                  name: {{ .Values.app.mongodb.passwordKeyref }}
+                  key:  mongodb-password
+                  name: "{{ .Values.fullnameOverride }}-mongodb"
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
@@ -47,13 +47,13 @@ spec:
             httpGet:
               path: /actuator/health
               port: http
-            initialDelaySeconds: 120
+            initialDelaySeconds: 30
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: http
-            initialDelaySeconds: 120
+            initialDelaySeconds: 30
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
