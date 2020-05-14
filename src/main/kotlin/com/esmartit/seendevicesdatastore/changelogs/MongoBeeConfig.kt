@@ -42,4 +42,22 @@ class InitialChangeLog {
         logMessage.append("time", Instant.now())
         collection.insertOne(logMessage)
     }
+
+    @ChangeSet(order = "002", id = "hourlyDeviceCount", author = "gustavo.rodriguez@esmartit.es")
+    fun hourlyDeviceCount(db: MongoDatabase) {
+        db.createCollection("hourlyDeviceCount")
+        db.createCollection(
+            "hourlyDeviceCountTailable",
+            CreateCollectionOptions().capped(true)
+                .maxDocuments(7_200 * 14)
+                .sizeInBytes(102400)
+        )
+        val collection = db.getCollection("hourlyDeviceCountTailable")
+        val logMessage = Document()
+        logMessage.append("inCount", 0)
+        logMessage.append("limitCount", 0)
+        logMessage.append("outCount", 0)
+        logMessage.append("time", Instant.now())
+        collection.insertOne(logMessage)
+    }
 }

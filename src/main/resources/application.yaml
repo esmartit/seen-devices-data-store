@@ -18,5 +18,8 @@ spring:
       unique-devices-detected-count-input:
         destination: "smartpoke-unique-devices-detected-count"
         group: "smartpoke.sensor-activity.data-store"
+      hourly-device-presence-count-input:
+        destination: "smartpoke-hourly-presence-count"
+        group: "smartpoke.sensor-activity.data-store"
       restream-output:
         destination: "smartpoke-device-presence"
