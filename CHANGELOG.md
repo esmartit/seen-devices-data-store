@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.8.1...v1.9.0) (2020-05-14)
+
+
+### Features
+
+* hourly presence counter ([#13](https://github.com/esmartit/seen-devices-data-store/issues/13)) ([e5be215](https://github.com/esmartit/seen-devices-data-store/commit/e5be215fc56f04af1874b3c0839e1040d4d85ffb))
+
 ## [1.8.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.8.0...v1.8.1) (2020-05-13)
 
 
