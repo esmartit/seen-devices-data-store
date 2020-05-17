@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.10.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.10.1...v1.10.2) (2020-05-17)
+
+
+### Bug Fixes
+
+* consumer group ([b1869eb](https://github.com/esmartit/seen-devices-data-store/commit/b1869eb60910714cad4069e73ce2015f56399062))
+
 ## [1.10.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.10.0...v1.10.1) (2020-05-17)
 
 
