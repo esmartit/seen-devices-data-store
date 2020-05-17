@@ -5,3 +5,6 @@ import java.time.Instant
 
 @Document
 data class UniqueDevicesDetectedCount(val count: Long, val time: Instant)
+
+@Document
+data class DailyUniqueDevicesDetectedCount(val count: Long, val time: Instant)

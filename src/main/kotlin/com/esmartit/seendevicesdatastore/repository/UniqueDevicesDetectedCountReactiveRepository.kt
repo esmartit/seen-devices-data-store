@@ -11,3 +11,9 @@ interface UniqueDevicesDetectedCountReactiveRepository : ReactiveMongoRepository
     @Tailable
     fun findWithTailableCursorBy(): Flux<UniqueDevicesDetectedCount>
 }
+
+interface DailyUniqueDevicesDetectedCountRepository : MongoRepository<DailyUniqueDevicesDetectedCount, String>
+interface DailyUniqueDevicesDetectedCountReactiveRepository : ReactiveMongoRepository<DailyUniqueDevicesDetectedCount, String> {
+    @Tailable
+    fun findWithTailableCursorBy(): Flux<DailyUniqueDevicesDetectedCount>
+}
