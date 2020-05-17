@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.10.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.9.0...v1.10.0) (2020-05-17)
+
+
+### Features
+
+* daily unique counter ([#14](https://github.com/esmartit/seen-devices-data-store/issues/14)) ([d850e0f](https://github.com/esmartit/seen-devices-data-store/commit/d850e0fb41126a87fc29eaac825a05c91ec57b8b))
+
 # [1.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.8.1...v1.9.0) (2020-05-14)
 
 
