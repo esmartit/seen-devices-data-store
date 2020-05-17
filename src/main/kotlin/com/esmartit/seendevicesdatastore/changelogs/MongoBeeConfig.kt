@@ -60,4 +60,19 @@ class InitialChangeLog {
         logMessage.append("time", Instant.now())
         collection.insertOne(logMessage)
     }
+
+    @ChangeSet(order = "003", id = "dailyUniqueDevicesDetectedCount", author = "gustavo.rodriguez@esmartit.es")
+    fun dailyUniqueDevicesDetectedCount(db: MongoDatabase) {
+        db.createCollection(
+            "dailyUniqueDevicesDetectedCount",
+            CreateCollectionOptions().capped(true)
+                .maxDocuments(172_800 * 2)
+                .sizeInBytes(102400)
+        )
+        val collection = db.getCollection("dailyUniqueDevicesDetectedCount")
+        val logMessage = Document()
+        logMessage.append("count", 0)
+        logMessage.append("time", Instant.now())
+        collection.insertOne(logMessage)
+    }
 }
