@@ -19,10 +19,10 @@ data class HourlyDeviceCount(
 @Document
 data class HourlyDeviceCountTailable(
     val id: String? = null,
-    val time: Instant,
-    val inCount: Long,
-    val limitCount: Long,
-    val outCount: Long
+    val time: Instant = Instant.now(),
+    val inCount: Long = 0,
+    val limitCount: Long = 0,
+    val outCount: Long = 0
 )
 
 interface HourlyDeviceCountRepository : MongoRepository<HourlyDeviceCount, String> {
