@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.11.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.10.2...v1.11.0) (2020-05-19)
+
+
+### Features
+
+* hourly delta endpoint BREAKING CHANGE: adding hourly delta endpoint ([d752eac](https://github.com/esmartit/seen-devices-data-store/commit/d752eacc6b0dcdf3b3c750ffee1ad4e012e9e97c))
+
 ## [1.10.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.10.1...v1.10.2) (2020-05-17)
 
 
