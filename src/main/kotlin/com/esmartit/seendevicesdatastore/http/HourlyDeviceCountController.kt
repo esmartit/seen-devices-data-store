@@ -31,8 +31,8 @@ class HourlyDeviceCountController(private val repository: HourlyDeviceCountReact
     }
 
     private fun zeroIfMoreThanAMinute(count: HourlyDeviceCountTailable): HourlyDeviceCountTailable {
-        return if (Instant.now().minusSeconds(60).isBefore(count.time)) {
-            count
+        return if (Instant.now().minusSeconds(120).isBefore(count.time)) {
+            count.copy(time = Instant.now())
         } else {
             HourlyDeviceCountTailable()
         }
