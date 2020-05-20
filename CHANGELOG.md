@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.12.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.12.2...v1.12.3) (2020-05-20)
+
+
+### Bug Fixes
+
+* pod prometheus annotations ([ca15bd7](https://github.com/esmartit/seen-devices-data-store/commit/ca15bd70c7cc75d7bd2ed9e22a097910c281a0be))
+
 ## [1.12.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.12.1...v1.12.2) (2020-05-20)
 
 
