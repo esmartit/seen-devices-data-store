@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.13.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.12.4...v1.13.0) (2020-05-20)
+
+
+### Features
+
+* adding registry application name ([00ba13c](https://github.com/esmartit/seen-devices-data-store/commit/00ba13c08d04a1315c389d75d80a08ca832620c4))
+
 ## [1.12.4](https://github.com/esmartit/seen-devices-data-store/compare/v1.12.3...v1.12.4) (2020-05-20)
 
 
