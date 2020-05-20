@@ -11,10 +11,6 @@ spec:
       {{- include "seen-devices-data-store.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/actuator/prometheus"
-        prometheus.io/port: "9000"
       labels:
         {{- include "seen-devices-data-store.selectorLabels" . | nindent 8 }}
     spec:
