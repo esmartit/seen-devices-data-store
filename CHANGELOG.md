@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.12.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.11.1...v1.12.0) (2020-05-20)
+
+
+### Features
+
+* adding prometheus ([6e836f9](https://github.com/esmartit/seen-devices-data-store/commit/6e836f9ccddc36b5a71282f269373e60b2880f4d))
+
 ## [1.11.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.11.0...v1.11.1) (2020-05-20)
 
 
