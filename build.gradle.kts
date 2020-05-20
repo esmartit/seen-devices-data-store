@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.2.5.RELEASE"
+	id("org.springframework.boot") version "2.2.7.RELEASE"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
-	kotlin("jvm") version "1.3.61"
-	kotlin("plugin.spring") version "1.3.61"
+	kotlin("jvm") version "1.3.72"
+	kotlin("plugin.spring") version "1.3.72"
 }
 
 group = "com.esmartit"
@@ -22,7 +22,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springCloudVersion"] = "Hoxton.SR3"
+extra["springCloudVersion"] = "Hoxton.SR4"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.javassist:javassist:3.18.2-GA")
 	implementation("com.github.mongobee:mongobee:0.13")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}

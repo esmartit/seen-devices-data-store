@@ -23,3 +23,9 @@ spring:
       smartpoke-daily-unique-devices-detected-count-input:
         destination: "smartpoke-daily-unique-devices-detected-count"
         group: "smartpoke.sensor-activity.data-store.daily.unique.1"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics, health, prometheus
