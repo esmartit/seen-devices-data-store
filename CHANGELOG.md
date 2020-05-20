@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.11.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.11.0...v1.11.1) (2020-05-20)
+
+
+### Bug Fixes
+
+* more delay to hourly delta ([2a5200d](https://github.com/esmartit/seen-devices-data-store/commit/2a5200d0fb924a00f336b36deddb0369df87c05a))
+
 # [1.11.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.10.2...v1.11.0) (2020-05-19)
 
 
