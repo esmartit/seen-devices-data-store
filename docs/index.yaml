@@ -2,8 +2,26 @@ apiVersion: v1
 entries:
   seen-devices-data-store:
   - apiVersion: v2
+    appVersion: 1.14.1
+    created: "2020-05-21T06:51:45.692387725Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - seen-devices-data-store-database
+      version: 7.14.0
+    description: A Helm chart for Kubernetes
+    digest: fb00b8165169787f07d7cfd12862a5f51efdd01c18d520b9eafa7b39904794e5
+    icon: https://esmartit.github.io/seen-devices-data-store/docs/smartpoke.png
+    name: seen-devices-data-store
+    type: application
+    urls:
+    - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.14.1.tgz
+    version: 1.14.1
+  - apiVersion: v2
     appVersion: 1.14.0
-    created: "2020-05-21T06:48:00.027345109Z"
+    created: "2020-05-21T06:51:45.688598833Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -21,7 +39,7 @@ entries:
     version: 1.14.0
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2020-05-21T06:48:00.02488472Z"
+    created: "2020-05-21T06:51:45.683465346Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -39,7 +57,7 @@ entries:
     version: 1.13.0
   - apiVersion: v2
     appVersion: 1.12.4
-    created: "2020-05-21T06:48:00.019031037Z"
+    created: "2020-05-21T06:51:45.671083878Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -57,7 +75,7 @@ entries:
     version: 1.12.4
   - apiVersion: v2
     appVersion: 1.12.3
-    created: "2020-05-21T06:48:00.016594873Z"
+    created: "2020-05-21T06:51:45.666895435Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -75,7 +93,7 @@ entries:
     version: 1.12.3
   - apiVersion: v2
     appVersion: 1.12.2
-    created: "2020-05-21T06:48:00.014326275Z"
+    created: "2020-05-21T06:51:45.662924406Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -93,7 +111,7 @@ entries:
     version: 1.12.2
   - apiVersion: v2
     appVersion: 1.12.1
-    created: "2020-05-21T06:48:00.012011638Z"
+    created: "2020-05-21T06:51:45.656169448Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -111,7 +129,7 @@ entries:
     version: 1.12.1
   - apiVersion: v2
     appVersion: 1.12.0
-    created: "2020-05-21T06:48:00.007253066Z"
+    created: "2020-05-21T06:51:45.647772997Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -129,7 +147,7 @@ entries:
     version: 1.12.0
   - apiVersion: v2
     appVersion: 1.11.1
-    created: "2020-05-21T06:48:00.004942664Z"
+    created: "2020-05-21T06:51:45.643938399Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -147,7 +165,7 @@ entries:
     version: 1.11.1
   - apiVersion: v2
     appVersion: 1.11.0
-    created: "2020-05-21T06:48:00.002700968Z"
+    created: "2020-05-21T06:51:45.64016303Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -165,7 +183,7 @@ entries:
     version: 1.11.0
   - apiVersion: v2
     appVersion: 1.10.2
-    created: "2020-05-21T06:47:59.999711149Z"
+    created: "2020-05-21T06:51:45.636380826Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -183,7 +201,7 @@ entries:
     version: 1.10.2
   - apiVersion: v2
     appVersion: 1.10.1
-    created: "2020-05-21T06:47:59.992171862Z"
+    created: "2020-05-21T06:51:45.625179692Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -201,7 +219,7 @@ entries:
     version: 1.10.1
   - apiVersion: v2
     appVersion: 1.10.0
-    created: "2020-05-21T06:47:59.989626286Z"
+    created: "2020-05-21T06:51:45.621153907Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -219,7 +237,7 @@ entries:
     version: 1.10.0
   - apiVersion: v2
     appVersion: 1.9.0
-    created: "2020-05-21T06:48:00.039386639Z"
+    created: "2020-05-21T06:51:45.717158835Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -237,7 +255,7 @@ entries:
     version: 1.9.0
   - apiVersion: v2
     appVersion: 1.8.1
-    created: "2020-05-21T06:48:00.036486497Z"
+    created: "2020-05-21T06:51:45.713692987Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -255,7 +273,7 @@ entries:
     version: 1.8.1
   - apiVersion: v2
     appVersion: 1.8.0
-    created: "2020-05-21T06:48:00.032122067Z"
+    created: "2020-05-21T06:51:45.708763847Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -272,7 +290,7 @@ entries:
     version: 1.8.0
   - apiVersion: v2
     appVersion: 1.6.1
-    created: "2020-05-21T06:48:00.029725508Z"
+    created: "2020-05-21T06:51:45.696279952Z"
     description: A Helm chart for Kubernetes
     digest: 8b73c9fea7de7857464d21f0a1b0a2be1609e211f12a4d957129fc9a1bdead69
     name: seen-devices-data-store
@@ -282,7 +300,7 @@ entries:
     version: 1.6.1
   - apiVersion: v2
     appVersion: 1.6.0
-    created: "2020-05-21T06:48:00.029253604Z"
+    created: "2020-05-21T06:51:45.695491184Z"
     description: A Helm chart for Kubernetes
     digest: 1e1de69651fc70bbf47824633e8f3dd2cd17a16838dcda7bd80eaf25cff5a6c9
     name: seen-devices-data-store
@@ -292,7 +310,7 @@ entries:
     version: 1.6.0
   - apiVersion: v2
     appVersion: 1.5.2
-    created: "2020-05-21T06:48:00.028769034Z"
+    created: "2020-05-21T06:51:45.694749449Z"
     description: A Helm chart for Kubernetes
     digest: fc56381ab832fbbfe42f1755b780ffb248d993523a552dfa705a4fd4c078ecdb
     name: seen-devices-data-store
@@ -302,7 +320,7 @@ entries:
     version: 1.5.2
   - apiVersion: v2
     appVersion: 1.5.1
-    created: "2020-05-21T06:48:00.028293028Z"
+    created: "2020-05-21T06:51:45.693927994Z"
     description: A Helm chart for Kubernetes
     digest: 4a65b790713f471cc1fd2df073fd09afede9a89612b1eddb525380f42ac1c525
     name: seen-devices-data-store
@@ -312,7 +330,7 @@ entries:
     version: 1.5.1
   - apiVersion: v2
     appVersion: 1.5.0
-    created: "2020-05-21T06:48:00.027812418Z"
+    created: "2020-05-21T06:51:45.693153391Z"
     description: A Helm chart for Kubernetes
     digest: 1e2c104b4b2f1910dea65c22c123914c22d887afc36efb56c2de1bfc3d6b8694
     name: seen-devices-data-store
@@ -580,4 +598,4 @@ entries:
     urls:
     - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.0.17.tgz
     version: 1.0.17
-generated: "2020-05-21T06:47:59.987134884Z"
+generated: "2020-05-21T06:51:45.616808117Z"
