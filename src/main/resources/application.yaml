@@ -11,18 +11,18 @@ spring:
     bindings:
       input:
         destination: "smartpoke-device-presence"
-        group: "smartpoke.sensor-activity.data-store.2"
+        group: "smartpoke.data-store.device-presence"
       unique-devices-detected-count-input:
         destination: "smartpoke-unique-devices-detected-count"
-        group: "smartpoke.sensor-activity.data-store.2"
+        group: "smartpoke.data-store.unique-devices-detected-count"
       hourly-device-presence-count-input:
         destination: "smartpoke-hourly-presence-count"
-        group: "smartpoke.sensor-activity.data-store.2"
+        group: "smartpoke.data-store.hourly-presence-count"
       restream-output:
         destination: "smartpoke-device-presence"
       smartpoke-daily-unique-devices-detected-count-input:
         destination: "smartpoke-daily-unique-devices-detected-count"
-        group: "smartpoke.sensor-activity.data-store.daily.unique.2"
+        group: "smartpoke.data-store.daily-unique-devices-detected-count"
 
 management:
   endpoints:

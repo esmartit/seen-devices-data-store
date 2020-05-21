@@ -1,10 +1,10 @@
 package com.esmartit.seendevicesdatastore.repository
 
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 import org.springframework.data.mongodb.repository.Tailable
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.Instant
 
 @Document
@@ -25,11 +25,12 @@ data class HourlyDeviceCountTailable(
     val outCount: Long = 0
 )
 
-interface HourlyDeviceCountRepository : MongoRepository<HourlyDeviceCount, String> {
-    fun findByTime(time: Instant): HourlyDeviceCount?
+interface HourlyDeviceCountRepository : ReactiveMongoRepository<HourlyDeviceCount, String> {
+    fun findByTime(time: Instant): Mono<HourlyDeviceCount>
+    fun findByTimeGreaterThanEqual(time: Instant): Flux<HourlyDeviceCount>
 }
 
-interface HourlyDeviceCountReactiveRepository : ReactiveMongoRepository<HourlyDeviceCountTailable, String> {
+interface HourlyDeviceCountTailableRepository : ReactiveMongoRepository<HourlyDeviceCountTailable, String> {
     @Tailable
     fun findWithTailableCursorBy(): Flux<HourlyDeviceCountTailable>
 }
