@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.16.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.15.0...v1.16.0) (2020-05-21)
+
+
+### Features
+
+* current day hourly counter ([197c5b2](https://github.com/esmartit/seen-devices-data-store/commit/197c5b20e6d98383f3bdb9bc43e3f33baa17a1e0))
+
 # [1.15.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.14.1...v1.15.0) (2020-05-21)
 
 
