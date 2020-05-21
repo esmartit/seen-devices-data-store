@@ -21,9 +21,9 @@ class CurrentDayHourlyCounter(
     fun getCounters(): Flux<HourlyDeviceCountTailable> {
 
         val startOfDay = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
-        val upTillNowFlux = repo.findByTimeGreaterThanEqual(startOfDay).map { convertToTailable(it) }
+        val upTillNowFlux = repo.findByTimeGreaterThanEqualOrderByTimeAsc(startOfDay).map { convertToTailable(it) }
 
-        val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
+        val ticker = Flux.interval(Duration.ofSeconds(5)).onBackpressureDrop()
         val counter = repository.findWithTailableCursorBy()
         val fromNowOnFlux =
             Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: HourlyDeviceCountTailable -> b })

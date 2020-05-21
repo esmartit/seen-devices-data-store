@@ -27,7 +27,7 @@ data class HourlyDeviceCountTailable(
 
 interface HourlyDeviceCountRepository : ReactiveMongoRepository<HourlyDeviceCount, String> {
     fun findByTime(time: Instant): Mono<HourlyDeviceCount>
-    fun findByTimeGreaterThanEqual(time: Instant): Flux<HourlyDeviceCount>
+    fun findByTimeGreaterThanEqualOrderByTimeAsc(time: Instant): Flux<HourlyDeviceCount>
 }
 
 interface HourlyDeviceCountTailableRepository : ReactiveMongoRepository<HourlyDeviceCountTailable, String> {
