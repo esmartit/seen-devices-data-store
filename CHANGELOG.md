@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.15.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.14.1...v1.15.0) (2020-05-21)
+
+
+### Features
+
+* removing k8s resource limits ([5e14c16](https://github.com/esmartit/seen-devices-data-store/commit/5e14c16e9f053507343297cb96257e55072fb01c))
+
 ## [1.14.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.14.0...v1.14.1) (2020-05-21)
 
 
