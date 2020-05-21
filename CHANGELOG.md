@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.14.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.13.0...v1.14.0) (2020-05-21)
+
+
+### Features
+
+* back to ebs file system ([c722bee](https://github.com/esmartit/seen-devices-data-store/commit/c722beeca0e3912ae2c4fc32ec4e2770ebb23a7e))
+
 # [1.13.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.12.4...v1.13.0) (2020-05-20)
 
 
