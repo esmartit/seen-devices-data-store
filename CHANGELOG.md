@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.16.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.16.1...v1.16.2) (2020-05-22)
+
+
+### Bug Fixes
+
+* liveness readiness ([dc7aa24](https://github.com/esmartit/seen-devices-data-store/commit/dc7aa24abf823af58113d363fbaf71ccd67393ec))
+
 ## [1.16.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.16.0...v1.16.1) (2020-05-21)
 
 
