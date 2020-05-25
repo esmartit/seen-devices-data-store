@@ -8,12 +8,12 @@ import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.messaging.SubscribableChannel
 
-@EnableBinding(MinutePresenceCountInput::class)
+//@EnableBinding(MinutePresenceCountInput::class)
 class MinutePresenceCountConsumer(
     private val reactiveRepo: MinutePresenceCountRepository
 ) {
 
-    @StreamListener(MINUTE_DEVICE_COUNT_INPUT)
+//    @StreamListener(MINUTE_DEVICE_COUNT_INPUT)
     fun handle(count: HourlyDevicePresenceStat) {
         with(count) {
             println(count)
