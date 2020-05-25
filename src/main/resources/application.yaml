@@ -23,6 +23,9 @@ spring:
       smartpoke-daily-unique-devices-detected-count-input:
         destination: "smartpoke-daily-unique-devices-detected-count"
         group: "smartpoke.data-store.daily-unique-devices-detected-count"
+      minute-device-presence-count-input:
+        destination: "smartpoke-minute-presence-count"
+        group: "smartpoke.data-store.minute-presence-count"
 
 management:
   endpoints:

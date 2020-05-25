@@ -11,7 +11,7 @@ services:
       KAFKA_BROKER_HOST: "kafka:9092"
 
   live_counter:
-    image: esmartit/live-stream-counters:latest
+    image: esmartit/live-stream-counters:1.5.2
     ports:
       - "9002:9000"
     environment:
@@ -28,7 +28,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: "kafka"
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:1:1,smartpoke-device-position:1:1,smartpoke-unique-devices-detected-count:1:1,smartpoke-hourly-presence-count:1:1,smartpoke-sensor-settings:1:1:compact,smartpoke-daily-unique-devices-detected-count:1:1"
+      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:1:1,smartpoke-device-position:1:1,smartpoke-unique-devices-detected-count:1:1,smartpoke-hourly-presence-count:1:1,smartpoke-sensor-settings:1:1:compact,smartpoke-daily-unique-devices-detected-count:1:1,smartpoke-minute-presence-count:1:1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     depends_on:
       - zookeeper

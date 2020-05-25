@@ -10,6 +10,7 @@ import java.time.Instant
 private const val UNIQUE_DEVICES_COUNT_COLLECTION = "uniqueDevicesDetectedCount"
 private const val HOURLY_COUNT_TAILABLE = "hourlyDeviceCountTailable"
 private const val DAILY_UNIQUE_COUNT_COLLECTION = "dailyUniqueDevicesDetectedCount"
+private const val MINUTE_PRESENCE_TAILABLE = "minutePresenceCountTailable"
 
 @ChangeLog(order = "001")
 class InitialChangeLog {
@@ -47,6 +48,12 @@ class InitialChangeLog {
         insertFirstCount(db, DAILY_UNIQUE_COUNT_COLLECTION)
         insertFirstCount(db, UNIQUE_DEVICES_COUNT_COLLECTION)
         insertFirstPresence(db, HOURLY_COUNT_TAILABLE)
+    }
+
+    @ChangeSet(order = "005", id = "minutePresenceCount", author = "gustavo.rodriguez@esmartit.es")
+    fun minutePresenceCount(db: MongoDatabase) {
+        createCappedCollection(db, MINUTE_PRESENCE_TAILABLE, 7_200, 31457280)
+        insertFirstPresence(db, MINUTE_PRESENCE_TAILABLE)
     }
 
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
