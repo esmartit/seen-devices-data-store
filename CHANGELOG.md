@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.17.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.17.0...v1.17.1) (2020-05-25)
+
+
+### Bug Fixes
+
+* missing id ([ab2fa79](https://github.com/esmartit/seen-devices-data-store/commit/ab2fa799075731c22ae43172627c4eb1b2655903))
+
 # [1.17.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.16.2...v1.17.0) (2020-05-25)
 
 
