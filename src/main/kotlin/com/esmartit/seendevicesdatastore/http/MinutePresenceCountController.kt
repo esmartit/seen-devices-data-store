@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
+import java.util.UUID
 import java.util.function.BiFunction
 
 @RestController
@@ -37,7 +38,10 @@ class MinutePresenceCountController(
 
     private fun getTwoMinutesAgoCount(it: MutableMap<Int, MinutePresenceCountTailable>): MinutePresenceCountTailable {
         val twoMinutesAgo = Instant.now().minus(Duration.ofMinutes(2))
-        return it[twoMinutesAgo.atZone(ZoneOffset.UTC).minute] ?: MinutePresenceCountTailable(time = twoMinutesAgo)
+        return it[twoMinutesAgo.atZone(ZoneOffset.UTC).minute] ?: MinutePresenceCountTailable(
+            time = twoMinutesAgo,
+            id = UUID.randomUUID().toString()
+        )
     }
 
     private fun scanNewEvents(
