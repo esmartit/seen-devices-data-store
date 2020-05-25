@@ -25,6 +25,10 @@ class MinutePresenceCountController(
         val thirtyMinutesAgo = Instant.now().minus(Duration.ofMinutes(30))
 
         val historyFlux = repository.findByTimeGreaterThanEqual(thirtyMinutesAgo)
+            .groupBy { it.time }
+            .flatMap { g -> g.reduce { _, u -> u } }
+            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
+
         val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
         val latest = repository.findWithTailableCursorBy()
         val currentFlux =
