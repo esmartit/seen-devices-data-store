@@ -56,6 +56,13 @@ class InitialChangeLog {
         insertFirstPresence(db, MINUTE_PRESENCE_TAILABLE)
     }
 
+    @ChangeSet(order = "006", id = "minutePresenceCountFix", author = "gustavo.rodriguez@esmartit.es")
+    fun minutePresenceCountFix(db: MongoDatabase) {
+        db.getCollection(MINUTE_PRESENCE_TAILABLE).drop()
+        createCappedCollection(db, MINUTE_PRESENCE_TAILABLE, 7_200, 31457280)
+        insertFirstPresence(db, MINUTE_PRESENCE_TAILABLE)
+    }
+
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
         val options = CreateCollectionOptions().capped(true).maxDocuments(maxDocuments).sizeInBytes(sizeInBytes)
         db.createCollection(name, options)
