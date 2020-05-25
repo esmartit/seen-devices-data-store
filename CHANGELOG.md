@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.17.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.16.2...v1.17.0) (2020-05-25)
+
+
+### Features
+
+* minute presence ([89c28b9](https://github.com/esmartit/seen-devices-data-store/commit/89c28b981d81054c202435a9ceb0eb907364c352))
+
 ## [1.16.2](https://github.com/esmartit/seen-devices-data-store/compare/v1.16.1...v1.16.2) (2020-05-22)
 
 
