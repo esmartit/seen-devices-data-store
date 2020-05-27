@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.18.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.17.7...v1.18.0) (2020-05-27)
+
+
+### Features
+
+* timezone for daily aggregate and new endpoint total by minute ([0588cd6](https://github.com/esmartit/seen-devices-data-store/commit/0588cd6486ed8eb2ffffd4a8e740199afbb9b7c4))
+
 ## [1.17.7](https://github.com/esmartit/seen-devices-data-store/compare/v1.17.6...v1.17.7) (2020-05-27)
 
 
