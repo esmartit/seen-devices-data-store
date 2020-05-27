@@ -7,8 +7,10 @@ import com.esmartit.seendevicesdatastore.service.HourlyDeltaCounter
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import java.time.ZoneId
 
 @RestController
 @RequestMapping("/sensor-activity")
@@ -29,7 +31,9 @@ class HourlyDeviceCountController(
     }
 
     @GetMapping(path = ["/today-hourly-device-presence"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getHourlyPresence(): Flux<HourlyDeviceCountTailable> {
-        return currentDayHourlyCounter.getCounters()
+    fun getHourlyPresence(
+        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
+    ): Flux<HourlyDeviceCountTailable> {
+        return currentDayHourlyCounter.getCounters(zoneId)
     }
 }

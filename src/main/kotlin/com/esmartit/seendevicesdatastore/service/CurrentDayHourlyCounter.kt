@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.function.BiFunction
 
 @Service
@@ -18,9 +18,9 @@ class CurrentDayHourlyCounter(
 ) {
 
 
-    fun getCounters(): Flux<HourlyDeviceCountTailable> {
+    fun getCounters(zoneId: ZoneId): Flux<HourlyDeviceCountTailable> {
 
-        val startOfDay = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant()
+        val startOfDay = LocalDate.now().atStartOfDay(zoneId).toInstant()
         val upTillNowFlux = repo.findByTimeGreaterThanEqualOrderByTimeAsc(startOfDay).map { convertToTailable(it) }
 
         val ticker = Flux.interval(Duration.ofSeconds(5)).onBackpressureDrop()
