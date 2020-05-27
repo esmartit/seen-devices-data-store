@@ -25,8 +25,8 @@ class ReStreamController(
     fun getAllSensorActivity(): Flux<DeviceSeenEventReStream> {
         return repository.findAll()
             .map { it.toDeviceSeenEvent() }
-            .window(Duration.ofMillis(200))
-            .flatMap { w -> w.parallel().doOnNext { sendEvent(it) } }
+            .window(Duration.ofMillis(800))
+            .flatMap { w -> w.doOnNext { sendEvent(it) } }
             .reduce { _, lastEvent -> lastEvent }
             .flux()
     }
