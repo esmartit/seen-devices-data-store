@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.19.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.18.0...v1.19.0) (2020-05-28)
+
+
+### Features
+
+* consuming devices with position in,limit,out ([84aad64](https://github.com/esmartit/seen-devices-data-store/commit/84aad64eb6c1c93db1d4d7d08716153e2be21f43))
+
 # [1.18.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.17.7...v1.18.0) (2020-05-27)
 
 
