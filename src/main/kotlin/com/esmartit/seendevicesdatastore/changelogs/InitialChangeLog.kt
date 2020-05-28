@@ -63,6 +63,11 @@ class InitialChangeLog {
         insertFirstPresence(db, MINUTE_PRESENCE_TAILABLE)
     }
 
+    @ChangeSet(order = "007", id = "deviceWithPosition", author = "gustavo.rodriguez@esmartit.es")
+    fun deviceWithPosition(db: MongoDatabase) {
+        db.createCollection("deviceWithPosition")
+    }
+
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
         val options = CreateCollectionOptions().capped(true).maxDocuments(maxDocuments).sizeInBytes(sizeInBytes)
         db.createCollection(name, options)

@@ -26,6 +26,9 @@ spring:
       minute-device-presence-count-input:
         destination: "smartpoke-minute-presence-count"
         group: "smartpoke.data-store.minute-presence-count"
+      device-position-input:
+        destination: "smartpoke-device-position"
+        group: "smartpoke.data-store.device-position"
 
 management:
   endpoints:
