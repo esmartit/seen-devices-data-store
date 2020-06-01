@@ -7,13 +7,12 @@ import org.springframework.data.mongodb.repository.Tailable
 import reactor.core.publisher.Flux
 import java.time.Instant
 
-@Document
-data class DailyUniqueDevicesDetectedCount(val count: Long, val time: Instant)
+@Document(collection = "dailyUniqueDevicesDetectedCount")
+data class DailyDevices(val count: Long, val time: Instant)
 
-interface DailyUniqueDevicesDetectedCountRepository : MongoRepository<DailyUniqueDevicesDetectedCount, String>
+interface DailyDevicesRepository : MongoRepository<DailyDevices, String>
 
-interface DailyUniqueDevicesDetectedCountReactiveRepository :
-    ReactiveMongoRepository<DailyUniqueDevicesDetectedCount, String> {
+interface DailyDevicesReactiveRepository : ReactiveMongoRepository<DailyDevices, String> {
     @Tailable
-    fun findWithTailableCursorBy(): Flux<DailyUniqueDevicesDetectedCount>
+    fun findWithTailableCursorBy(): Flux<DailyDevices>
 }

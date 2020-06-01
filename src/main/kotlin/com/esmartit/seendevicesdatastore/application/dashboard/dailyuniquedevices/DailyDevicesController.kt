@@ -10,12 +10,12 @@ import java.util.function.BiFunction
 
 @RestController
 @RequestMapping("/sensor-activity")
-class DailyUniqueDevicesDetectedController(private val repository: DailyUniqueDevicesDetectedCountReactiveRepository) {
+class DailyDevicesController(private val repository: DailyDevicesReactiveRepository) {
 
     @GetMapping(path = ["/daily-unique-devices-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getAllSensorActivity(): Flux<DailyUniqueDevicesDetectedCount> {
+    fun getAllSensorActivity(): Flux<DailyDevices> {
         val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
         val counter = repository.findWithTailableCursorBy()
-        return Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: DailyUniqueDevicesDetectedCount -> b })
+        return Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: DailyDevices -> b })
     }
 }
