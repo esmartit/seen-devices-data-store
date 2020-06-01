@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.repository
+package com.esmartit.seendevicesdatastore.application.sensoractivity
 
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
@@ -14,5 +14,5 @@ interface DeviceStatReactiveRepository : ReactiveMongoRepository<SensorActivity,
 
 @Repository
 interface DeviceStatRepository : MongoRepository<SensorActivity, String> {
-    fun findByDeviceMacAddressAndSeenTime(macAddress: String,seenTime: Instant): SensorActivity?
+    fun findByDeviceMacAddressAndSeenTime(macAddress: String, seenTime: Instant): SensorActivity?
 }

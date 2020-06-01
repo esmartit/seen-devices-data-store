@@ -1,8 +1,7 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.dashboard.nowpresence
 
-import com.esmartit.seendevicesdatastore.consumer.MinutePresenceCountInput.Companion.MINUTE_DEVICE_COUNT_INPUT
-import com.esmartit.seendevicesdatastore.repository.MinutePresenceCountRepository
-import com.esmartit.seendevicesdatastore.repository.MinutePresenceCountTailable
+import com.esmartit.seendevicesdatastore.application.dashboard.nowpresence.MinutePresenceCountInput.Companion.MINUTE_DEVICE_COUNT_INPUT
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDevicePresenceStat
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener
@@ -15,11 +14,17 @@ class MinutePresenceCountConsumer(
 
     @StreamListener(MINUTE_DEVICE_COUNT_INPUT)
     fun handle(count: HourlyDevicePresenceStat) {
-        with(count) {
-            println(count)
-            reactiveRepo.save(MinutePresenceCountTailable(null, time, inCount, limitCount, outCount))
-                .block()
-        }
+        reactiveRepo.save(count.minutePresenceCountTailable()).block()
+    }
+
+    private fun HourlyDevicePresenceStat.minutePresenceCountTailable(): MinutePresenceCountTailable {
+        return MinutePresenceCountTailable(
+            null,
+            time,
+            inCount,
+            limitCount,
+            outCount
+        )
     }
 }
 

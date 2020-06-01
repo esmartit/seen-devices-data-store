@@ -1,8 +1,6 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.dashboard.dailyuniquedevices
 
-import com.esmartit.seendevicesdatastore.consumer.DailyUniqueDevicesCountInput.Companion.DAILY_UNIQUE_DEVICES_DETECTED_COUNT_INPUT
-import com.esmartit.seendevicesdatastore.repository.DailyUniqueDevicesDetectedCount
-import com.esmartit.seendevicesdatastore.repository.DailyUniqueDevicesDetectedCountRepository
+import com.esmartit.seendevicesdatastore.application.dashboard.dailyuniquedevices.DailyUniqueDevicesCountInput.Companion.DAILY_UNIQUE_DEVICES_DETECTED_COUNT_INPUT
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

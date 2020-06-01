@@ -1,10 +1,10 @@
 package com.esmartit.seendevicesdatastore.service
 
-import com.esmartit.seendevicesdatastore.consumer.DeviceSeenEvent
-import com.esmartit.seendevicesdatastore.repository.AccessPoint
-import com.esmartit.seendevicesdatastore.repository.Device
-import com.esmartit.seendevicesdatastore.repository.Location
-import com.esmartit.seendevicesdatastore.repository.SensorActivity
+import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
+import com.esmartit.seendevicesdatastore.application.sensoractivity.AccessPoint
+import com.esmartit.seendevicesdatastore.application.sensoractivity.Device
+import com.esmartit.seendevicesdatastore.application.sensoractivity.Location
+import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivity
 import org.springframework.stereotype.Service
 import java.time.temporal.ChronoUnit
 
@@ -42,6 +42,11 @@ class EventToSensorActivity {
         )
 
     private fun createLocation(it: DeviceSeenEvent) = with(it.device.location) {
-        Location(position = listOf(lat, lng), unc = unc)
+        Location(
+            position = listOf(
+                lat,
+                lng
+            ), unc = unc
+        )
     }
 }

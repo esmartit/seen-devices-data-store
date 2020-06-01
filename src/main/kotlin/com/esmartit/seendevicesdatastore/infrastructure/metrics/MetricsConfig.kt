@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.metrics
+package com.esmartit.seendevicesdatastore.infrastructure.metrics
 
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer

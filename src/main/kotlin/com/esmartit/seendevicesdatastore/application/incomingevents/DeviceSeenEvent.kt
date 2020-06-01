@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.incomingevents
 
 import java.time.Instant
 

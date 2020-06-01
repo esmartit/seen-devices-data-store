@@ -1,9 +1,9 @@
 package com.esmartit.seendevicesdatastore.service
 
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCount
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountRepository
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailable
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailableRepository
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCount
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountRepository
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountTailable
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountTailableRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.Duration

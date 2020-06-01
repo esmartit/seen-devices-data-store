@@ -1,7 +1,5 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices
 
-import com.esmartit.seendevicesdatastore.repository.UniqueDevicesDetectedCount
-import com.esmartit.seendevicesdatastore.repository.UniqueDevicesDetectedCountRepository
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.changelogs
+package com.esmartit.seendevicesdatastore.infrastructure.changelogs
 
 import com.github.mongobee.Mongobee
 import org.springframework.beans.factory.annotation.Value
@@ -13,7 +13,7 @@ class MongoBeeConfig {
     fun mongobee(@Value("\${spring.data.mongodb.uri}") mongoDbUri: String): Mongobee {
         val runner = Mongobee(mongoDbUri)
         runner.setDbName("smartpoke")
-        runner.setChangeLogsScanPackage("com.esmartit.seendevicesdatastore.changelogs")
+        runner.setChangeLogsScanPackage("com.esmartit.seendevicesdatastore.infrastructure.changelogs")
         return runner
     }
 }

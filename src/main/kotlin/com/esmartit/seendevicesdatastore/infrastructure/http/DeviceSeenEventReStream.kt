@@ -1,6 +1,4 @@
-package com.esmartit.seendevicesdatastore.http
-
-import java.time.Instant
+package com.esmartit.seendevicesdatastore.infrastructure.http
 
 data class DeviceSeenEventReStream(val apMac: String,
                            val groupName:String,

@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.repository
+package com.esmartit.seendevicesdatastore.application.sensoractivity
 
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant

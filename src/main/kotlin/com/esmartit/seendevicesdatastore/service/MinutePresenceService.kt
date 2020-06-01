@@ -1,7 +1,7 @@
 package com.esmartit.seendevicesdatastore.service
 
-import com.esmartit.seendevicesdatastore.repository.MinutePresenceCountRepository
-import com.esmartit.seendevicesdatastore.repository.MinutePresenceCountTailable
+import com.esmartit.seendevicesdatastore.application.dashboard.nowpresence.MinutePresenceCountRepository
+import com.esmartit.seendevicesdatastore.application.dashboard.nowpresence.MinutePresenceCountTailable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.Duration

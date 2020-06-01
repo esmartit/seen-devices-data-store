@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.consumer
 
+import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceWithPresenceEvent
 import com.esmartit.seendevicesdatastore.repository.DevicePositionRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
@@ -46,5 +47,3 @@ interface SeenDevicesPositionInput {
         const val DEVICE_POSITION_INPUT = "device-position-input"
     }
 }
-
-data class DeviceWithPresenceEvent(val deviceDetectedEvent: DeviceSeenEvent, val position: Position)

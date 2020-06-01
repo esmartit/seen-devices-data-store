@@ -1,6 +1,6 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.sensoractivity
 
-import com.esmartit.seendevicesdatastore.repository.DeviceStatRepository
+import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
 import com.esmartit.seendevicesdatastore.service.EventToSensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener

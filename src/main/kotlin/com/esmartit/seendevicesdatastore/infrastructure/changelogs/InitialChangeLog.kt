@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.changelogs
+package com.esmartit.seendevicesdatastore.infrastructure.changelogs
 
 import com.github.mongobee.changeset.ChangeLog
 import com.github.mongobee.changeset.ChangeSet

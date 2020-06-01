@@ -1,7 +1,5 @@
-package com.esmartit.seendevicesdatastore.http
+package com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices
 
-import com.esmartit.seendevicesdatastore.repository.UniqueDevicesDetectedCount
-import com.esmartit.seendevicesdatastore.repository.UniqueDevicesDetectedCountReactiveRepository
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

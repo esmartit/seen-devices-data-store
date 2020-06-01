@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.repository
+package com.esmartit.seendevicesdatastore.application.dashboard.nowpresence
 
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository

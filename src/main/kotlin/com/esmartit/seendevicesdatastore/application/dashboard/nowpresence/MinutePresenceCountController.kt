@@ -1,6 +1,5 @@
-package com.esmartit.seendevicesdatastore.http
+package com.esmartit.seendevicesdatastore.application.dashboard.nowpresence
 
-import com.esmartit.seendevicesdatastore.repository.MinutePresenceCountTailable
 import com.esmartit.seendevicesdatastore.service.MinutePresenceService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,7 +24,12 @@ class MinutePresenceCountController(private val minuteService: MinutePresenceSer
     fun getRecentTotalActivity(): Flux<MinuteRecentCount> {
         val tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10))
         return minuteService.getPresenceAfter(tenMinutesAgo)
-            .map { it.run { inCount + limitCount + outCount }.run { MinuteRecentCount(this, it.time) } }
+            .map { it.run { inCount + limitCount + outCount }.run {
+                MinuteRecentCount(
+                    this,
+                    it.time
+                )
+            } }
     }
 }
 

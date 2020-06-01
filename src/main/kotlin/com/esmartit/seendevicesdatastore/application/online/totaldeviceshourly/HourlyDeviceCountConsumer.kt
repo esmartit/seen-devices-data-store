@@ -1,10 +1,6 @@
-package com.esmartit.seendevicesdatastore.consumer
+package com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly
 
-import com.esmartit.seendevicesdatastore.consumer.HourlyDeviceCountCountInput.Companion.HOURLY_DEVICE_COUNT_INPUT
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCount
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountRepository
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailable
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailableRepository
+import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountCountInput.Companion.HOURLY_DEVICE_COUNT_INPUT
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener
@@ -25,7 +21,15 @@ class HourlyDeviceCountConsumer(
                 .map { it.copy(time = time, inCount = inCount, limitCount = limitCount, outCount = outCount) }
                 .flatMap { repo.save(it) }
                 .block()
-            reactiveRepo.save(HourlyDeviceCountTailable(null, time, inCount, limitCount, outCount))
+            reactiveRepo.save(
+                HourlyDeviceCountTailable(
+                    null,
+                    time,
+                    inCount,
+                    limitCount,
+                    outCount
+                )
+            )
                 .block()
         }
     }

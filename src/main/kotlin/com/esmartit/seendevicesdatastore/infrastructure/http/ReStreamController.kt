@@ -1,7 +1,7 @@
-package com.esmartit.seendevicesdatastore.http
+package com.esmartit.seendevicesdatastore.infrastructure.http
 
-import com.esmartit.seendevicesdatastore.repository.DeviceStatReactiveRepository
-import com.esmartit.seendevicesdatastore.repository.SensorActivity
+import com.esmartit.seendevicesdatastore.application.sensoractivity.DeviceStatReactiveRepository
+import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Output
 import org.springframework.kafka.support.KafkaHeaders

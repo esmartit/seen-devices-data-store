@@ -1,7 +1,5 @@
-package com.esmartit.seendevicesdatastore.http
+package com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly
 
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailable
-import com.esmartit.seendevicesdatastore.repository.HourlyDeviceCountTailableRepository
 import com.esmartit.seendevicesdatastore.service.CurrentDayHourlyCounter
 import com.esmartit.seendevicesdatastore.service.HourlyDeltaCounter
 import org.springframework.http.MediaType
