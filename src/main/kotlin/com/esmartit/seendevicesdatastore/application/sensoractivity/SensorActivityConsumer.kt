@@ -1,15 +1,15 @@
 package com.esmartit.seendevicesdatastore.application.sensoractivity
 
 import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
-import com.esmartit.seendevicesdatastore.service.EventToSensorActivity
+import com.esmartit.seendevicesdatastore.application.incomingevents.EventToSensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
 
 @EnableBinding(Sink::class)
-class SeenDevicesConsumer(
+class SensorActivityConsumer(
     private val eventToSensorActivity: EventToSensorActivity,
-    private val repository: DeviceStatRepository
+    private val repository: SensorActivityRepository
 ) {
 
     @StreamListener(Sink.INPUT)

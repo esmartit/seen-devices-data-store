@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.service
+package com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly
 
 import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCount
 import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountRepository

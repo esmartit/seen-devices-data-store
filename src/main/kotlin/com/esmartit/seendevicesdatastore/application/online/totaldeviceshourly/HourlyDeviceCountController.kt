@@ -1,7 +1,5 @@
 package com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly
 
-import com.esmartit.seendevicesdatastore.service.CurrentDayHourlyCounter
-import com.esmartit.seendevicesdatastore.service.HourlyDeltaCounter
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

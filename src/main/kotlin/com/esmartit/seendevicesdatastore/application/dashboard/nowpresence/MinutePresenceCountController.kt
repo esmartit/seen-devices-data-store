@@ -1,6 +1,5 @@
 package com.esmartit.seendevicesdatastore.application.dashboard.nowpresence
 
-import com.esmartit.seendevicesdatastore.service.MinutePresenceService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

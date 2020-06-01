@@ -4,7 +4,7 @@ import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceWithPr
 import com.esmartit.seendevicesdatastore.repository.DevicePositionRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
-import com.esmartit.seendevicesdatastore.service.EventToSensorActivity
+import com.esmartit.seendevicesdatastore.application.incomingevents.EventToSensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.infrastructure.http
 
-import com.esmartit.seendevicesdatastore.application.sensoractivity.DeviceStatReactiveRepository
+import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityReactiveRepository
 import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Output
@@ -17,7 +17,7 @@ import java.time.Duration
 @RequestMapping("/sensor-activity")
 @EnableBinding(ReStreamOutput::class)
 class ReStreamController(
-    private val repository: DeviceStatReactiveRepository,
+    private val repository: SensorActivityReactiveRepository,
     private val reStreamOutput: ReStreamOutput
 ) {
 

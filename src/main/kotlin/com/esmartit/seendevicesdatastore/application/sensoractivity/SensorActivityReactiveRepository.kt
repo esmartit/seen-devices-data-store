@@ -7,12 +7,12 @@ import reactor.core.publisher.Flux
 import java.time.Instant
 
 @Repository
-interface DeviceStatReactiveRepository : ReactiveMongoRepository<SensorActivity, String> {
+interface SensorActivityReactiveRepository : ReactiveMongoRepository<SensorActivity, String> {
 
     fun findBySeenTimeBetween(start: Instant, end: Instant): Flux<SensorActivity>
 }
 
 @Repository
-interface DeviceStatRepository : MongoRepository<SensorActivity, String> {
+interface SensorActivityRepository : MongoRepository<SensorActivity, String> {
     fun findByDeviceMacAddressAndSeenTime(macAddress: String, seenTime: Instant): SensorActivity?
 }

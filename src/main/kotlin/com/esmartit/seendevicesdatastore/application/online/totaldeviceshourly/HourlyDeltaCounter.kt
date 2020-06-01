@@ -1,7 +1,5 @@
-package com.esmartit.seendevicesdatastore.service
+package com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly
 
-import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountTailable
-import com.esmartit.seendevicesdatastore.application.online.totaldeviceshourly.HourlyDeviceCountTailableRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.Duration

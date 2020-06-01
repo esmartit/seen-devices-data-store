@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.service
+package com.esmartit.seendevicesdatastore.application.incomingevents
 
 import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
 import com.esmartit.seendevicesdatastore.application.sensoractivity.AccessPoint
