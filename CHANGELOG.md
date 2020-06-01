@@ -1,5 +1,21 @@
 # Semantic Versioning Changelog
 
+# [1.20.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.19.0...v1.20.0) (2020-06-01)
+
+
+### Bug Fixes
+
+* refactoring to match frontend ([d024454](https://github.com/esmartit/seen-devices-data-store/commit/d0244545f4d155485eb7fe05465c95a5c2a980dc))
+* refactoring to match frontend ([c8eeca3](https://github.com/esmartit/seen-devices-data-store/commit/c8eeca3f97d3a0ac8385233e430c34758232790a))
+* refactoring to match frontend ([dff24ec](https://github.com/esmartit/seen-devices-data-store/commit/dff24ec4192863f6826057107e8acde1a1b2a5b2))
+* refactoring to match frontend ([accba9c](https://github.com/esmartit/seen-devices-data-store/commit/accba9c1c4be6c62f7fe83b50f514fc654ad9d3f))
+* refactoring to match frontend ([d82f5a6](https://github.com/esmartit/seen-devices-data-store/commit/d82f5a68adba7b8d58f1e1adccc0194c75b7d558))
+
+
+### Features
+
+* adding timezone to endpoints ([27f7c1c](https://github.com/esmartit/seen-devices-data-store/commit/27f7c1c328dc16ae0e227f7ac3e8dda4b7044f13))
+
 # [1.19.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.18.0...v1.19.0) (2020-05-28)
 
 
