@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.sensoractivity
 
-import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
+import com.esmartit.seendevicesdatastore.application.incomingevents.SensorActivityEvent
 import com.esmartit.seendevicesdatastore.application.incomingevents.EventToSensorActivity
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
@@ -13,7 +13,7 @@ class SensorActivityConsumer(
 ) {
 
     @StreamListener(Sink.INPUT)
-    fun handle(seenDevice: DeviceSeenEvent) {
+    fun handle(seenDevice: SensorActivityEvent) {
 
         val incomingSensorActivity = eventToSensorActivity.convertToSensorActivity(seenDevice)
         val existingSensorActivity = repository.findByDeviceMacAddressAndSeenTime(

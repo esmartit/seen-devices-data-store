@@ -2,13 +2,13 @@ package com.esmartit.seendevicesdatastore.application.incomingevents
 
 import java.time.Instant
 
-data class DeviceSeenEvent(val apMac: String,
-                           val groupName:String,
-                           val hotSpot:String,
-                           val sensorName:String,
-                           val spotId:String,
-                           val device: DeviceSeen,
-                           val apFloors: List<String?>)
+data class SensorActivityEvent(val apMac: String,
+                               val groupName:String,
+                               val hotSpot:String,
+                               val sensorName:String,
+                               val spotId:String,
+                               val device: DeviceSeen,
+                               val apFloors: List<String?>)
 
 data class DeviceSeen(val clientMac: String,
                       val ipv4: String?,

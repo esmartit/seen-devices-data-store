@@ -1,6 +1,5 @@
 package com.esmartit.seendevicesdatastore.application.incomingevents
 
-import com.esmartit.seendevicesdatastore.application.incomingevents.DeviceSeenEvent
 import com.esmartit.seendevicesdatastore.application.sensoractivity.AccessPoint
 import com.esmartit.seendevicesdatastore.application.sensoractivity.Device
 import com.esmartit.seendevicesdatastore.application.sensoractivity.Location
@@ -11,18 +10,18 @@ import java.time.temporal.ChronoUnit
 @Service
 class EventToSensorActivity {
 
-    fun convertToSensorActivity(deviceSeenEvent: DeviceSeenEvent): SensorActivity {
+    fun convertToSensorActivity(sensorActivityEvent: SensorActivityEvent): SensorActivity {
 
         return SensorActivity(
-            accessPoint = createAccessPoint(deviceSeenEvent),
-            device = createDevice(deviceSeenEvent),
-            rssi = deviceSeenEvent.device.rssi,
-            seenTime = deviceSeenEvent.device.seenTime.truncatedTo(ChronoUnit.HOURS),
-            location = createLocation(deviceSeenEvent)
+            accessPoint = createAccessPoint(sensorActivityEvent),
+            device = createDevice(sensorActivityEvent),
+            rssi = sensorActivityEvent.device.rssi,
+            seenTime = sensorActivityEvent.device.seenTime.truncatedTo(ChronoUnit.HOURS),
+            location = createLocation(sensorActivityEvent)
         )
     }
 
-    private fun createDevice(it: DeviceSeenEvent) =
+    private fun createDevice(it: SensorActivityEvent) =
         Device(
             macAddress = it.device.clientMac,
             ipv4 = it.device.ipv4,
@@ -31,7 +30,7 @@ class EventToSensorActivity {
             manufacturer = it.device.manufacturer
         )
 
-    private fun createAccessPoint(it: DeviceSeenEvent) =
+    private fun createAccessPoint(it: SensorActivityEvent) =
         AccessPoint(
             macAddress = it.apMac,
             groupName = it.groupName,
@@ -41,7 +40,7 @@ class EventToSensorActivity {
             floors = it.apFloors
         )
 
-    private fun createLocation(it: DeviceSeenEvent) = with(it.device.location) {
+    private fun createLocation(it: SensorActivityEvent) = with(it.device.location) {
         Location(
             position = listOf(
                 lat,

@@ -10,10 +10,10 @@ import java.time.Instant
 
 @RestController
 @RequestMapping("/sensor-activity")
-class MinutePresenceCountController(private val minuteService: MinutePresenceService) {
+class NowPresenceController(private val minuteService: NowPresenceService) {
 
     @GetMapping(path = ["/minute-device-presence-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getRecentActivity(): Flux<MinutePresenceCountTailable> {
+    fun getRecentActivity(): Flux<NowPresence> {
 
         val thirtyMinutesAgo = Instant.now().minus(Duration.ofMinutes(30))
         return minuteService.getPresenceAfter(thirtyMinutesAgo)
@@ -24,10 +24,7 @@ class MinutePresenceCountController(private val minuteService: MinutePresenceSer
         val tenMinutesAgo = Instant.now().minus(Duration.ofMinutes(10))
         return minuteService.getPresenceAfter(tenMinutesAgo)
             .map { it.run { inCount + limitCount + outCount }.run {
-                MinuteRecentCount(
-                    this,
-                    it.time
-                )
+                MinuteRecentCount(this, it.time)
             } }
     }
 }

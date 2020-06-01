@@ -10,9 +10,9 @@ import java.util.UUID
 import java.util.function.BiFunction
 
 @Service
-class MinutePresenceService(private val repository: MinutePresenceCountRepository) {
+class NowPresenceService(private val repository: NowPresenceReactiveRepository) {
 
-    fun getPresenceAfter(someTimeAgo:Instant): Flux<MinutePresenceCountTailable> {
+    fun getPresenceAfter(someTimeAgo:Instant): Flux<NowPresence> {
 
         val historyFlux = repository.findByTimeGreaterThanEqual(someTimeAgo)
             .groupBy { it.time }
@@ -27,16 +27,16 @@ class MinutePresenceService(private val repository: MinutePresenceCountRepositor
             Flux.combineLatest(
                 ticker,
                 latest,
-                BiFunction { _: Long, b: MutableMap<Int, MinutePresenceCountTailable> -> b })
+                BiFunction { _: Long, b: MutableMap<Int, NowPresence> -> b })
                 .map { getTwoMinutesAgoCount(it) }
 
 
         return Flux.concat(historyFlux, currentFlux)
     }
 
-    private fun getTwoMinutesAgoCount(it: MutableMap<Int, MinutePresenceCountTailable>): MinutePresenceCountTailable {
+    private fun getTwoMinutesAgoCount(it: MutableMap<Int, NowPresence>): NowPresence {
         val twoMinutesAgo = getTwoMinutesAgo()
-        return it[twoMinutesAgo.atZone(ZoneOffset.UTC).minute] ?: MinutePresenceCountTailable(
+        return it[twoMinutesAgo.atZone(ZoneOffset.UTC).minute] ?: NowPresence(
             time = twoMinutesAgo.truncatedTo(ChronoUnit.MINUTES),
             id = UUID.randomUUID().toString().replace("-", "").substring(0..22)
         )
@@ -45,9 +45,9 @@ class MinutePresenceService(private val repository: MinutePresenceCountRepositor
     private fun getTwoMinutesAgo() = Instant.now().minus(Duration.ofMinutes(2))
 
     private fun scanNewEvents(
-        a: MutableMap<Int, MinutePresenceCountTailable>,
-        c: MinutePresenceCountTailable
-    ): MutableMap<Int, MinutePresenceCountTailable> {
+        a: MutableMap<Int, NowPresence>,
+        c: NowPresence
+    ): MutableMap<Int, NowPresence> {
         return a.apply { this[c.time.atZone(ZoneOffset.UTC).minute] = c }
     }
 }

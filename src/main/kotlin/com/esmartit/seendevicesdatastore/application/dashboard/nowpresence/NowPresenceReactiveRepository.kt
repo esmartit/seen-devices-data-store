@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.repository.Tailable
 import reactor.core.publisher.Flux
 import java.time.Instant
 
-@Document
-data class MinutePresenceCountTailable(
+@Document(collection = "minutePresenceCountTailable")
+data class NowPresence(
     val id: String? = null,
     val time: Instant = Instant.now(),
     val inCount: Long = 0,
@@ -15,9 +15,9 @@ data class MinutePresenceCountTailable(
     val outCount: Long = 0
 )
 
-interface MinutePresenceCountRepository : ReactiveMongoRepository<MinutePresenceCountTailable, String> {
+interface NowPresenceReactiveRepository : ReactiveMongoRepository<NowPresence, String> {
     @Tailable
-    fun findWithTailableCursorBy(): Flux<MinutePresenceCountTailable>
+    fun findWithTailableCursorBy(): Flux<NowPresence>
 
-    fun findByTimeGreaterThanEqual(time: Instant): Flux<MinutePresenceCountTailable>
+    fun findByTimeGreaterThanEqual(time: Instant): Flux<NowPresence>
 }
