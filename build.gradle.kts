@@ -1,8 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.adarshr.gradle.testlogger.TestLoggerExtension
+import com.adarshr.gradle.testlogger.TestLoggerPlugin
+import com.adarshr.gradle.testlogger.theme.ThemeType
 
 plugins {
 	id("org.springframework.boot") version "2.2.7.RELEASE"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
+	id("com.adarshr.test-logger") version "2.0.0" //apply false
 	kotlin("jvm") version "1.3.72"
 	kotlin("plugin.spring") version "1.3.72"
 }
@@ -64,5 +68,14 @@ tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "1.8"
+	}
+}
+
+plugins.withType<TestLoggerPlugin> {
+	configure<TestLoggerExtension> {
+		theme = ThemeType.MOCHA
+		showCauses = true
+		showFullStackTraces = true
+		showStandardStreams = true
 	}
 }
