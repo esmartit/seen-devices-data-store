@@ -18,9 +18,15 @@ class RegisteredUserConsumer(
 
     @StreamListener(RegisteredUserInput.REGISTERED_DEVICE_INPUT)
     fun handle(event: RegisteredEvent) {
-        val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
-            ?: RegisteredUser(info = event.toInfo())
-        repository.save(registeredDevice)
+        try {
+            println(event)
+            val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
+                ?: RegisteredUser(info = event.toInfo())
+            repository.save(registeredDevice)
+            println(registeredDevice)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
 
