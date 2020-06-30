@@ -5,7 +5,7 @@ import java.time.Instant
 import java.time.LocalDate
 
 @Document
-data class RegisteredDevice(val id: String? = null, val info: RegisteredInfo)
+data class RegisteredUser(val id: String? = null, val info: RegisteredInfo)
 
 data class RegisteredInfo(
     val username: String,

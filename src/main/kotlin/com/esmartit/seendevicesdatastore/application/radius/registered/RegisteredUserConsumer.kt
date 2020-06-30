@@ -11,15 +11,15 @@ import java.time.format.DateTimeFormatter
 
 private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-@EnableBinding(RegisteredDeviceInput::class)
-class RegisteredDeviceConsumer(
-    private val repository: RegisteredDeviceRepository
+@EnableBinding(RegisteredUserInput::class)
+class RegisteredUserConsumer(
+    private val repository: RegisteredUserRepository
 ) {
 
-    @StreamListener(RegisteredDeviceInput.REGISTERED_DEVICE_INPUT)
+    @StreamListener(RegisteredUserInput.REGISTERED_DEVICE_INPUT)
     fun handle(event: RegisteredEvent) {
         val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
-            ?: RegisteredDevice(info = event.toInfo())
+            ?: RegisteredUser(info = event.toInfo())
         repository.save(registeredDevice)
     }
 }
@@ -38,7 +38,7 @@ private fun RegisteredEvent.toInfo(): RegisteredInfo {
     )
 }
 
-interface RegisteredDeviceInput {
+interface RegisteredUserInput {
     @Input(REGISTERED_DEVICE_INPUT)
     fun input(): SubscribableChannel
 
