@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.22.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.21.1...v1.22.0) (2020-06-30)
+
+
+### Features
+
+* radius activity ([#18](https://github.com/esmartit/seen-devices-data-store/issues/18)) ([3ae19f3](https://github.com/esmartit/seen-devices-data-store/commit/3ae19f3f200dc0f1c93a42ee491ae85240fe24e1))
+
 ## [1.21.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.21.0...v1.21.1) (2020-06-30)
 
 
