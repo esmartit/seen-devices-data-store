@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.application.registered
+package com.esmartit.seendevicesdatastore.application.radius.registered
 
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
