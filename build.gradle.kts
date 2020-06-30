@@ -52,6 +52,7 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
 	testImplementation("org.springframework.kafka:spring-kafka-test")
+	testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 dependencyManagement {
