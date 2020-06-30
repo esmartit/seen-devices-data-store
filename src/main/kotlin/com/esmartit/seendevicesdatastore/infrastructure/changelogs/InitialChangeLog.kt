@@ -73,6 +73,11 @@ class InitialChangeLog {
         db.createCollection("registeredDevice")
     }
 
+    @ChangeSet(order = "009", id = "radiusActivity", author = "gustavo.rodriguez@esmartit.es")
+    fun radiusActivity(db: MongoDatabase) {
+        db.createCollection("radiusActivity")
+    }
+
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
         val options = CreateCollectionOptions().capped(true).maxDocuments(maxDocuments).sizeInBytes(sizeInBytes)
         db.createCollection(name, options)

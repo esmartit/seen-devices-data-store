@@ -32,6 +32,9 @@ spring:
       registered-device-input:
         destination: "smartpoke-registered-users"
         group: "smartpoke.data-store.registered-users"
+      radius-activity-input:
+        destination: "smartpoke-session-activity"
+        group: "smartpoke.data-store.radius-activity"
 
 management:
   endpoints:
