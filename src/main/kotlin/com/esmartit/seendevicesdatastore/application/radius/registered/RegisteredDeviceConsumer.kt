@@ -18,10 +18,10 @@ class RegisteredDeviceConsumer(
 
     @StreamListener(RegisteredDeviceInput.REGISTERED_DEVICE_INPUT)
     fun handle(event: RegisteredEvent) {
+        println(event)
 //        val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
 //            ?: RegisteredDevice(info = event.toInfo())
 //        repository.save(registeredDevice)
-        println(event.toInfo())
     }
 }
 
