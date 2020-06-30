@@ -7,7 +7,7 @@ data class FreeRadiusEvent(
     val calledStationId: String,
     val callingStationId: String,
     val connectInfo: String,
-    val eventTimeStamp: String,
+    val eventTimeStamp: Long,
     val serviceType: String,
     val username: String
 )
