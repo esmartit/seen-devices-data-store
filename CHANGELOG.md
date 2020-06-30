@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.21.1](https://github.com/esmartit/seen-devices-data-store/compare/v1.21.0...v1.21.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* moving to radius package ([#17](https://github.com/esmartit/seen-devices-data-store/issues/17)) ([36c7672](https://github.com/esmartit/seen-devices-data-store/commit/36c7672707f41033a11909785e91b817386e5adc))
+
 # [1.21.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.20.0...v1.21.0) (2020-06-30)
 
 
