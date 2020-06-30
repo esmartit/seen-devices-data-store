@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.application.registered
+package com.esmartit.seendevicesdatastore.application.radius.registered
 
 import com.esmartit.seendevicesdatastore.application.incomingevents.RegisteredEvent
 import org.springframework.cloud.stream.annotation.EnableBinding
@@ -9,7 +9,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private val dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 @EnableBinding(RegisteredDeviceInput::class)
 class RegisteredDeviceConsumer(
@@ -18,9 +18,10 @@ class RegisteredDeviceConsumer(
 
     @StreamListener(RegisteredDeviceInput.REGISTERED_DEVICE_INPUT)
     fun handle(event: RegisteredEvent) {
-        val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
-            ?: RegisteredDevice(info = event.toInfo())
-        repository.save(registeredDevice)
+//        val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
+//            ?: RegisteredDevice(info = event.toInfo())
+//        repository.save(registeredDevice)
+        println(event.toInfo())
     }
 }
 
