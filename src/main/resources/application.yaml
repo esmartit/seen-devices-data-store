@@ -29,6 +29,9 @@ spring:
       device-position-input:
         destination: "smartpoke-device-position"
         group: "smartpoke.data-store.device-position"
+      registered-device-input:
+        destination: "smartpoke-registered-users"
+        group: "smartpoke.data-store.registered-users"
 
 management:
   endpoints:
