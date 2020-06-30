@@ -2,6 +2,7 @@ package com.esmartit.seendevicesdatastore.infrastructure.changelogs
 
 import com.github.mongobee.changeset.ChangeLog
 import com.github.mongobee.changeset.ChangeSet
+import com.mongodb.BasicDBObject
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.CreateCollectionOptions
 import org.bson.Document
@@ -76,6 +77,17 @@ class InitialChangeLog {
     @ChangeSet(order = "009", id = "radiusActivity", author = "gustavo.rodriguez@esmartit.es")
     fun radiusActivity(db: MongoDatabase) {
         db.createCollection("radiusActivity")
+    }
+
+    @ChangeSet(order = "010", id = "deviceWithPositionCount", author = "gustavo.rodriguez@esmartit.es")
+    fun deviceWithPositionCount(db: MongoDatabase) {
+
+        val update = BasicDBObject()
+        update["\$set"] = BasicDBObject("countInAnHour", 1)
+
+        db.getCollection("deviceWithPosition")
+            .updateMany(BasicDBObject(), update)
+
     }
 
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {

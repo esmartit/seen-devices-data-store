@@ -8,8 +8,6 @@ import org.springframework.messaging.SubscribableChannel
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
-private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
 @EnableBinding(RadiusActivityInput::class)
 class RadiusActivityConsumer(
     private val repository: RadiusActivityRepository
@@ -17,11 +15,9 @@ class RadiusActivityConsumer(
 
     @StreamListener(RadiusActivityInput.RADIUS_ACTIVITY_INPUT)
     fun handle(event: FreeRadiusEvent) {
-        println(event)
-//        val registeredDevice = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
-//            ?: RegisteredDevice(info = event.toInfo())
-//        repository.save(registeredDevice)
-//        println(event.toInfo())
+        val radiusActivity = repository.findByInfoUsername(event.username)?.copy(info = event.toInfo())
+            ?: RadiusActivity(info = event.toInfo())
+        repository.save(radiusActivity)
     }
 }
 
@@ -32,9 +28,9 @@ private fun FreeRadiusEvent.toInfo(): RadiusActivityInfo {
         statusType = statusType,
         acctUniqueSessionId = acctUniqueSessionId,
         calledStationId = calledStationId,
-        callingStationId = callingStationId,
+        callingStationId = callingStationId.replace("-", "").toLowerCase(),
         connectInfo = connectInfo,
-        eventTimeStamp = Instant.now(),
+        eventTimeStamp = Instant.ofEpochMilli(eventTimeStamp),
         serviceType = serviceType
     )
 }

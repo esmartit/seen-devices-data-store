@@ -9,5 +9,6 @@ interface RadiusActivityReactiveRepository : ReactiveMongoRepository<RadiusActiv
 
 @Repository
 interface RadiusActivityRepository : MongoRepository<RadiusActivity, String> {
-    fun findByInfoUsername(clientMac: String): RadiusActivity?
+    fun findByInfoUsername(username: String): RadiusActivity?
+    fun findByInfoCallingStationId(clientMac: String): RadiusActivity?
 }

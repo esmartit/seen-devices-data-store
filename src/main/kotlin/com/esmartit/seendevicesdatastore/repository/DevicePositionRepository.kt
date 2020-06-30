@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.repository
 
+import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivity
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
@@ -12,7 +13,9 @@ data class DeviceWithPosition(
     val id: String? = null,
     val macAddress: String,
     val seenTime: Instant,
-    val position: Position
+    val position: Position,
+    val countInAnHour: Int = 0,
+    val userInfo: RadiusActivity? = null
 ) {
     fun isWithinRange(): Boolean {
         return position != Position.NO_POSITION
