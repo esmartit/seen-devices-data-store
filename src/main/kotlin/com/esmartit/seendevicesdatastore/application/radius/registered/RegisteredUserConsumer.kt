@@ -34,7 +34,11 @@ private fun RegisteredEvent.toInfo(): RegisteredInfo {
         zipCode = zipCode,
         gender = gender.takeIf { it == "0" }?.let { Gender.MALE } ?: Gender.FEMALE,
         seenTime = Instant.ofEpochMilli(seenTimeEpoch),
-        dateOfBirth = LocalDate.from(dateFormatter.parse(dateOfBirth))
+        dateOfBirth = try {
+            LocalDate.from(dateFormatter.parse(dateOfBirth))
+        } catch (e: Exception) {
+            LocalDate.of(1900, 1, 1)
+        }
     )
 }
 

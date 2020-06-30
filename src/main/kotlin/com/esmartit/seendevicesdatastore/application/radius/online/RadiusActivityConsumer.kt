@@ -30,7 +30,7 @@ private fun FreeRadiusEvent.toInfo(): RadiusActivityInfo {
         calledStationId = calledStationId,
         callingStationId = callingStationId.replace("-", "").toLowerCase(),
         connectInfo = connectInfo,
-        eventTimeStamp = Instant.ofEpochMilli(eventTimeStamp),
+        eventTimeStamp = Instant.ofEpochSecond(eventTimeStamp),
         serviceType = serviceType
     )
 }
