@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [1.21.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.20.0...v1.21.0) (2020-06-30)
+
+
+### Features
+
+* saving registered users ([#16](https://github.com/esmartit/seen-devices-data-store/issues/16)) ([fe6d5cc](https://github.com/esmartit/seen-devices-data-store/commit/fe6d5ccc4f30ae425db21907db462cb9ed9e484f))
+
 # [1.20.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.19.0...v1.20.0) (2020-06-01)
 
 
