@@ -17,7 +17,8 @@ class EventToSensorActivity {
             device = createDevice(sensorActivityEvent),
             rssi = sensorActivityEvent.device.rssi,
             seenTime = sensorActivityEvent.device.seenTime.truncatedTo(ChronoUnit.HOURS),
-            location = createLocation(sensorActivityEvent)
+            location = createLocation(sensorActivityEvent),
+            lastUpdate = sensorActivityEvent.device.seenTime
         )
     }
 

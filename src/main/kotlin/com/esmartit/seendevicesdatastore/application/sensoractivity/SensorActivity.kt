@@ -10,7 +10,8 @@ data class SensorActivity(
     val device: Device,
     val seenTime: Instant,
     val rssi: Int,
-    val location: Location
+    val location: Location,
+    val lastUpdate: Instant = seenTime
 )
 
 data class AccessPoint(
