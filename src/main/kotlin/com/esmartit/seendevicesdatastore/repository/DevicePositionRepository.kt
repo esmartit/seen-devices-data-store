@@ -15,7 +15,8 @@ data class DeviceWithPosition(
     val seenTime: Instant,
     val position: Position,
     val countInAnHour: Int = 0,
-    val userInfo: RadiusActivity? = null
+    val userInfo: RadiusActivity? = null,
+    val lastUpdate: Instant = seenTime
 ) {
     fun isWithinRange(): Boolean {
         return position != Position.NO_POSITION
