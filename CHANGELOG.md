@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [1.23.4](https://github.com/esmartit/seen-devices-data-store/compare/v1.23.3...v1.23.4) (2020-07-01)
+
+
+### Bug Fixes
+
+* renaming registered counters ([#25](https://github.com/esmartit/seen-devices-data-store/issues/25)) ([2076514](https://github.com/esmartit/seen-devices-data-store/commit/20765140a909de3edd2f2cddf8f435e9d21c5367))
+
 ## [1.23.3](https://github.com/esmartit/seen-devices-data-store/compare/v1.23.2...v1.23.3) (2020-07-01)
 
 
