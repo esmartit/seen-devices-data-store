@@ -10,6 +10,7 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
 
 class DailyRegisteredServiceTest {
 
@@ -36,6 +37,6 @@ class DailyRegisteredServiceTest {
             .subscribe {
                 println(it)
             }
-//        TimeUnit.SECONDS.sleep(30)
+//        TimeUnit.SECONDS.sleep(60)
     }
 }

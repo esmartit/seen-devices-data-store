@@ -17,12 +17,12 @@ class DailyRegisteredService(
     fun getDailyRegisteredCount(zoneId: ZoneId): Flux<Long> {
 
         val startOfDay = clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
-        val now = { clock.instant() }
-        val earlyFlux = repository.findByInfoSeenTimeGreaterThanEqual(startOfDay).map { 1L }
-        val nowFlux = { repository.findByInfoSeenTimeGreaterThanEqual(now()).count() }
+        val earlyFlux = repository.findByInfoSeenTimeGreaterThanEqual(startOfDay)
+            .scan(0L) { acc, _ -> acc + 1 }
+        val nowFlux = { repository.findByInfoSeenTimeGreaterThanEqual(startOfDay).count() }
         val fifteenSecs = Duration.ofSeconds(15)
         val ticker = Flux.interval(fifteenSecs, fifteenSecs).flatMap { nowFlux() }
 
-        return Flux.concat(earlyFlux, ticker).scan { acc, curr -> acc + curr }
+        return Flux.concat(earlyFlux, ticker)
     }
 }
