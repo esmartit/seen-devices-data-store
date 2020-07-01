@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.application.dashboard.dailyregistered
+package com.esmartit.seendevicesdatastore.application.dashboard.registered
 
 import com.esmartit.seendevicesdatastore.application.dashboard.dailyuniquedevices.DailyDevices
 import org.springframework.http.MediaType
@@ -12,15 +12,21 @@ import java.time.ZoneId
 
 @RestController
 @RequestMapping("/sensor-activity")
-class DailyRegisteredController(
-    private val dailyRegisteredService: DailyRegisteredService
+class RegisteredController(
+    private val registeredService: RegisteredService
 ) {
 
     @GetMapping(path = ["/daily-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getAllSensorActivity(
+    fun getDailyRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<DailyDevices> {
-        return dailyRegisteredService.getDailyRegisteredCount(zoneId)
-            .map { DailyDevices(it, Instant.now()) }
+        return registeredService.getDailyRegisteredCount(zoneId).map { DailyDevices(it, Instant.now()) }
+    }
+
+    @GetMapping(path = ["/now-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getNowRegisteredCount(
+        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
+    ): Flux<DailyDevices> {
+        return registeredService.getNowRegisteredCount(zoneId).map { DailyDevices(it, Instant.now()) }
     }
 }

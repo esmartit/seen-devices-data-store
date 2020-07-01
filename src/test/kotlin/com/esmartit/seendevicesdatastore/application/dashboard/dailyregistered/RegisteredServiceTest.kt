@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.dashboard.dailyregistered
 
+import com.esmartit.seendevicesdatastore.application.dashboard.registered.RegisteredService
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUser
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserReactiveRepository
 import com.nhaarman.mockitokotlin2.mock
@@ -10,9 +11,8 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 
-class DailyRegisteredServiceTest {
+class RegisteredServiceTest {
 
     @Test
     fun `daily registered count`() {
@@ -20,7 +20,11 @@ class DailyRegisteredServiceTest {
         val clock = Clock.fixed(Instant.parse("2020-03-13T20:36:31Z"), ZoneOffset.UTC)
         val repo = mock<RegisteredUserReactiveRepository>()
         val zoneId = ZoneOffset.UTC
-        val dailyRegisteredService = DailyRegisteredService(repo, clock)
+        val dailyRegisteredService =
+            RegisteredService(
+                repo,
+                clock
+            )
         val startOfDay = clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
         val now = clock.instant()
 

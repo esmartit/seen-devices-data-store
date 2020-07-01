@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.application.dashboard.dailyregistered
+package com.esmartit.seendevicesdatastore.application.dashboard.registered
 
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserReactiveRepository
 import org.springframework.stereotype.Service
@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 @Service
-class DailyRegisteredService(
+class RegisteredService(
     private val repository: RegisteredUserReactiveRepository,
     private val clock: Clock
 ) {
@@ -24,5 +24,13 @@ class DailyRegisteredService(
         val ticker = Flux.interval(fifteenSecs, fifteenSecs).flatMap { nowFlux() }
 
         return Flux.concat(earlyFlux, ticker)
+    }
+
+    fun getNowRegisteredCount(zoneId: ZoneId): Flux<Long> {
+
+        val twoMinutesAgo = { clock.instant().atZone(zoneId).minusMinutes(2).toInstant() }
+        val nowFlux = { repository.findByInfoSeenTimeGreaterThanEqual(twoMinutesAgo()).count() }
+        val fifteenSecs = Duration.ofSeconds(15)
+        return Flux.interval(fifteenSecs).flatMap { nowFlux() }
     }
 }
