@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux
 import java.time.Duration
 import java.time.Instant
 
+@Deprecated(replaceWith = ReplaceWith("DetectedController"), message = "")
 @RestController
 @RequestMapping("/sensor-activity")
 class NowPresenceController(private val minuteService: NowPresenceService) {

@@ -12,6 +12,7 @@ import java.time.Duration
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
+@Deprecated(replaceWith = ReplaceWith("DetectedController"), message = "")
 @RestController
 @RequestMapping("/sensor-activity")
 class DailyDevicesController(
