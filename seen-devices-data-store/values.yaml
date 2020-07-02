@@ -96,5 +96,7 @@ mongodb:
     tag: 4.0.14-debian-9-r9
   replicaSet:
     enabled: true
+  metrics:
+    enabled: false
 #  persistence:
 #    storageClass: aws-efs
