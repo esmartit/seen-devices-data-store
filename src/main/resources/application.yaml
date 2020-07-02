@@ -10,8 +10,9 @@ spring:
         binder:
           brokers: "${KAFKA_BROKER_HOST}"
           consumer-properties:
-            max.poll.interval.ms: 500000
+            max.poll.interval.ms: 300000
             max.poll.records: 200
+            auto.offset.reset: earliest
 
     bindings:
       input:
