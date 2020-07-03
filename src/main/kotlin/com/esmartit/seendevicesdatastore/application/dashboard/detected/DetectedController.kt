@@ -1,7 +1,7 @@
 package com.esmartit.seendevicesdatastore.application.dashboard.detected
 
-import com.esmartit.seendevicesdatastore.application.dashboard.dailyuniquedevices.DailyDevices
-import com.esmartit.seendevicesdatastore.application.dashboard.nowpresence.NowPresence
+import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevices
+import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevicesReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
@@ -19,13 +19,22 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import java.util.function.BiFunction
 
 @RestController
 @RequestMapping("/sensor-activity")
 class DetectedController(
     private val repository: DevicePositionReactiveRepository,
+    private val totalCountRepo: TotalDevicesReactiveRepository,
     private val clock: Clock
 ) {
+
+    @GetMapping(path = ["/total-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getAllSensorActivity(): Flux<TotalDevices> {
+        val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
+        val counter = totalCountRepo.findWithTailableCursorBy()
+        return Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: TotalDevices -> b })
+    }
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyDetected(

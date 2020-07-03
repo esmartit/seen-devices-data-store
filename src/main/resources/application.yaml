@@ -22,17 +22,6 @@ spring:
         unique-devices-detected-count-input:
           destination: "smartpoke-unique-devices-detected-count"
           group: "smartpoke.data-store.unique-devices-detected-count"
-        hourly-device-presence-count-input:
-          destination: "smartpoke-hourly-presence-count"
-          group: "smartpoke.data-store.hourly-presence-count"
-        restream-output:
-          destination: "smartpoke-device-presence"
-        smartpoke-daily-unique-devices-detected-count-input:
-          destination: "smartpoke-daily-unique-devices-detected-count"
-          group: "smartpoke.data-store.daily-unique-devices-detected-count"
-        minute-device-presence-count-input:
-          destination: "smartpoke-minute-presence-count"
-          group: "smartpoke.data-store.minute-presence-count"
         device-position-input:
           destination: "smartpoke-device-position"
           group: "smartpoke.data-store.device-position"
@@ -42,6 +31,8 @@ spring:
         radius-activity-input:
           destination: "smartpoke-session-activity"
           group: "smartpoke.data-store.radius-activity"
+        restream-output:
+          destination: "smartpoke-device-presence"
 
 management:
   endpoints:

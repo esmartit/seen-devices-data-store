@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.dashboard.registered
 
-import com.esmartit.seendevicesdatastore.application.dashboard.dailyuniquedevices.DailyDevices
+import com.esmartit.seendevicesdatastore.application.dashboard.detected.DailyDevices
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,13 +20,23 @@ class RegisteredController(
     fun getDailyRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<DailyDevices> {
-        return registeredService.getDailyRegisteredCount(zoneId).map { DailyDevices(it, Instant.now()) }
+        return registeredService.getDailyRegisteredCount(zoneId).map {
+            DailyDevices(
+                it,
+                Instant.now()
+            )
+        }
     }
 
     @GetMapping(path = ["/now-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getNowRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<DailyDevices> {
-        return registeredService.getNowRegisteredCount(zoneId).map { DailyDevices(it, Instant.now()) }
+        return registeredService.getNowRegisteredCount(zoneId).map {
+            DailyDevices(
+                it,
+                Instant.now()
+            )
+        }
     }
 }

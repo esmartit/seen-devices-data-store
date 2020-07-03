@@ -90,6 +90,14 @@ class InitialChangeLog {
 
     }
 
+    @ChangeSet(order = "011", id = "dropUnusedCollections", author = "gustavo.rodriguez@esmartit.es")
+    fun dropUnusedCollections(db: MongoDatabase) {
+        db.getCollection(DAILY_UNIQUE_COUNT_COLLECTION).drop()
+        db.getCollection(MINUTE_PRESENCE_TAILABLE).drop()
+        db.getCollection(HOURLY_COUNT_TAILABLE).drop()
+        db.getCollection("hourlyDeviceCount").drop()
+    }
+
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
         val options = CreateCollectionOptions().capped(true).maxDocuments(maxDocuments).sizeInBytes(sizeInBytes)
         db.createCollection(name, options)
