@@ -93,7 +93,7 @@ class DetectedController(
     private fun todayDetectedFlux(someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
             .filter { it.isWithinRange() }
-            .groupBy { it.lastUpdate }
+            .groupBy { it.seenTime }
             .flatMap { group -> groupByTime(group) }
             .sort { o1, o2 -> o1.time.compareTo(o2.time) }
     }
