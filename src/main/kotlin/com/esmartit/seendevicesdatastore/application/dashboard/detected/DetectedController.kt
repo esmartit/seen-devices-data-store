@@ -60,14 +60,10 @@ class DetectedController(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<NowPresence> {
 
-        val twoMinutesAgo =
-            { clock.instant().atZone(zoneId).minusMinutes(3).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val thirtyMinutesAgo =
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
-        val earlyFlux = nowDetectedFlux(thirtyMinutesAgo)
         val fifteenSecs = Duration.ofSeconds(15)
-        val currentFlux = Flux.interval(fifteenSecs, fifteenSecs).flatMap { nowDetectedFlux(twoMinutesAgo) }
-        return Flux.concat(earlyFlux, currentFlux)
+        return Flux.interval(fifteenSecs).flatMap { nowDetectedFlux(thirtyMinutesAgo) }
     }
 
     @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
