@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.0.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.0.0...v2.0.1) (2020-07-04)
+
+
+### Bug Fixes
+
+* now presence initial delay ([#39](https://github.com/esmartit/seen-devices-data-store/issues/39)) ([86ce06e](https://github.com/esmartit/seen-devices-data-store/commit/86ce06e348e1448d9a07d35dd6c5710ed33a9298))
+
 # [2.0.0](https://github.com/esmartit/seen-devices-data-store/compare/v1.27.1...v2.0.0) (2020-07-03)
 
 
