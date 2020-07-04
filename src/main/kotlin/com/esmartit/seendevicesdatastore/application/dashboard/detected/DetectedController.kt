@@ -72,7 +72,7 @@ class DetectedController(
         val thirtyMinutesAgo =
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
-        return Flux.interval(fifteenSecs).flatMap { nowDetectedFlux(thirtyMinutesAgo) }
+        return Flux.interval(Duration.ofSeconds(0), fifteenSecs).flatMap { nowDetectedFlux(thirtyMinutesAgo) }
     }
 
     @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
