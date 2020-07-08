@@ -105,13 +105,6 @@ class InitialChangeLog {
         insertFirstCount(db, TOTAL_REGISTERED_COUNT_COLLECTION)
     }
 
-    @ChangeSet(order = "013", id = "totalRegisteredCountRedo", author = "gustavo.rodriguez@esmartit.es")
-    fun totalRegisteredCountRedo(db: MongoDatabase) {
-        db.getCollection(TOTAL_REGISTERED_COUNT_COLLECTION).drop()
-        createCappedCollection(db, TOTAL_REGISTERED_COUNT_COLLECTION, 1000, 5 * 1024 * 1024)
-        insertFirstCount(db, TOTAL_REGISTERED_COUNT_COLLECTION)
-    }
-
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {
         val options = CreateCollectionOptions().capped(true).maxDocuments(maxDocuments).sizeInBytes(sizeInBytes)
         db.createCollection(name, options)
