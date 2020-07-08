@@ -9,6 +9,7 @@ import org.bson.Document
 import java.time.Instant
 
 private const val UNIQUE_DEVICES_COUNT_COLLECTION = "uniqueDevicesDetectedCount"
+private const val TOTAL_REGISTERED_COUNT_COLLECTION = "totalRegisteredCount"
 private const val HOURLY_COUNT_TAILABLE = "hourlyDeviceCountTailable"
 private const val DAILY_UNIQUE_COUNT_COLLECTION = "dailyUniqueDevicesDetectedCount"
 private const val MINUTE_PRESENCE_TAILABLE = "minutePresenceCountTailable"
@@ -96,6 +97,12 @@ class InitialChangeLog {
         db.getCollection(MINUTE_PRESENCE_TAILABLE).drop()
         db.getCollection(HOURLY_COUNT_TAILABLE).drop()
         db.getCollection("hourlyDeviceCount").drop()
+    }
+
+    @ChangeSet(order = "012", id = TOTAL_REGISTERED_COUNT_COLLECTION, author = "gustavo.rodriguez@esmartit.es")
+    fun totalRegisteredCount(db: MongoDatabase) {
+        createCappedCollection(db, TOTAL_REGISTERED_COUNT_COLLECTION, 1000, 5 * 1024 * 1024)
+        insertFirstCount(db, TOTAL_REGISTERED_COUNT_COLLECTION)
     }
 
     private fun createCappedCollection(db: MongoDatabase, name: String, maxDocuments: Long, sizeInBytes: Long) {

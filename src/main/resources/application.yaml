@@ -33,6 +33,9 @@ spring:
           group: "smartpoke.data-store.radius-activity"
         restream-output:
           destination: "smartpoke-device-presence"
+        total-registered-input:
+          destination: "smartpoke-registered-users-count"
+          group: "smartpoke.data-store.total-registered-input"
 
 management:
   endpoints:
