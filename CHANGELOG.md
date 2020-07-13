@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [2.2.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.1.2...v2.2.0) (2020-07-13)
+
+
+### Features
+
+* storing country info ([#42](https://github.com/esmartit/seen-devices-data-store/issues/42)) ([1e02adf](https://github.com/esmartit/seen-devices-data-store/commit/1e02adf01d51a95d2dbbb9d553ac263cfd8f5d5a))
+
 ## [2.1.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.1.1...v2.1.2) (2020-07-08)
 
 
