@@ -36,7 +36,8 @@ class SeenDevicesPositionService(
                 seenTime = incomingSensorActivity.seenTime,
                 countInAnHour = newCount,
                 userInfo = userInfo,
-                lastUpdate = incomingSensorActivity.lastUpdate
+                lastUpdate = incomingSensorActivity.lastUpdate,
+                countryLocation = event.deviceDetectedEvent.countryLocation
             )
         )
     }

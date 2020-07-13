@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.sensoractivity
 
+import com.esmartit.seendevicesdatastore.application.incomingevents.CountryLocation
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
@@ -22,7 +23,8 @@ data class AccessPoint(
     val hotSpot: String? = null,
     val sensorName: String? = null,
     val spotId: String? = null,
-    val floors: List<String?> = emptyList()
+    val floors: List<String?> = emptyList(),
+    val countryLocation: CountryLocation? = null
 )
 
 data class Device(
