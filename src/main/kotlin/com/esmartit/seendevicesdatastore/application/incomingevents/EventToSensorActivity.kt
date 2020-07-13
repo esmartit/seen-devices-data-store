@@ -42,11 +42,6 @@ class EventToSensorActivity {
         )
 
     private fun createLocation(it: SensorActivityEvent) = with(it.device.location) {
-        Location(
-            position = listOf(
-                lat,
-                lng
-            ), unc = unc
-        )
+        Location(position = listOf(lat, lng), unc = unc)
     }
 }

@@ -2,24 +2,29 @@ package com.esmartit.seendevicesdatastore.application.incomingevents
 
 import java.time.Instant
 
-data class SensorActivityEvent(val apMac: String,
-                               val groupName:String,
-                               val hotSpot:String,
-                               val sensorName:String,
-                               val spotId:String,
-                               val device: DeviceSeen,
-                               val apFloors: List<String?>)
+data class SensorActivityEvent(
+    val apMac: String,
+    val groupName: String,
+    val hotSpot: String,
+    val sensorName: String,
+    val spotId: String,
+    val device: DeviceSeen,
+    val apFloors: List<String?>,
+    val countryLocation: CountryLocation? = null
+)
 
-data class DeviceSeen(val clientMac: String,
-                      val ipv4: String?,
-                      val ipv6: String?,
-                      val location: DeviceLocation,
-                      val manufacturer: String?,
-                      val os: String?,
-                      val rssi: Int,
-                      val seenEpoch: Int,
-                      val seenTime: Instant,
-                      val ssid: String?)
+data class DeviceSeen(
+    val clientMac: String,
+    val ipv4: String?,
+    val ipv6: String?,
+    val location: DeviceLocation,
+    val manufacturer: String?,
+    val os: String?,
+    val rssi: Int,
+    val seenEpoch: Int,
+    val seenTime: Instant,
+    val ssid: String?
+)
 
 data class DeviceLocation(
     val lat: Double?,
@@ -28,3 +33,5 @@ data class DeviceLocation(
     val x: List<String?>,
     val y: List<String?>
 )
+
+data class CountryLocation(val countryId: String, val stateId: String, val cityId: String)

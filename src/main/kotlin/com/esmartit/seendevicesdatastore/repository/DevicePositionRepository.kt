@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.repository
 
+import com.esmartit.seendevicesdatastore.application.incomingevents.CountryLocation
 import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivity
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.index.CompoundIndexes
@@ -22,7 +23,8 @@ data class DeviceWithPosition(
     val countInAnHour: Int = 0,
     val userInfo: RadiusActivity? = null,
     @Indexed(name = "lastUpdate_idx")
-    val lastUpdate: Instant = seenTime
+    val lastUpdate: Instant = seenTime,
+    val countryLocation: CountryLocation? = null
 ) {
     fun isWithinRange(): Boolean {
         return position != Position.NO_POSITION
