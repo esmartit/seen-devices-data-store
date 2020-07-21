@@ -13,5 +13,6 @@ interface RegisteredUserReactiveRepository : ReactiveMongoRepository<RegisteredU
 
 @Repository
 interface RegisteredUserRepository : MongoRepository<RegisteredUser, String> {
-    fun findByInfoUsername(clientMac: String): RegisteredUser?
+    fun findByInfoUsername(username: String): RegisteredUser?
+    fun findByInfoClientMac(clientMac: String): List<RegisteredUser>
 }

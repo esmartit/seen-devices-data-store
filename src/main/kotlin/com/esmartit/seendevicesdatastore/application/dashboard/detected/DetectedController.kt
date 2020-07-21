@@ -2,6 +2,7 @@ package com.esmartit.seendevicesdatastore.application.dashboard.detected
 
 import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevices
 import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevicesReactiveRepository
+import com.esmartit.seendevicesdatastore.application.radius.registered.Gender
 import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
@@ -17,6 +18,7 @@ import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZoneOffset.UTC
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.function.BiFunction
@@ -38,10 +40,10 @@ class DetectedController(
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyDetected(
-        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
+        requestFilters: QueryFilterRequest
     ): Flux<NowPresence> {
 
-        val todayDetected = todayDetectedFlux { startOfDay(zoneId) }
+        val todayDetected = todayDetectedFlux2(requestFilters) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last() }
@@ -103,6 +105,14 @@ class DetectedController(
             .sort { o1, o2 -> o1.time.compareTo(o2.time) }
     }
 
+    private fun todayDetectedFlux2(filters: QueryFilterRequest, someTimeAgo: () -> Instant): Flux<NowPresence> {
+        return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
+            .filter { filters.handle(it) }
+            .groupBy { it.seenTime }
+            .flatMap { group -> groupByTime(group) }
+            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
+    }
+
     private fun nowDetectedFlux(someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findByLastUpdateGreaterThanEqual(someTimeAgo())
             .filter { it.isWithinRange() }
@@ -121,5 +131,50 @@ class DetectedController(
                 Position.NO_POSITION -> acc
             }
         }
+    }
+}
+
+data class QueryFilterRequest(
+    val timezone: ZoneId = UTC,
+    val startTime: String? = null,
+    val endTime: String? = null,
+    val countryId: String? = null,
+    val stateId: String? = null,
+    val cityId: String? = null,
+    val spotId: String? = null,
+    val sensorId: String? = null,
+    val brands: List<String> = emptyList(),
+    val status: Position? = null,
+    val ageStart: String? = null,
+    val ageEnd: String? = null,
+    val gender: Gender? = null,
+    val zipCode: String? = null,
+    val memberShip: Boolean? = null
+) {
+    fun handle(sensorAct: DeviceWithPosition): Boolean {
+
+        val countryFilter = countryId?.let { { country: String? -> it == country } } ?: { true }
+        val stateFilter = stateId?.let { { state: String? -> it == state } } ?: { true }
+        val cityFilter = cityId?.let { { city: String? -> it == city } } ?: { true }
+        val spotFilter = spotId?.let { { spot: String? -> it == spot } } ?: { true }
+        val sensorFilter = sensorId?.let { { sensor: String? -> it == sensor } } ?: { true }
+        val statusFilter = status?.let { { position: Position? -> it == position } } ?: { true }
+        val ageStartFilter = ageStart?.toInt()?.let { { age: Int -> it >= age } } ?: { true }
+        val ageEndFilter = ageEnd?.toInt()?.let { { age: Int -> it <= age } } ?: { true }
+        val genderFilter = gender?.let { { genderParam: Gender? -> it == genderParam } } ?: { true }
+        val zipCodeFilter = zipCode?.let { { zip: String? -> it == zip } } ?: { true }
+        val memberFilter = memberShip?.let { { member: Boolean? -> it == member } } ?: { true }
+
+        return countryFilter(sensorAct.activity?.accessPoint?.countryLocation?.countryId) &&
+            stateFilter(sensorAct.activity?.accessPoint?.countryLocation?.stateId) &&
+            cityFilter(sensorAct.activity?.accessPoint?.countryLocation?.cityId) &&
+            spotFilter(sensorAct.activity?.accessPoint?.spotId) &&
+            sensorFilter(sensorAct.activity?.accessPoint?.sensorName) &&
+            statusFilter(sensorAct.position) &&
+            ageStartFilter(sensorAct.userInfo?.dateOfBirth?.year ?: 0) &&
+            ageEndFilter(sensorAct.userInfo?.dateOfBirth?.year ?: 0) &&
+            genderFilter(sensorAct.userInfo?.gender) &&
+            zipCodeFilter(sensorAct.userInfo?.zipCode) &&
+            memberFilter(sensorAct.userInfo?.memberShip)
     }
 }

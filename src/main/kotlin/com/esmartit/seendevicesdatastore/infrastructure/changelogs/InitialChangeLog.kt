@@ -14,6 +14,8 @@ private const val HOURLY_COUNT_TAILABLE = "hourlyDeviceCountTailable"
 private const val DAILY_UNIQUE_COUNT_COLLECTION = "dailyUniqueDevicesDetectedCount"
 private const val MINUTE_PRESENCE_TAILABLE = "minutePresenceCountTailable"
 
+private const val DEVICE_WITH_POSITION_COLLECTION = "deviceWithPosition"
+
 @ChangeLog(order = "001")
 class InitialChangeLog {
 
@@ -65,9 +67,9 @@ class InitialChangeLog {
         insertFirstPresence(db, MINUTE_PRESENCE_TAILABLE)
     }
 
-    @ChangeSet(order = "007", id = "deviceWithPosition", author = "gustavo.rodriguez@esmartit.es")
+    @ChangeSet(order = "007", id = DEVICE_WITH_POSITION_COLLECTION, author = "gustavo.rodriguez@esmartit.es")
     fun deviceWithPosition(db: MongoDatabase) {
-        db.createCollection("deviceWithPosition")
+        db.createCollection(DEVICE_WITH_POSITION_COLLECTION)
     }
 
     @ChangeSet(order = "008", id = "registeredDevices", author = "gustavo.rodriguez@esmartit.es")
@@ -86,7 +88,18 @@ class InitialChangeLog {
         val update = BasicDBObject()
         update["\$set"] = BasicDBObject("countInAnHour", 1)
 
-        db.getCollection("deviceWithPosition")
+        db.getCollection(DEVICE_WITH_POSITION_COLLECTION)
+            .updateMany(BasicDBObject(), update)
+
+    }
+
+    @ChangeSet(order = "011", id = "clearingUserInfo", author = "gustavo.rodriguez@esmartit.es")
+    fun clearingUserInfo(db: MongoDatabase) {
+
+        val update = BasicDBObject()
+        update["\$unset"] = BasicDBObject("userInfo", BasicDBObject())
+
+        db.getCollection(DEVICE_WITH_POSITION_COLLECTION)
             .updateMany(BasicDBObject(), update)
 
     }
