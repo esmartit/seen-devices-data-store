@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset.UTC
 import java.time.temporal.ChronoUnit
@@ -43,7 +44,7 @@ class DetectedController(
         requestFilters: QueryFilterRequest
     ): Flux<NowPresence> {
 
-        val todayDetected = todayDetectedFlux2(requestFilters) { startOfDay(requestFilters.timezone) }
+        val todayDetected = todayDetectedFlux(requestFilters) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last() }
@@ -97,17 +98,9 @@ class DetectedController(
     private fun startOfDay(zoneId: ZoneId) =
         clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
 
-    private fun todayDetectedFlux(someTimeAgo: () -> Instant): Flux<NowPresence> {
+    private fun todayDetectedFlux(filters: QueryFilterRequest, someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
-            .filter { it.isWithinRange() }
-            .groupBy { it.seenTime }
-            .flatMap { group -> groupByTime(group) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
-    }
-
-    private fun todayDetectedFlux2(filters: QueryFilterRequest, someTimeAgo: () -> Instant): Flux<NowPresence> {
-        return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
-            .filter { filters.handle(it) }
+            .filter { filters.handle(it, clock) }
             .groupBy { it.seenTime }
             .flatMap { group -> groupByTime(group) }
             .sort { o1, o2 -> o1.time.compareTo(o2.time) }
@@ -151,30 +144,36 @@ data class QueryFilterRequest(
     val zipCode: String? = null,
     val memberShip: Boolean? = null
 ) {
-    fun handle(sensorAct: DeviceWithPosition): Boolean {
+    fun handle(sensorAct: DeviceWithPosition, clock: Clock): Boolean {
 
-        val countryFilter = countryId?.let { { country: String? -> it == country } } ?: { true }
-        val stateFilter = stateId?.let { { state: String? -> it == state } } ?: { true }
-        val cityFilter = cityId?.let { { city: String? -> it == city } } ?: { true }
-        val spotFilter = spotId?.let { { spot: String? -> it == spot } } ?: { true }
-        val sensorFilter = sensorId?.let { { sensor: String? -> it == sensor } } ?: { true }
-        val statusFilter = status?.let { { position: Position? -> it == position } } ?: { true }
-        val ageStartFilter = ageStart?.toInt()?.let { { age: Int -> it >= age } } ?: { true }
-        val ageEndFilter = ageEnd?.toInt()?.let { { age: Int -> it <= age } } ?: { true }
-        val genderFilter = gender?.let { { genderParam: Gender? -> it == genderParam } } ?: { true }
-        val zipCodeFilter = zipCode?.let { { zip: String? -> it == zip } } ?: { true }
-        val memberFilter = memberShip?.let { { member: Boolean? -> it == member } } ?: { true }
+        val ageStartFilter = ageStart?.toInt()?.let { { age: Int -> age >= it } } ?: { true }
+        val ageEndFilter = ageEnd?.toInt()?.let { { age: Int -> age <= it } } ?: { true }
 
-        return countryFilter(sensorAct.activity?.accessPoint?.countryLocation?.countryId) &&
-            stateFilter(sensorAct.activity?.accessPoint?.countryLocation?.stateId) &&
-            cityFilter(sensorAct.activity?.accessPoint?.countryLocation?.cityId) &&
-            spotFilter(sensorAct.activity?.accessPoint?.spotId) &&
-            sensorFilter(sensorAct.activity?.accessPoint?.sensorName) &&
-            statusFilter(sensorAct.position) &&
-            ageStartFilter(sensorAct.userInfo?.dateOfBirth?.year ?: 0) &&
-            ageEndFilter(sensorAct.userInfo?.dateOfBirth?.year ?: 0) &&
-            genderFilter(sensorAct.userInfo?.gender) &&
-            zipCodeFilter(sensorAct.userInfo?.zipCode) &&
-            memberFilter(sensorAct.userInfo?.memberShip)
+        val sensorCountry = sensorAct.activity?.accessPoint?.countryLocation?.countryId
+        val sensorState = sensorAct.activity?.accessPoint?.countryLocation?.stateId
+        val sensorCity = sensorAct.activity?.accessPoint?.countryLocation?.cityId
+        val sensorSpot = sensorAct.activity?.accessPoint?.spotId
+        val sensorName = sensorAct.activity?.accessPoint?.sensorName
+        val sensorStatus = sensorAct.position
+        val sensorGender = sensorAct.userInfo?.gender
+        val sensorZipCode = sensorAct.userInfo?.zipCode
+        val sensorMembership = sensorAct.userInfo?.memberShip
+        val sensorAge = LocalDate.now(clock).year - (sensorAct.userInfo?.dateOfBirth?.year ?: 1900)
+
+        return filter(countryId, sensorCountry) &&
+            filter(stateId, sensorState) &&
+            filter(cityId, sensorCity) &&
+            filter(spotId, sensorSpot) &&
+            filter(sensorId, sensorName) &&
+            filter(status, sensorStatus) &&
+            filter(gender, sensorGender) &&
+            filter(zipCode, sensorZipCode) &&
+            filter(memberShip, sensorMembership) &&
+            ageStartFilter(sensorAge) &&
+            ageEndFilter(sensorAge)
+    }
+
+    private fun filter(param: Any?, param2: Any?): Boolean {
+        return param?.let { it == param2 } ?: true
     }
 }
