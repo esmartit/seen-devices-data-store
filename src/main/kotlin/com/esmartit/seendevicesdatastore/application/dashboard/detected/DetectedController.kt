@@ -12,16 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.core.publisher.GroupedFlux
-import reactor.core.publisher.Mono
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset.UTC
 import java.time.temporal.ChronoUnit
-import java.util.UUID
 import java.util.function.BiFunction
 
 @RestController
@@ -29,6 +25,7 @@ import java.util.function.BiFunction
 class DetectedController(
     private val repository: DevicePositionReactiveRepository,
     private val totalCountRepo: TotalDevicesReactiveRepository,
+    private val service: DetectedService,
     private val clock: Clock
 ) {
 
@@ -44,7 +41,7 @@ class DetectedController(
         requestFilters: QueryFilterRequest
     ): Flux<NowPresence> {
 
-        val todayDetected = todayDetectedFlux(requestFilters) { startOfDay(requestFilters.timezone) }
+        val todayDetected = service.todayDetectedFlux(requestFilters) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last() }
@@ -75,7 +72,8 @@ class DetectedController(
         val thirtyMinutesAgo =
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
-        return Flux.interval(Duration.ofSeconds(0), fifteenSecs).flatMap { nowDetectedFlux(thirtyMinutesAgo) }
+        return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
+            .flatMap { service.nowDetectedFlux(thirtyMinutesAgo) }
     }
 
     @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -97,34 +95,6 @@ class DetectedController(
 
     private fun startOfDay(zoneId: ZoneId) =
         clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
-
-    private fun todayDetectedFlux(filters: QueryFilterRequest, someTimeAgo: () -> Instant): Flux<NowPresence> {
-        return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
-            .filter { filters.handle(it, clock) }
-            .groupBy { it.seenTime }
-            .flatMap { group -> groupByTime(group) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
-    }
-
-    private fun nowDetectedFlux(someTimeAgo: () -> Instant): Flux<NowPresence> {
-        return repository.findByLastUpdateGreaterThanEqual(someTimeAgo())
-            .filter { it.isWithinRange() }
-            .map { it.copy(lastUpdate = it.lastUpdate.truncatedTo(ChronoUnit.MINUTES)) }
-            .groupBy { it.lastUpdate }
-            .flatMap { group -> groupByTime(group) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
-    }
-
-    private fun groupByTime(group: GroupedFlux<Instant, DeviceWithPosition>): Mono<NowPresence> {
-        return group.reduce(NowPresence(UUID.randomUUID().toString(), group.key()!!)) { acc, curr ->
-            when (curr.position) {
-                Position.IN -> acc.copy(inCount = acc.inCount + 1)
-                Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
-                Position.OUT -> acc.copy(outCount = acc.outCount + 1)
-                Position.NO_POSITION -> acc
-            }
-        }
-    }
 }
 
 data class QueryFilterRequest(
