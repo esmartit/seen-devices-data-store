@@ -41,7 +41,8 @@ class DetectedController(
         requestFilters: QueryFilterRequest
     ): Flux<NowPresence> {
 
-        val todayDetected = service.todayDetectedFlux(requestFilters) { startOfDay(requestFilters.timezone) }
+        val todayDetected =
+            service.todayDetectedFlux({ requestFilters.handle(it, clock) }) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last() }
@@ -73,7 +74,7 @@ class DetectedController(
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux(thirtyMinutesAgo) }
+            .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, thirtyMinutesAgo) }
     }
 
     @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])

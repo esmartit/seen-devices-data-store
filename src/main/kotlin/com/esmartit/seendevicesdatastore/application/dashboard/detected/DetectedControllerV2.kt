@@ -27,7 +27,7 @@ class DetectedControllerV2(
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux(thirtyMinutesAgo).collectList() }
+            .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, thirtyMinutesAgo).collectList() }
     }
 
     @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -39,7 +39,7 @@ class DetectedControllerV2(
             { clock.instant().atZone(zoneId).minusMinutes(2).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux(twoMinutesAgo).collectList() }
+            .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, twoMinutesAgo).collectList() }
             .map { it.last().run { DailyDevices(inCount + limitCount + outCount, clock.instant()) } }
     }
 }

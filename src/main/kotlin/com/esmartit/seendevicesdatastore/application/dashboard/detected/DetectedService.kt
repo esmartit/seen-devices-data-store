@@ -7,26 +7,24 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Service
 class DetectedService(
-    private val repository: DevicePositionReactiveRepository,
-    private val clock: Clock
+    private val repository: DevicePositionReactiveRepository
 ) {
 
-    fun todayDetectedFlux(filters: QueryFilterRequest, someTimeAgo: () -> Instant): Flux<NowPresence> {
+    fun todayDetectedFlux(filters: (DeviceWithPosition) -> Boolean, someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findBySeenTimeGreaterThanEqual(someTimeAgo())
-            .filter { filters.handle(it, clock) }
+            .filter { filters(it) }
             .groupBy { it.seenTime }
             .flatMap { group -> groupByTime(group) }
             .sort { o1, o2 -> o1.time.compareTo(o2.time) }
     }
 
-    fun nowDetectedFlux(someTimeAgo: () -> Instant): Flux<NowPresence> {
+    fun nowDetectedFlux(filters: (DeviceWithPosition) -> Boolean, someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findByLastUpdateGreaterThanEqual(someTimeAgo())
             .filter { it.isWithinRange() }
             .map { it.copy(lastUpdate = it.lastUpdate.truncatedTo(ChronoUnit.MINUTES)) }
