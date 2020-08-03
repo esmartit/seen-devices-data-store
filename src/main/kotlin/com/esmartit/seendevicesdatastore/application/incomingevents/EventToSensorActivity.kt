@@ -18,7 +18,8 @@ class EventToSensorActivity {
             rssi = sensorActivityEvent.device.rssi,
             seenTime = sensorActivityEvent.device.seenTime.truncatedTo(ChronoUnit.HOURS),
             location = createLocation(sensorActivityEvent),
-            lastUpdate = sensorActivityEvent.device.seenTime
+            lastUpdate = sensorActivityEvent.device.seenTime,
+            ssid = sensorActivityEvent.device.ssid
         )
     }
 
