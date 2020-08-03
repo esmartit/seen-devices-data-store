@@ -26,7 +26,7 @@ class DetectedService(
 
     fun nowDetectedFlux(filters: (DeviceWithPosition) -> Boolean, someTimeAgo: () -> Instant): Flux<NowPresence> {
         return repository.findByLastUpdateGreaterThanEqual(someTimeAgo())
-            .filter { it.isWithinRange() }
+            .filter { filters(it) }
             .map { it.copy(lastUpdate = it.lastUpdate.truncatedTo(ChronoUnit.MINUTES)) }
             .groupBy { it.lastUpdate }
             .flatMap { group -> groupByTime(group) }
