@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.5.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.5.1...v2.5.2) (2020-08-04)
+
+
+### Bug Fixes
+
+* smartpoke endpoints ([2cd54d6](https://github.com/esmartit/seen-devices-data-store/commit/2cd54d6709cf4c9cd3d156c39592cd190ae5a2ff))
+
 ## [2.5.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.5.0...v2.5.1) (2020-08-03)
 
 
