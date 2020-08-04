@@ -16,6 +16,7 @@ import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 @RestController
 @RequestMapping("/smartpoke")
@@ -35,8 +36,8 @@ class SmartPokeController(
                 filterTodayConnected(it, requestFilters)
             }) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
-        val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
-            .flatMap { todayConnected.last() }
+        val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
+            .flatMap { todayConnected.last(NowPresence(UUID.randomUUID().toString())) }
 
         return Flux.concat(todayConnected, latest)
     }
@@ -80,7 +81,10 @@ class SmartPokeController(
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
             .flatMap { service.nowDetectedFlux(this::filterNowConnected, twoMinutesAgo).collectList() }
-            .map { it.last().run { DailyDevices(inCount + limitCount + outCount, clock.instant()) } }
+            .map {
+                it.lastOrNull()?.run { DailyDevices(inCount + limitCount + outCount, clock.instant()) }
+                    ?: DailyDevices(0, clock.instant())
+            }
     }
 
     private fun startOfDay(zoneId: ZoneId) =

@@ -18,6 +18,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset.UTC
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 import java.util.function.BiFunction
 
 @RestController
@@ -44,8 +45,8 @@ class DetectedController(
         val todayDetected =
             service.todayDetectedFlux({ requestFilters.handle(it, clock) }) { startOfDay(requestFilters.timezone) }
         val fifteenSeconds = Duration.ofSeconds(15)
-        val latest = Flux.interval(fifteenSeconds, fifteenSeconds).onBackpressureDrop()
-            .flatMap { todayDetected.last() }
+        val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
+            .flatMap { todayDetected.last(NowPresence(UUID.randomUUID().toString())) }
 
         return Flux.concat(todayDetected, latest)
     }
@@ -59,35 +60,6 @@ class DetectedController(
         val earlyFlux = repository.findBySeenTimeGreaterThanEqual(startOfDay)
             .scan(0L) { acc, _ -> acc + 1 }
         val nowFlux = { repository.findBySeenTimeGreaterThanEqual(startOfDay).count() }
-        val fifteenSecs = Duration.ofSeconds(15)
-        val ticker = Flux.interval(fifteenSecs).flatMap { nowFlux() }
-
-        return Flux.concat(earlyFlux, ticker).map { DailyDevices(it, clock.instant()) }
-    }
-
-    @GetMapping(path = ["/now-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getNowDetected(
-        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
-    ): Flux<NowPresence> {
-
-        val thirtyMinutesAgo =
-            { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
-        val fifteenSecs = Duration.ofSeconds(15)
-        return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, thirtyMinutesAgo) }
-    }
-
-    @GetMapping(path = ["/now-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getNowDetectedCount(
-        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
-    ): Flux<DailyDevices> {
-
-        val twoMinutesAgo =
-            { clock.instant().atZone(zoneId).minusMinutes(2).toInstant().truncatedTo(ChronoUnit.MINUTES) }
-
-        val earlyFlux = repository.findByLastUpdateGreaterThanEqual(twoMinutesAgo())
-            .scan(0L) { acc, _ -> acc + 1 }
-        val nowFlux = { repository.findByLastUpdateGreaterThanEqual(twoMinutesAgo()).count() }
         val fifteenSecs = Duration.ofSeconds(15)
         val ticker = Flux.interval(fifteenSecs).flatMap { nowFlux() }
 

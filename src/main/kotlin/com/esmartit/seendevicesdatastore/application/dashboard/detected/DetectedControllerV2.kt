@@ -40,6 +40,9 @@ class DetectedControllerV2(
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
             .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, twoMinutesAgo).collectList() }
-            .map { it.last().run { DailyDevices(inCount + limitCount + outCount, clock.instant()) } }
+            .map {
+                it.lastOrNull()?.run { DailyDevices(inCount + limitCount + outCount, clock.instant()) }
+                    ?: DailyDevices(0, clock.instant())
+            }
     }
 }
