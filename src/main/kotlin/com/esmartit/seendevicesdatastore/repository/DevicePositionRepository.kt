@@ -37,7 +37,9 @@ enum class Position(val value: Int) {
 @Repository
 interface DevicePositionReactiveRepository : ReactiveMongoRepository<DeviceWithPosition, String> {
 
+    fun findBySeenTimeLessThanEqual(time: Instant): Flux<DeviceWithPosition>
     fun findBySeenTimeGreaterThanEqual(time: Instant): Flux<DeviceWithPosition>
+    fun findBySeenTimeBetween(start: Instant, end: Instant): Flux<DeviceWithPosition>
     fun findByLastUpdateGreaterThanEqual(time: Instant): Flux<DeviceWithPosition>
 }
 

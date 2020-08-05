@@ -85,12 +85,16 @@ data class QueryFilterRequest(
     val ageEnd: String? = null,
     val gender: Gender? = null,
     val zipCode: String? = null,
-    val memberShip: Boolean? = null
+    val memberShip: Boolean? = null,
+    val startDate: String? = null,
+    val endDate: String? = null,
+    val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY
 ) {
     fun handle(sensorAct: DeviceWithPosition, clock: Clock): Boolean {
 
-        val ageStartFilter = ageStart?.toInt()?.let { { age: Int -> age >= it } } ?: { true }
-        val ageEndFilter = ageEnd?.toInt()?.let { { age: Int -> age <= it } } ?: { true }
+        val ageStartFilter =
+            ageStart?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age >= it } } ?: { true }
+        val ageEndFilter = ageEnd?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age <= it } } ?: { true }
 
         val sensorCountry = sensorAct.activity?.accessPoint?.countryLocation?.countryId
         val sensorState = sensorAct.activity?.accessPoint?.countryLocation?.stateId
@@ -103,14 +107,14 @@ data class QueryFilterRequest(
         val sensorMembership = sensorAct.userInfo?.memberShip
         val sensorAge = LocalDate.now(clock).year - (sensorAct.userInfo?.dateOfBirth?.year ?: 1900)
 
-        return filter(countryId, sensorCountry) &&
-            filter(stateId, sensorState) &&
-            filter(cityId, sensorCity) &&
-            filter(spotId, sensorSpot) &&
-            filter(sensorId, sensorName) &&
+        return filter(countryId?.takeIf { it.isNotBlank() }, sensorCountry) &&
+            filter(stateId?.takeIf { it.isNotBlank() }, sensorState) &&
+            filter(cityId?.takeIf { it.isNotBlank() }, sensorCity) &&
+            filter(spotId?.takeIf { it.isNotBlank() }, sensorSpot) &&
+            filter(sensorId?.takeIf { it.isNotBlank() }, sensorName) &&
             filter(status, sensorStatus) &&
             filter(gender, sensorGender) &&
-            filter(zipCode, sensorZipCode) &&
+            filter(zipCode?.takeIf { it.isNotBlank() }, sensorZipCode) &&
             filter(memberShip, sensorMembership) &&
             ageStartFilter(sensorAge) &&
             ageEndFilter(sensorAge)
@@ -119,4 +123,8 @@ data class QueryFilterRequest(
     private fun filter(param: Any?, param2: Any?): Boolean {
         return param?.let { it == param2 } ?: true
     }
+}
+
+enum class FilterDateGroup {
+    BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
 }
