@@ -2,9 +2,11 @@ package com.esmartit.seendevicesdatastore.application.bigdata
 
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.QueryFilterRequest
+import com.esmartit.seendevicesdatastore.consumer.SeenDevicesPositionConsumer
 import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,6 +29,17 @@ class BigDataController(
     private val repository: DevicePositionReactiveRepository,
     private val clock: Clock
 ) {
+
+    private val logger = LoggerFactory.getLogger(BigDataController::class.java)
+
+    @GetMapping(path = ["/find-debug"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun findDebug(
+        requestFilters: QueryFilterRequest
+    ): Flux<DeviceWithPosition> {
+
+        val timeZone = requestFilters.timezone
+        return flux(requestFilters, timeZone)
+    }
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
@@ -51,6 +64,8 @@ class BigDataController(
             ?.let { LocalDateTime.parse("$it${getTime(requestFilters.startTime)}").atZone(timeZone) }?.toInstant()
         val endDate = requestFilters.endDate?.takeIf { it.isNotBlank() }
             ?.let { LocalDateTime.parse("$it${getTime(requestFilters.endTime)}").atZone(timeZone) }?.toInstant()
+
+        logger.info("$requestFilters - START= $startDate - END= $endDate")
 
         return when {
             startDate != null && endDate != null -> {

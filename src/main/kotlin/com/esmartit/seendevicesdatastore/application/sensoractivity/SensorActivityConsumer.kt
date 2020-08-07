@@ -2,7 +2,6 @@ package com.esmartit.seendevicesdatastore.application.sensoractivity
 
 import com.esmartit.seendevicesdatastore.application.incomingevents.EventToSensorActivity
 import com.esmartit.seendevicesdatastore.application.incomingevents.SensorActivityEvent
-import org.slf4j.LoggerFactory
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
@@ -12,8 +11,6 @@ class SensorActivityConsumer(
     private val eventToSensorActivity: EventToSensorActivity,
     private val repository: SensorActivityRepository
 ) {
-
-    private val logger = LoggerFactory.getLogger(SensorActivityConsumer::class.java)
 
     @StreamListener(Sink.INPUT)
     fun handle(seenDevice: SensorActivityEvent) {
@@ -28,7 +25,5 @@ class SensorActivityConsumer(
         if (incomingSensorActivity.rssi > existingRSSI) {
             repository.save(incomingSensorActivity.copy(id = existingSensorActivity?.id))
         }
-
-        logger.info("Event Consumed: $seenDevice")
     }
 }
