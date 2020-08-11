@@ -3,7 +3,7 @@ package com.esmartit.seendevicesdatastore.application.smartpoke
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.DailyDevices
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.DetectedService
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.NowPresence
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.QueryFilterRequest
+import com.esmartit.seendevicesdatastore.application.dashboard.detected.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import org.springframework.http.MediaType
@@ -28,7 +28,7 @@ class SmartPokeController(
 
     @GetMapping(path = ["/today-connected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: QueryFilterRequest
+        requestFilters: OnlineQueryFilterRequest
     ): Flux<NowPresence> {
 
         val todayConnected =
@@ -96,7 +96,7 @@ class SmartPokeController(
         return device.isWithinRange() && isNotNullOrEmpty
     }
 
-    private fun filterTodayConnected(device: DeviceWithPosition, filters: QueryFilterRequest): Boolean {
+    private fun filterTodayConnected(device: DeviceWithPosition, filters: OnlineQueryFilterRequest): Boolean {
         val ssid: String? = device.activity?.ssid
         val isNotNullOrEmpty = ssid?.isNotEmpty() ?: false
         return device.isWithinRange() && isNotNullOrEmpty && filters.handle(device, clock)
