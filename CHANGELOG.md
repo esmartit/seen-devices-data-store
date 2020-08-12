@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.6.3](https://github.com/esmartit/seen-devices-data-store/compare/v2.6.2...v2.6.3) (2020-08-12)
+
+
+### Bug Fixes
+
+* bigdata filters ([75b2398](https://github.com/esmartit/seen-devices-data-store/commit/75b239856808ee150d4caf356b1cdfee411f6a86))
+
 ## [2.6.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.6.1...v2.6.2) (2020-08-11)
 
 
