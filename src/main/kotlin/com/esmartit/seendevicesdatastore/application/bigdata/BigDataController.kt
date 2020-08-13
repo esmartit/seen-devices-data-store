@@ -56,8 +56,10 @@ class BigDataController(
             FilterDateGroup.BY_MONTH -> { it: DeviceWithPosition -> monthDate(it.seenTime.atZone(timeZone)) }
             FilterDateGroup.BY_YEAR -> { it: DeviceWithPosition -> yearDate(it.seenTime.atZone(timeZone)) }
         }.let { group -> result.groupBy(group) }
+            .flatMap(this::groupByTime)
             .window(Duration.ofMillis(300))
-            .flatMap { w -> w.flatMap(this::groupByTime) }
+            .flatMap { w -> w.groupBy { it.id } }
+            .flatMap { g -> g.last(BigDataPresence()) }
             .concatWith(Mono.just(BigDataPresence()))
     }
 
@@ -88,8 +90,8 @@ class BigDataController(
 
     }
 
-    private fun groupByTime(group: GroupedFlux<String, DeviceWithPosition>): Mono<BigDataPresence> {
-        return group.reduce(
+    private fun groupByTime(group: GroupedFlux<String, DeviceWithPosition>): Flux<BigDataPresence> {
+        return group.scan(
             BigDataPresence(
                 id = UUID.randomUUID().toString(),
                 group = group.key()!!,
