@@ -1,11 +1,8 @@
 package com.esmartit.seendevicesdatastore.application.bigdata
 
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.BigDataQueryFilterRequest
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup
-import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
+import com.esmartit.seendevicesdatastore.application.dashboard.detected.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.repository.Position
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,81 +10,35 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Clock
 import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.WeekFields
-import java.util.Locale
 import java.util.UUID
 
 
 @RestController
 @RequestMapping("/bigdata")
 class BigDataController(
-    private val repository: DevicePositionReactiveRepository,
-    private val clock: Clock
+    private val bigDataService: BigDataService
 ) {
-
-    private val logger = LoggerFactory.getLogger(BigDataController::class.java)
 
     @GetMapping(path = ["/find-debug"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun findDebug(
-        requestFilters: BigDataQueryFilterRequest
+        requestFilters: OnlineQueryFilterRequest
     ): Flux<DeviceWithPosition> {
 
-        val timeZone = requestFilters.timezone
-        return filteredFlux(requestFilters, timeZone)
+        return bigDataService.filteredFlux(requestFilters)
     }
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: BigDataQueryFilterRequest
+        requestFilters: OnlineQueryFilterRequest
     ): Flux<BigDataPresence> {
 
-        val timeZone = requestFilters.timezone
-        val result = filteredFlux(requestFilters, timeZone)
-
-        return when (requestFilters.groupBy) {
-            FilterDateGroup.BY_DAY -> { it: DeviceWithPosition -> dayDate(it.seenTime.atZone(timeZone)) }
-            FilterDateGroup.BY_WEEK -> { it: DeviceWithPosition -> weekDate(it.seenTime.atZone(timeZone)) }
-            FilterDateGroup.BY_MONTH -> { it: DeviceWithPosition -> monthDate(it.seenTime.atZone(timeZone)) }
-            FilterDateGroup.BY_YEAR -> { it: DeviceWithPosition -> yearDate(it.seenTime.atZone(timeZone)) }
-        }.let { group -> result.groupBy(group) }
+        return bigDataService.filteredFluxGrouped(requestFilters)
             .flatMap(this::groupByTime)
             .window(Duration.ofMillis(300))
             .flatMap { w -> w.groupBy { it.id } }
             .flatMap { g -> g.last(BigDataPresence()) }
             .concatWith(Mono.just(BigDataPresence()))
-    }
-
-    private fun filteredFlux(requestFilters: BigDataQueryFilterRequest, timeZone: ZoneId): Flux<DeviceWithPosition> {
-
-        val getTime = { time: String? -> time?.takeIf { it.isNotBlank() }?.let { "T$it" } ?: "T00:00:00" }
-        val startDate = requestFilters.startDate?.takeIf { it.isNotBlank() }
-            ?.let { LocalDateTime.parse("$it${getTime(requestFilters.startTime)}").atZone(timeZone) }?.toInstant()
-        val endDate = requestFilters.endDate?.takeIf { it.isNotBlank() }
-            ?.let { LocalDateTime.parse("$it${getTime(requestFilters.endTime)}").atZone(timeZone) }?.toInstant()
-
-        logger.info("$requestFilters - START= $startDate - END= $endDate")
-
-        return when {
-            startDate != null && endDate != null -> {
-                repository.findBySeenTimeBetween(startDate, endDate)
-            }
-            startDate != null -> {
-                repository.findBySeenTimeGreaterThanEqual(startDate)
-            }
-            endDate != null -> {
-                repository.findBySeenTimeLessThanEqual(endDate)
-            }
-            else -> {
-                repository.findAll()
-            }
-        }.filter { requestFilters.handle(it, clock) }
-
     }
 
     private fun groupByTime(group: GroupedFlux<String, DeviceWithPosition>): Flux<BigDataPresence> {
@@ -108,24 +59,6 @@ class BigDataController(
                 Position.NO_POSITION -> acc
             }
         }
-    }
-
-    private fun dayDate(time: ZonedDateTime): String {
-        return time.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
-    }
-
-    private fun weekDate(time: ZonedDateTime): String {
-        val woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
-        val weekNumber = time[woy]
-        return "${time.year}/$weekNumber"
-    }
-
-    private fun monthDate(time: ZonedDateTime): String {
-        return time.format(DateTimeFormatter.ofPattern("yyyy/MM"))
-    }
-
-    private fun yearDate(time: ZonedDateTime): String {
-        return time.format(DateTimeFormatter.ofPattern("yyyy"))
     }
 }
 

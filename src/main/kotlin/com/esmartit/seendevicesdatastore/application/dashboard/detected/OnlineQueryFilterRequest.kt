@@ -55,54 +55,12 @@ sealed class QueryFilter(
             ageEndFilter(sensorAge)
     }
 
-    protected fun filter(param: Any?, param2: Any?): Boolean {
+    private fun filter(param: Any?, param2: Any?): Boolean {
         return param?.let { it == param2 } ?: true
     }
 }
 
 data class OnlineQueryFilterRequest(
-    override val timezone: ZoneId = ZoneOffset.UTC,
-    override val startTime: String? = null,
-    override val endTime: String? = null,
-    override val countryId: String? = null,
-    override val stateId: String? = null,
-    override val cityId: String? = null,
-    override val spotId: String? = null,
-    override val sensorId: String? = null,
-    override val brands: List<String> = emptyList(),
-    override val status: Position? = null,
-    override val ageStart: String? = null,
-    override val ageEnd: String? = null,
-    override val gender: Gender? = null,
-    override val zipCode: String? = null,
-    override val memberShip: Boolean? = null
-) : QueryFilter(
-    timezone,
-    startTime,
-    endTime,
-    countryId,
-    stateId,
-    cityId,
-    spotId,
-    sensorId,
-    brands,
-    status,
-    ageStart,
-    ageEnd,
-    gender,
-    zipCode,
-    memberShip
-) {
-    override fun handle(sensorAct: DeviceWithPosition, clock: Clock): Boolean {
-
-        val startTimeParam = sensorAct.seenTime.atZone(timezone).hour
-        val param = startTime?.takeIf { it.isNotBlank() }?.split(":")?.get(0)?.toInt() ?: 0
-        return super.handle(sensorAct, clock) &&
-            startTimeParam >= param
-    }
-}
-
-data class BigDataQueryFilterRequest(
     override val timezone: ZoneId = ZoneOffset.UTC,
     override val startTime: String? = null,
     override val endTime: String? = null,
@@ -137,4 +95,14 @@ data class BigDataQueryFilterRequest(
     gender,
     zipCode,
     memberShip
-)
+) {
+    override fun handle(sensorAct: DeviceWithPosition, clock: Clock): Boolean {
+
+        val sensorTime = sensorAct.seenTime.atZone(timezone).hour
+        val startTimeParam = startTime?.takeIf { it.isNotBlank() }?.split(":")?.get(0)?.toInt() ?: 0
+        val endTimeParam = endTime?.takeIf { it.isNotBlank() }?.split(":")?.get(0)?.toInt() ?: 23
+        return super.handle(sensorAct, clock) &&
+            sensorTime >= startTimeParam &&
+            sensorTime <= endTimeParam
+    }
+}
