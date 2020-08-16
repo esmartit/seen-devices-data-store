@@ -99,7 +99,7 @@ class SmartPokeController(
     private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
         timeGroup.groupBy { it.deviceWithPosition.macAddress }
             .flatMap { byMacAddress -> groupByMacAddress(timeGroup.key()!!, byMacAddress) }
-            .reduce(TimeAndCounters(timeGroup.key()!!), this::reduceTime)
+            .scan(TimeAndCounters(timeGroup.key()!!), this::reduceTime)
 
     private fun groupByMacAddress(
         timeGroup: String,
