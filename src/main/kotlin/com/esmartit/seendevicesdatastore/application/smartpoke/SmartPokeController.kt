@@ -1,5 +1,7 @@
 package com.esmartit.seendevicesdatastore.application.smartpoke
 
+import com.esmartit.seendevicesdatastore.application.bigdata.BigDataService
+import com.esmartit.seendevicesdatastore.application.bigdata.DeviceWithPositionAndTimeGroup
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.DailyDevices
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.DetectedService
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.NowPresence
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import reactor.core.publisher.GroupedFlux
 import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
@@ -23,7 +26,8 @@ import java.util.UUID
 class SmartPokeController(
     private val repository: DevicePositionReactiveRepository,
     private val service: DetectedService,
-    private val clock: Clock
+    private val clock: Clock,
+    private val bigDataService: BigDataService
 ) {
 
     @GetMapping(path = ["/today-connected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -87,6 +91,33 @@ class SmartPokeController(
             }
     }
 
+    @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getConnectedRegistered(requestFilters: OnlineQueryFilterRequest): Flux<TimeAndCounters> {
+        return bigDataService.filteredFluxGrouped(requestFilters).flatMap(this::groupByTime)
+    }
+
+    private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
+        timeGroup.groupBy { it.deviceWithPosition.macAddress }
+            .flatMap { byMacAddress -> groupByMacAddress(timeGroup.key()!!, byMacAddress) }
+            .reduce(TimeAndCounters(timeGroup.key()!!), this::reduceTime)
+
+    private fun groupByMacAddress(
+        timeGroup: String,
+        byMacAddress: GroupedFlux<String, DeviceWithPositionAndTimeGroup>
+    ) = byMacAddress.reduce(TimeAndDevice(timeGroup, byMacAddress.key()!!), this::reduceDevice)
+
+    private fun reduceDevice(acc: TimeAndDevice, curr: DeviceWithPositionAndTimeGroup): TimeAndDevice {
+        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected
+        val isRegistered = acc.time == curr.registeredTime && curr.deviceWithPosition.isConnected
+        return acc.copy(connected = acc.connected || isConnected, registered = acc.registered || isRegistered)
+    }
+
+    private fun reduceTime(acc: TimeAndCounters, curr: TimeAndDevice): TimeAndCounters {
+        val connectedCount = curr.connected.toInt()
+        val registeredCount = curr.registered.toInt()
+        return acc.copy(connected = acc.connected + connectedCount, registered = acc.registered + registeredCount)
+    }
+
     private fun startOfDay(zoneId: ZoneId) =
         clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
 
@@ -102,3 +133,20 @@ class SmartPokeController(
         return device.isWithinRange() && isNotNullOrEmpty && filters.handle(device, clock)
     }
 }
+
+private fun Boolean.toInt() = if (this) 1 else 0
+
+data class TimeAndDevice(
+    val time: String,
+    val macAddress: String,
+    val id: UUID = UUID.randomUUID(),
+    val registered: Boolean = false,
+    val connected: Boolean = false
+)
+
+data class TimeAndCounters(
+    val time: String,
+    val id: UUID = UUID.randomUUID(),
+    val registered: Int = 0,
+    val connected: Int = 0
+)

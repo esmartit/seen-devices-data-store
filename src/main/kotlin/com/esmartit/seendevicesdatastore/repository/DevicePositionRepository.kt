@@ -28,6 +28,10 @@ data class DeviceWithPosition(
     fun isWithinRange(): Boolean {
         return position != Position.NO_POSITION
     }
+
+    val isConnected: Boolean by lazy {
+        !activity?.ssid.isNullOrBlank()
+    }
 }
 
 enum class Position(val value: Int) {

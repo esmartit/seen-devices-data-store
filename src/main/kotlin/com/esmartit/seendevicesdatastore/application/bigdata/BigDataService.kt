@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -44,16 +45,18 @@ class BigDataService(private val repository: DevicePositionReactiveRepository, p
 
     }
 
-    fun filteredFluxGrouped(requestFilters: OnlineQueryFilterRequest): Flux<GroupedFlux<String, DeviceWithPosition>> {
+    fun filteredFluxGrouped(requestFilters: OnlineQueryFilterRequest): Flux<GroupedFlux<String, DeviceWithPositionAndTimeGroup>> {
         val result = filteredFlux(requestFilters)
         val timeZone = requestFilters.timezone
         val woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
         return when (requestFilters.groupBy) {
-            FilterDateGroup.BY_DAY -> { it: DeviceWithPosition -> dayDate(it.seenTime.atZone(timeZone)) }
-            FilterDateGroup.BY_WEEK -> { it: DeviceWithPosition -> weekDate(it.seenTime.atZone(timeZone), woy) }
-            FilterDateGroup.BY_MONTH -> { it: DeviceWithPosition -> monthDate(it.seenTime.atZone(timeZone)) }
-            FilterDateGroup.BY_YEAR -> { it: DeviceWithPosition -> yearDate(it.seenTime.atZone(timeZone)) }
-        }.let { group -> result.groupBy(group) }
+            FilterDateGroup.BY_DAY -> { it: Instant -> dayDate(it.atZone(timeZone)) }
+            FilterDateGroup.BY_WEEK -> { it: Instant -> weekDate(it.atZone(timeZone), woy) }
+            FilterDateGroup.BY_MONTH -> { it: Instant -> monthDate(it.atZone(timeZone)) }
+            FilterDateGroup.BY_YEAR -> { it: Instant -> yearDate(it.atZone(timeZone)) }
+        }.let { timeGroupFun ->
+            result.map { DeviceWithPositionAndTimeGroup(it, timeGroupFun) }.groupBy { it.detectedTime }
+        }
     }
 
     private fun dayDate(time: ZonedDateTime): String {
@@ -72,4 +75,13 @@ class BigDataService(private val repository: DevicePositionReactiveRepository, p
     private fun yearDate(time: ZonedDateTime): String {
         return time.format(DateTimeFormatter.ofPattern("yyyy"))
     }
+}
+
+data class DeviceWithPositionAndTimeGroup(
+    val deviceWithPosition: DeviceWithPosition,
+    private val timeFun: (Instant) -> String
+) {
+    val detectedTime: String by lazy { timeFun.invoke(deviceWithPosition.seenTime) }
+
+    val registeredTime: String by lazy { deviceWithPosition.userInfo?.seenTime?.let { timeFun.invoke(it) } ?: "" }
 }

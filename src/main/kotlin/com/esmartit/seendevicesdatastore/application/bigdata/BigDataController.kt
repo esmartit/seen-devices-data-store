@@ -41,7 +41,7 @@ class BigDataController(
             .concatWith(Mono.just(BigDataPresence()))
     }
 
-    private fun groupByTime(group: GroupedFlux<String, DeviceWithPosition>): Flux<BigDataPresence> {
+    private fun groupByTime(group: GroupedFlux<String, DeviceWithPositionAndTimeGroup>): Flux<BigDataPresence> {
         return group.scan(
             BigDataPresence(
                 id = UUID.randomUUID().toString(),
@@ -52,7 +52,7 @@ class BigDataController(
                 isLast = false
             )
         ) { acc, curr ->
-            when (curr.position) {
+            when (curr.deviceWithPosition.position) {
                 Position.IN -> acc.copy(inCount = acc.inCount + 1)
                 Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
                 Position.OUT -> acc.copy(outCount = acc.outCount + 1)
