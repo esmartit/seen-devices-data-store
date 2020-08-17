@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.7.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.1...v2.7.2) (2020-08-17)
+
+
+### Bug Fixes
+
+* stack overflow exception ([67e18b0](https://github.com/esmartit/seen-devices-data-store/commit/67e18b08c04274aba6c167c5c11fc808455bd4b9))
+
 ## [2.7.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.0...v2.7.1) (2020-08-16)
 
 
