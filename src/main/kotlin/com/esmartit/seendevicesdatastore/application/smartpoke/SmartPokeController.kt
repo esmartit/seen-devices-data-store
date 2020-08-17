@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
+import reactor.core.publisher.Mono
 import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
@@ -94,6 +95,7 @@ class SmartPokeController(
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getConnectedRegistered(requestFilters: OnlineQueryFilterRequest): Flux<TimeAndCounters> {
         return bigDataService.filteredFluxGrouped(requestFilters).flatMap(this::groupByTime)
+            .concatWith(Mono.just(TimeAndCounters(time = "", isLast = true)))
     }
 
     private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
@@ -155,5 +157,6 @@ data class TimeAndCounters(
     val time: String,
     val id: UUID = UUID.randomUUID(),
     val registered: Int = 0,
-    val connected: Int = 0
+    val connected: Int = 0,
+    val isLast: Boolean = false
 )
