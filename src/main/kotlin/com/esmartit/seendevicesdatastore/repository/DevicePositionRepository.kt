@@ -29,8 +29,8 @@ data class DeviceWithPosition(
         return position != Position.NO_POSITION
     }
 
-    val isConnected: Boolean by lazy {
-        !activity?.ssid.isNullOrBlank()
+    fun isConnected(): Boolean {
+        return !activity?.ssid.isNullOrBlank()
     }
 }
 

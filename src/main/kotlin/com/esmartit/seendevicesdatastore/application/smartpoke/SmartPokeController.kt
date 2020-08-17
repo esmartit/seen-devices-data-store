@@ -99,7 +99,14 @@ class SmartPokeController(
     private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
         timeGroup.groupBy { it.deviceWithPosition.macAddress }
             .flatMap { byMacAddress -> groupByMacAddress(timeGroup.key()!!, byMacAddress) }
-            .scan(TimeAndCounters(timeGroup.key()!!), this::reduceTime)
+            .window(Duration.ofMillis(300))
+            .flatMap { w -> w.reduce(TimeAndCounters(timeGroup.key()!!), this::reduceTime) }
+            .scan { acc, curr ->
+                acc.copy(
+                    connected = acc.connected + curr.connected,
+                    registered = acc.registered + curr.registered
+                )
+            }
 
     private fun groupByMacAddress(
         timeGroup: String,
@@ -107,8 +114,8 @@ class SmartPokeController(
     ) = byMacAddress.reduce(TimeAndDevice(timeGroup, byMacAddress.key()!!), this::reduceDevice)
 
     private fun reduceDevice(acc: TimeAndDevice, curr: DeviceWithPositionAndTimeGroup): TimeAndDevice {
-        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected
-        val isRegistered = acc.time == curr.registeredTime && curr.deviceWithPosition.isConnected
+        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected()
+        val isRegistered = acc.time == curr.registeredTime && curr.deviceWithPosition.isConnected()
         return acc.copy(connected = acc.connected || isConnected, registered = acc.registered || isRegistered)
     }
 
