@@ -39,7 +39,8 @@ class EventToSensorActivity {
             sensorName = it.sensorName,
             spotId = it.spotId,
             hotSpot = it.hotSpot,
-            floors = it.apFloors
+            floors = it.apFloors,
+            countryLocation = it.countryLocation
         )
 
     private fun createLocation(it: SensorActivityEvent) = with(it.device.location) {
