@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.7.3](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.2...v2.7.3) (2020-08-17)
+
+
+### Bug Fixes
+
+* adding country info ([18e0fc8](https://github.com/esmartit/seen-devices-data-store/commit/18e0fc8c0f215e41dbdc302e4ecae2b5530018a5))
+
 ## [2.7.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.1...v2.7.2) (2020-08-17)
 
 
