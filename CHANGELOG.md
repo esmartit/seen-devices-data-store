@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.7.4](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.3...v2.7.4) (2020-08-17)
+
+
+### Bug Fixes
+
+* adding is last event ([2ce5ebf](https://github.com/esmartit/seen-devices-data-store/commit/2ce5ebf7d36ac0ad1db8c9d554285220aa3f6528))
+
 ## [2.7.3](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.2...v2.7.3) (2020-08-17)
 
 
