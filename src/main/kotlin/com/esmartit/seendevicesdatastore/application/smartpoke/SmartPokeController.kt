@@ -94,7 +94,29 @@ class SmartPokeController(
 
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getConnectedRegistered(requestFilters: OnlineQueryFilterRequest): Flux<TimeAndCounters> {
-        return bigDataService.filteredFluxGrouped(requestFilters).flatMap(this::groupByTime)
+        return bigDataService.filteredFluxGrouped(requestFilters)
+            .flatMap { g ->
+                g.scan(TimeAndDevices(g.key()!!)) { t: TimeAndDevices, u: DeviceWithPositionAndTimeGroup ->
+                    t.changed = false
+                    if (u.deviceWithPosition.isConnected()) {
+                        t.connected.computeIfAbsent(u.deviceWithPosition.macAddress) { true }
+                        t.changed = true
+                    }
+                    val isRegistered = t.time == u.registeredTime
+                    if (isRegistered) {
+                        t.registered.computeIfAbsent(u.deviceWithPosition.macAddress) { true }
+                        t.changed = true
+                    }
+                    t
+                }.filter { it.changed }
+                    .map {
+                        TimeAndCounters(
+                            it.time,
+                            connected = it.connected.count(),
+                            registered = it.registered.count()
+                        )
+                    }
+            }
             .concatWith(Mono.just(TimeAndCounters(time = "", isLast = true)))
     }
 
@@ -118,7 +140,7 @@ class SmartPokeController(
 
     private fun reduceDevice(acc: TimeAndDevice, curr: DeviceWithPositionAndTimeGroup): TimeAndDevice {
         val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected()
-        val isRegistered = acc.time == curr.registeredTime && curr.deviceWithPosition.isConnected()
+        val isRegistered = acc.time == curr.registeredTime
         return acc.copy(connected = acc.connected || isConnected, registered = acc.registered || isRegistered)
     }
 
@@ -160,4 +182,13 @@ data class TimeAndCounters(
     val registered: Int = 0,
     val connected: Int = 0,
     val isLast: Boolean = false
+)
+
+
+data class TimeAndDevices(
+    val time: String,
+    val id: UUID = UUID.randomUUID(),
+    val connected: MutableMap<String, Boolean> = mutableMapOf(),
+    val registered: MutableMap<String, Boolean> = mutableMapOf(),
+    var changed: Boolean = false
 )
