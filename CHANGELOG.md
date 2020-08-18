@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.7.6](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.5...v2.7.6) (2020-08-18)
+
+
+### Bug Fixes
+
+* improving connected registered endpoint ([d378158](https://github.com/esmartit/seen-devices-data-store/commit/d378158e74847a9e493740cbf584d6da2d3d61b9))
+
 ## [2.7.5](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.4...v2.7.5) (2020-08-17)
 
 
