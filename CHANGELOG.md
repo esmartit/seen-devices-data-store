@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [2.8.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.6...v2.8.0) (2020-08-19)
+
+
+### Features
+
+* average presence endpoint ([f9e2ecf](https://github.com/esmartit/seen-devices-data-store/commit/f9e2ecf19be82262cc0458378d03a88f83729ec5))
+
 ## [2.7.6](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.5...v2.7.6) (2020-08-18)
 
 
