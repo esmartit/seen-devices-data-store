@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 
@@ -41,6 +42,29 @@ class BigDataController(
             .concatWith(Mono.just(BigDataPresence()))
     }
 
+    @GetMapping(path = ["/average-presence"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getAveragePresence(
+        requestFilters: OnlineQueryFilterRequest
+    ) = bigDataService.filteredFlux(requestFilters)
+        .groupBy { it.seenTime.atZone(requestFilters.timezone).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) }
+        .flatMap { g ->
+            g.scan(g.key()!! to mutableMapOf<String, MutableList<Int>>()) { t, u ->
+                t.also {
+                    it.second.computeIfAbsent(u.macAddress) { mutableListOf() }
+                    it.second.computeIfPresent(u.macAddress) { k, l -> l.apply { add(u.countInAnHour) } }
+                }
+            }.map { it.first to it.second.mapValues { l -> l.value.average() }.values.average() }
+        }
+        .scan(mutableMapOf<String, Double>()) { t, u ->
+            t.apply {
+                this[u.first] = u.second
+            }
+        }.map { it.values.average() }
+        .window(Duration.ofMillis(300))
+        .flatMap { w -> w.last(0.0) }
+        .map { AveragePresence(it) }
+        .concatWith(Mono.just(AveragePresence(0.0, true)))
+
     private fun groupByTime(group: GroupedFlux<String, DeviceWithPositionAndTimeGroup>): Flux<BigDataPresence> {
         return group.scan(
             BigDataPresence(
@@ -70,3 +94,5 @@ data class BigDataPresence(
     val outCount: Long = 0,
     val isLast: Boolean = true
 )
+
+data class AveragePresence(val value: Double, val isLast: Boolean = false)
