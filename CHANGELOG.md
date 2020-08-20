@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.8.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.0...v2.8.1) (2020-08-20)
+
+
+### Bug Fixes
+
+* adding log to event consumer to verify mc address ([7ea12ec](https://github.com/esmartit/seen-devices-data-store/commit/7ea12ec072be292ed12627026a25bbd67177fc29))
+
 # [2.8.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.7.6...v2.8.0) (2020-08-19)
 
 
