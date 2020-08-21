@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.8.3](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.2...v2.8.3) (2020-08-21)
+
+
+### Bug Fixes
+
+* adding log to radius event consumer ([0f4bde4](https://github.com/esmartit/seen-devices-data-store/commit/0f4bde41c7a3d30de74d71e87063ee724875365d))
+
 ## [2.8.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.1...v2.8.2) (2020-08-21)
 
 
