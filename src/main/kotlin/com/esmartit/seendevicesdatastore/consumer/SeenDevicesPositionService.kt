@@ -20,6 +20,8 @@ class SeenDevicesPositionService(
 
     fun handle(event: DeviceWithPresenceEvent) {
 
+        logger.info("received event: $event")
+
         val incomingSensorActivity = eventToSensorActivity.convertToSensorActivity(event.deviceDetectedEvent)
         val existingSensorActivity = repository.findByMacAddressAndSeenTime(
             incomingSensorActivity.device.macAddress,

@@ -13,11 +13,8 @@ class RadiusActivityConsumer(
     private val repository: RadiusActivityRepository
 ) {
 
-    private val logger = LoggerFactory.getLogger(RadiusActivityConsumer::class.java)
-
     @StreamListener(RadiusActivityInput.RADIUS_ACTIVITY_INPUT)
     fun handle(event: FreeRadiusEvent) {
-        logger.info("Event received from radius: $event")
         val radiusActivity = RadiusActivity(info = event.toInfo())
         repository.save(radiusActivity)
     }
