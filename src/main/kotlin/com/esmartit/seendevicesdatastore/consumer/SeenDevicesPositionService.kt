@@ -35,7 +35,7 @@ class SeenDevicesPositionService(
 
         val registered = registeredUserRepository.findByInfoClientMac(normalizedMacAddress).lastOrNull()
 
-//        logger.info("Searching registered by normalized mac $normalizedMacAddress found: $registered")
+        logger.info("Searching registered by normalized mac $normalizedMacAddress found: $registered")
 
         repository.save(
             DeviceWithPosition(
