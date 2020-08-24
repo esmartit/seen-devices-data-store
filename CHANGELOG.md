@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.8.5](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.4...v2.8.5) (2020-08-24)
+
+
+### Bug Fixes
+
+* adding log to device with position ([9b9e175](https://github.com/esmartit/seen-devices-data-store/commit/9b9e1759f3bf421fa0b30ecce0648c7b931b2372))
+
 ## [2.8.4](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.3...v2.8.4) (2020-08-22)
 
 
