@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.dashboard.detected
 
+import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevices
 import com.esmartit.seendevicesdatastore.application.dashboard.totaluniquedevices.TotalDevicesReactiveRepository
 import com.esmartit.seendevicesdatastore.repository.DevicePositionReactiveRepository
@@ -22,7 +23,8 @@ class DetectedController(
     private val repository: DevicePositionReactiveRepository,
     private val totalCountRepo: TotalDevicesReactiveRepository,
     private val service: DetectedService,
-    private val clock: Clock
+    private val clock: Clock,
+    private val brandsRepository: BrandsRepository
 ) {
 
     @GetMapping(path = ["/total-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -61,9 +63,24 @@ class DetectedController(
         return Flux.concat(earlyFlux, ticker).map { DailyDevices(it, clock.instant()) }
     }
 
+    @GetMapping(path = ["/today-brands"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDailyBrands(
+        @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
+    ) = Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15))
+        .flatMap {
+            repository.findBySeenTimeGreaterThanEqual(startOfDay(zoneId))
+                .map { brandsRepository.findByName(it.activity?.device?.manufacturer ?: "other") }
+                .groupBy { it.name }
+                .flatMap { group -> group.count().map { BrandCount(group.key()!!, it) } }
+                .collectList()
+        }
+
+
     private fun startOfDay(zoneId: ZoneId) =
         clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
 }
+
+data class BrandCount(val name: String, val count: Long)
 
 enum class FilterDateGroup {
     BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
