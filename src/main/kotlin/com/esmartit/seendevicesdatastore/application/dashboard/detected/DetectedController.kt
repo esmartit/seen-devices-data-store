@@ -80,7 +80,7 @@ class DetectedController(
         clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
 }
 
-data class BrandCount(val name: String, val count: Long)
+data class BrandCount(val name: String, val value: Long)
 
 enum class FilterDateGroup {
     BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
