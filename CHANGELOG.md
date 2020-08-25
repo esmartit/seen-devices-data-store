@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [2.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.5...v2.9.0) (2020-08-25)
+
+
+### Features
+
+* today brands endpoint ([eae6093](https://github.com/esmartit/seen-devices-data-store/commit/eae6093cdc5cbd5ddf20cb5d01e0c6fd3f3869d3))
+
 ## [2.8.5](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.4...v2.8.5) (2020-08-24)
 
 
