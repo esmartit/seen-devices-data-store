@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.9.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.9.0...v2.9.1) (2020-08-25)
+
+
+### Bug Fixes
+
+* changing from count to value ([b627de0](https://github.com/esmartit/seen-devices-data-store/commit/b627de02a0e3594673358dc337d671aa32382c08))
+
 # [2.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.8.5...v2.9.0) (2020-08-25)
 
 
