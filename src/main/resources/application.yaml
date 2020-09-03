@@ -36,6 +36,8 @@ spring:
         total-registered-input:
           destination: "smartpoke-registered-users-count"
           group: "smartpoke.data-store.total-registered-input"
+        sensor-settings-output:
+          destination: "smartpoke-sensor-settings"
 
 management:
   endpoints:
