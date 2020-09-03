@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [2.10.0](https://github.com/esmartit/seen-devices-data-store/compare/v2.9.1...v2.10.0) (2020-09-03)
+
+
+### Features
+
+* sensor settings ([7431dd3](https://github.com/esmartit/seen-devices-data-store/commit/7431dd333effbd8d3bda09a90d180808711ddfa8))
+
 ## [2.9.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.9.0...v2.9.1) (2020-08-25)
 
 
