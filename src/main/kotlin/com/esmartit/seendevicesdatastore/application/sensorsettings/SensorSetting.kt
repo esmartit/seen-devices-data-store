@@ -27,7 +27,9 @@ data class SensorSetting(
 )
 
 @RepositoryRestResource(collectionResourceRel = "sensor-settings", path = "sensor-settings")
-interface SensorSettingRepository : MongoRepository<SensorSetting, String>
+interface SensorSettingRepository : MongoRepository<SensorSetting, String> {
+    fun findByApMac(apMac: String): SensorSetting?
+}
 
 @Component
 @RepositoryEventHandler

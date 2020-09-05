@@ -9,6 +9,7 @@ import java.time.LocalDate
 data class RegisteredUser(val id: String? = null, val info: RegisteredInfo)
 
 data class RegisteredInfo(
+    @Indexed(name = "username_idx")
     val username: String,
     @Indexed(name = "clientMac_idx")
     val clientMac: String,
