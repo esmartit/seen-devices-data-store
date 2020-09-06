@@ -51,7 +51,7 @@ class ScanApiConsumer(
         }
 
         val seenTimeHour = seenTime.truncatedTo(ChronoUnit.HOURS)
-        val hourlyScanApiActivity =
+        var hourlyScanApiActivity =
             hourlyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeHour) ?: HourlyScanApiActivity(
                 clientMac = clientMac,
                 seenTime = seenTimeHour
@@ -59,7 +59,7 @@ class ScanApiConsumer(
         val newAct = hourlyScanApiActivity.activity.toMutableSet()
             .also { s -> s.removeIf { it.seenTime == newScanApiEvent.seenTime } }
             .also { it.add(newScanApiEvent) }
-        hourlyScanApiRepository.save(hourlyScanApiActivity.copy(activity = newAct))
+        hourlyScanApiActivity = hourlyScanApiRepository.save(hourlyScanApiActivity.copy(activity = newAct))
 
         val seenTimeDay = seenTime.truncatedTo(ChronoUnit.DAYS)
         val dailyScanApiActivity =
