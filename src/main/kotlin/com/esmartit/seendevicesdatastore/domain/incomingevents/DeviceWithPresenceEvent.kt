@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.v1.application.incomingevents
+package com.esmartit.seendevicesdatastore.domain.incomingevents
 
 import com.esmartit.seendevicesdatastore.v1.repository.Position
 

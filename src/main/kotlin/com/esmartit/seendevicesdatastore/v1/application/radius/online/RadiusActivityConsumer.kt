@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.v1.application.radius.online
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.FreeRadiusEvent
+import com.esmartit.seendevicesdatastore.domain.incomingevents.FreeRadiusEvent
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

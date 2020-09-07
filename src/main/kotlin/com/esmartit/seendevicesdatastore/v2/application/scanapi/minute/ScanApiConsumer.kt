@@ -1,8 +1,8 @@
-package com.esmartit.seendevicesdatastore.v2.application.scanapi
+package com.esmartit.seendevicesdatastore.v2.application.scanapi.minute
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.DeviceLocation
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.DeviceSeen
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.SensorActivityEvent
+import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceLocation
+import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceSeen
+import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
 import com.esmartit.seendevicesdatastore.v1.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredInfo
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserRepository

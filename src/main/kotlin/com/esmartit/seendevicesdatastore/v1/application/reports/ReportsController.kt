@@ -1,8 +1,8 @@
 package com.esmartit.seendevicesdatastore.v1.application.reports
 
-import com.esmartit.seendevicesdatastore.v1.application.bigdata.BigDataService
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.OnlineQueryFilterRequest
-import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
+import com.esmartit.seendevicesdatastore.domain.FlatDevice
+import com.esmartit.seendevicesdatastore.v1.services.BigDataService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,7 +16,7 @@ class ReportsController(private val bigDataService: BigDataService) {
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: OnlineQueryFilterRequest
+        requestFilters: FilterRequest
     ): Flux<DeviceWithPositionRecord> {
         return bigDataService.filteredFlux(requestFilters)
             .map { DeviceWithPositionRecord(body = it) }
@@ -28,4 +28,4 @@ class ReportsController(private val bigDataService: BigDataService) {
     }
 }
 
-data class DeviceWithPositionRecord(val body: DeviceWithPosition? = null, val isLast: Boolean = false)
+data class DeviceWithPositionRecord(val body: FlatDevice? = null, val isLast: Boolean = false)

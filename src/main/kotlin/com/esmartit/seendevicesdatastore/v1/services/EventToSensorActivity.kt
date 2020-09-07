@@ -1,5 +1,6 @@
-package com.esmartit.seendevicesdatastore.v1.application.incomingevents
+package com.esmartit.seendevicesdatastore.v1.services
 
+import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
 import com.esmartit.seendevicesdatastore.v1.application.sensoractivity.AccessPoint
 import com.esmartit.seendevicesdatastore.v1.application.sensoractivity.Device
 import com.esmartit.seendevicesdatastore.v1.application.sensoractivity.Location

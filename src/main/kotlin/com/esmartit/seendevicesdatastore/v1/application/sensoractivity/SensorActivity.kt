@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.v1.application.sensoractivity
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.CountryLocation
+import com.esmartit.seendevicesdatastore.domain.incomingevents.CountryLocation
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant

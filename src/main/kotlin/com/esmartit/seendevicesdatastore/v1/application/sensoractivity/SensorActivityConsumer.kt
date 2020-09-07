@@ -1,7 +1,7 @@
 package com.esmartit.seendevicesdatastore.v1.application.sensoractivity
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.EventToSensorActivity
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.SensorActivityEvent
+import com.esmartit.seendevicesdatastore.v1.services.EventToSensorActivity
+import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink

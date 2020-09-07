@@ -1,8 +1,9 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.registered
 
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.DailyDevices
+import com.esmartit.seendevicesdatastore.domain.DailyDevices
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.registered.total.TotalRegistered
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.registered.total.TotalRegisteredReactiveRepository
+import com.esmartit.seendevicesdatastore.v1.services.RegisteredService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

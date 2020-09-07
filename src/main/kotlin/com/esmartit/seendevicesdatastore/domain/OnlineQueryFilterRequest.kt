@@ -1,5 +1,6 @@
-package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
+package com.esmartit.seendevicesdatastore.domain
 
+import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.Gender
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.v1.repository.Position

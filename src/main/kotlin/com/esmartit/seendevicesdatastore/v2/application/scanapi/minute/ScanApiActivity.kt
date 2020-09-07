@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.v2.application.scanapi
+package com.esmartit.seendevicesdatastore.v2.application.scanapi.minute
 
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredInfo
 import com.esmartit.seendevicesdatastore.v1.application.sensorsettings.SensorSetting

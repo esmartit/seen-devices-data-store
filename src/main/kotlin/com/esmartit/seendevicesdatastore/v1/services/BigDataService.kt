@@ -1,7 +1,8 @@
-package com.esmartit.seendevicesdatastore.v1.application.bigdata
+package com.esmartit.seendevicesdatastore.v1.services
 
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
+import com.esmartit.seendevicesdatastore.domain.FlatDevice
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
 import org.springframework.stereotype.Service
@@ -9,7 +10,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalField
@@ -19,14 +20,10 @@ import java.util.Locale
 @Service
 class BigDataService(private val repository: DevicePositionReactiveRepository, private val clock: Clock) {
 
-    fun filteredFlux(requestFilters: OnlineQueryFilterRequest): Flux<DeviceWithPosition> {
+    fun filteredFlux(requestFilters: FilterRequest): Flux<FlatDevice> {
 
-        val timeZone = requestFilters.timezone
-        val getTime = { time: String? -> time?.takeIf { it.isNotBlank() }?.let { "T$it" } ?: "T00:00:00" }
-        val startDate = requestFilters.startDate?.takeIf { it.isNotBlank() }
-            ?.let { LocalDateTime.parse("$it${getTime(requestFilters.startTime)}").atZone(timeZone) }?.toInstant()
-        val endDate = requestFilters.endDate?.takeIf { it.isNotBlank() }
-            ?.let { LocalDateTime.parse("$it${getTime(requestFilters.endTime)}").atZone(timeZone) }?.toInstant()
+        val startDate = getStartDateTime(requestFilters)
+        val endDate = getEndDateTime(requestFilters)
 
         return when {
             startDate != null && endDate != null -> {
@@ -41,11 +38,12 @@ class BigDataService(private val repository: DevicePositionReactiveRepository, p
             else -> {
                 repository.findAll()
             }
-        }.filter { requestFilters.handle(it, clock) }
+        }.map { it.toFlatDevice(clock) }
+            .filter { requestFilters.handle(it) }
 
     }
 
-    fun filteredFluxGrouped(requestFilters: OnlineQueryFilterRequest): Flux<GroupedFlux<String, DeviceWithPositionAndTimeGroup>> {
+    fun filteredFluxGrouped(requestFilters: FilterRequest): Flux<GroupedFlux<String, DeviceWithPositionAndTimeGroup>> {
         val result = filteredFlux(requestFilters)
         val timeZone = requestFilters.timezone
         val woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
@@ -55,7 +53,12 @@ class BigDataService(private val repository: DevicePositionReactiveRepository, p
             FilterDateGroup.BY_MONTH -> { it: Instant -> monthDate(it.atZone(timeZone)) }
             FilterDateGroup.BY_YEAR -> { it: Instant -> yearDate(it.atZone(timeZone)) }
         }.let { timeGroupFun ->
-            result.map { DeviceWithPositionAndTimeGroup(it, timeGroupFun) }.groupBy { it.detectedTime }
+            result.map {
+                DeviceWithPositionAndTimeGroup(
+                    it,
+                    timeGroupFun
+                )
+            }.groupBy { it.detectedTime }
         }
     }
 
@@ -75,13 +78,28 @@ class BigDataService(private val repository: DevicePositionReactiveRepository, p
     private fun yearDate(time: ZonedDateTime): String {
         return time.format(DateTimeFormatter.ofPattern("yyyy"))
     }
+
+    private fun getStartDateTime(filters: FilterRequest) =
+        filters.startDateTime?.toLocalDate()?.atStartOfDay(ZoneOffset.UTC)?.toInstant()
+
+    private fun getEndDateTime(filters: FilterRequest): Instant? {
+        return filters.endDateTime?.toLocalDate()
+            ?.plusDays(1)
+            ?.atStartOfDay(ZoneOffset.UTC)
+            ?.minusSeconds(1)
+            ?.toInstant()
+    }
+}
+
+private fun DeviceWithPosition.toFlatDevice(clock: Clock): FlatDevice {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
 
 data class DeviceWithPositionAndTimeGroup(
-    val deviceWithPosition: DeviceWithPosition,
+    val deviceWithPosition: FlatDevice,
     private val timeFun: (Instant) -> String
 ) {
     val detectedTime: String by lazy { timeFun.invoke(deviceWithPosition.seenTime) }
 
-    val registeredTime: String by lazy { deviceWithPosition.userInfo?.seenTime?.let { timeFun.invoke(it) } ?: "" }
+    val registeredTime: String by lazy { deviceWithPosition.registeredDate?.let { timeFun.invoke(it) } ?: "" }
 }

@@ -1,7 +1,6 @@
-package com.esmartit.seendevicesdatastore.v1.consumer
+package com.esmartit.seendevicesdatastore.v1.services
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.DeviceWithPresenceEvent
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.EventToSensorActivity
+import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceWithPresenceEvent
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition

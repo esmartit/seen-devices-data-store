@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.v1.application.incomingevents
+package com.esmartit.seendevicesdatastore.domain.incomingevents
 
 data class FreeRadiusEvent(
     val acctSessionId: String,

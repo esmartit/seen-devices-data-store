@@ -1,8 +1,12 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
 
+import com.esmartit.seendevicesdatastore.domain.DailyDevices
+import com.esmartit.seendevicesdatastore.domain.NowPresence
+import com.esmartit.seendevicesdatastore.domain.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.v1.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.totaluniquedevices.TotalDevices
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.totaluniquedevices.TotalDevicesReactiveRepository
+import com.esmartit.seendevicesdatastore.v1.services.DetectedService
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -60,7 +64,12 @@ class DetectedController(
         val fifteenSecs = Duration.ofSeconds(15)
         val ticker = Flux.interval(fifteenSecs).flatMap { nowFlux() }
 
-        return Flux.concat(earlyFlux, ticker).map { DailyDevices(it, clock.instant()) }
+        return Flux.concat(earlyFlux, ticker).map {
+            DailyDevices(
+                it,
+                clock.instant()
+            )
+        }
     }
 
     @GetMapping(path = ["/today-brands"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])

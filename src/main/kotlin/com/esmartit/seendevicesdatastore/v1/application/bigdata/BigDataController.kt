@@ -1,8 +1,10 @@
 package com.esmartit.seendevicesdatastore.v1.application.bigdata
 
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.OnlineQueryFilterRequest
-import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
+import com.esmartit.seendevicesdatastore.domain.FlatDevice
 import com.esmartit.seendevicesdatastore.v1.repository.Position
+import com.esmartit.seendevicesdatastore.v1.services.BigDataService
+import com.esmartit.seendevicesdatastore.v1.services.DeviceWithPositionAndTimeGroup
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,15 +25,15 @@ class BigDataController(
 
     @GetMapping(path = ["/find-debug"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun findDebug(
-        requestFilters: OnlineQueryFilterRequest
-    ): Flux<DeviceWithPosition> {
+        requestFilters: FilterRequest
+    ): Flux<FlatDevice> {
 
         return bigDataService.filteredFlux(requestFilters)
     }
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: OnlineQueryFilterRequest
+        requestFilters: FilterRequest
     ): Flux<BigDataPresence> {
 
         return bigDataService.filteredFluxGrouped(requestFilters)
@@ -44,14 +46,14 @@ class BigDataController(
 
     @GetMapping(path = ["/average-presence"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAveragePresence(
-        requestFilters: OnlineQueryFilterRequest
+        requestFilters: FilterRequest
     ) = bigDataService.filteredFlux(requestFilters)
         .groupBy { it.seenTime.atZone(requestFilters.timezone).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) }
         .flatMap { g ->
             g.scan(g.key()!! to mutableMapOf<String, MutableList<Int>>()) { t, u ->
                 t.also {
-                    it.second.computeIfAbsent(u.macAddress) { mutableListOf() }
-                    it.second.computeIfPresent(u.macAddress) { k, l -> l.apply { add(u.countInAnHour) } }
+                    it.second.computeIfAbsent(u.clientMac) { mutableListOf() }
+                    it.second.computeIfPresent(u.clientMac) { k, l -> l.apply { add(u.countInAnHour) } }
                 }
             }.map { it.first to it.second.mapValues { l -> l.value.average() }.values.average() }
         }
@@ -76,7 +78,7 @@ class BigDataController(
                 isLast = false
             )
         ) { acc, curr ->
-            when (curr.deviceWithPosition.position) {
+            when (curr.deviceWithPosition.status) {
                 Position.IN -> acc.copy(inCount = acc.inCount + 1)
                 Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
                 Position.OUT -> acc.copy(outCount = acc.outCount + 1)

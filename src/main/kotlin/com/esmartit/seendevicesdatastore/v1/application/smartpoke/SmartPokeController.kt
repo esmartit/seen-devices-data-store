@@ -1,11 +1,12 @@
 package com.esmartit.seendevicesdatastore.v1.application.smartpoke
 
-import com.esmartit.seendevicesdatastore.v1.application.bigdata.BigDataService
-import com.esmartit.seendevicesdatastore.v1.application.bigdata.DeviceWithPositionAndTimeGroup
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.DailyDevices
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.DetectedService
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.NowPresence
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.OnlineQueryFilterRequest
+import com.esmartit.seendevicesdatastore.v1.services.BigDataService
+import com.esmartit.seendevicesdatastore.v1.services.DeviceWithPositionAndTimeGroup
+import com.esmartit.seendevicesdatastore.domain.DailyDevices
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
+import com.esmartit.seendevicesdatastore.v1.services.DetectedService
+import com.esmartit.seendevicesdatastore.domain.NowPresence
+import com.esmartit.seendevicesdatastore.domain.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
 import org.springframework.http.MediaType
@@ -61,7 +62,12 @@ class SmartPokeController(
         val fifteenSecs = Duration.ofSeconds(15)
         val ticker = Flux.interval(fifteenSecs).flatMap { nowFlux() }
 
-        return Flux.concat(earlyFlux, ticker).map { DailyDevices(it, clock.instant()) }
+        return Flux.concat(earlyFlux, ticker).map {
+            DailyDevices(
+                it,
+                clock.instant()
+            )
+        }
     }
 
     @GetMapping(path = ["/now-connected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -87,24 +93,29 @@ class SmartPokeController(
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
             .flatMap { service.nowDetectedFlux(this::filterNowConnected, twoMinutesAgo).collectList() }
             .map {
-                it.lastOrNull()?.run { DailyDevices(inCount + limitCount + outCount, clock.instant()) }
+                it.lastOrNull()?.run {
+                    DailyDevices(
+                        inCount + limitCount + outCount,
+                        clock.instant()
+                    )
+                }
                     ?: DailyDevices(0, clock.instant())
             }
     }
 
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getConnectedRegistered(requestFilters: OnlineQueryFilterRequest): Flux<TimeAndCounters> {
+    fun getConnectedRegistered(requestFilters: FilterRequest): Flux<TimeAndCounters> {
         return bigDataService.filteredFluxGrouped(requestFilters)
             .flatMap { g ->
                 g.scan(TimeAndDevices(g.key()!!)) { t: TimeAndDevices, u: DeviceWithPositionAndTimeGroup ->
                     t.changed = false
-                    if (u.deviceWithPosition.isConnected()) {
-                        t.connected.computeIfAbsent(u.deviceWithPosition.macAddress) { true }
+                    if (u.deviceWithPosition.isConnected) {
+                        t.connected.computeIfAbsent(u.deviceWithPosition.clientMac) { true }
                         t.changed = true
                     }
                     val isRegistered = t.time == u.registeredTime
                     if (isRegistered) {
-                        t.registered.computeIfAbsent(u.deviceWithPosition.macAddress) { true }
+                        t.registered.computeIfAbsent(u.deviceWithPosition.clientMac) { true }
                         t.changed = true
                     }
                     t
@@ -121,7 +132,7 @@ class SmartPokeController(
     }
 
     private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
-        timeGroup.groupBy { it.deviceWithPosition.macAddress }
+        timeGroup.groupBy { it.deviceWithPosition.clientMac }
             .flatMap { byMacAddress -> groupByMacAddress(timeGroup.key()!!, byMacAddress) }
             .filter { it.connected || it.registered }
             .window(Duration.ofMillis(300))
@@ -139,7 +150,7 @@ class SmartPokeController(
     ) = byMacAddress.reduce(TimeAndDevice(timeGroup, byMacAddress.key()!!), this::reduceDevice)
 
     private fun reduceDevice(acc: TimeAndDevice, curr: DeviceWithPositionAndTimeGroup): TimeAndDevice {
-        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected()
+        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected
         val isRegistered = acc.time == curr.registeredTime
         return acc.copy(connected = acc.connected || isConnected, registered = acc.registered || isRegistered)
     }

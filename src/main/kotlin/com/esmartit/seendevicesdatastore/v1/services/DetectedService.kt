@@ -1,5 +1,6 @@
-package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
+package com.esmartit.seendevicesdatastore.v1.services
 
+import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
 import com.esmartit.seendevicesdatastore.v1.repository.Position
@@ -34,7 +35,12 @@ class DetectedService(
     }
 
     private fun groupByTime(group: GroupedFlux<Instant, DeviceWithPosition>): Mono<NowPresence> {
-        return group.reduce(NowPresence(UUID.randomUUID().toString(), group.key()!!)) { acc, curr ->
+        return group.reduce(
+            NowPresence(
+                UUID.randomUUID().toString(),
+                group.key()!!
+            )
+        ) { acc, curr ->
             when (curr.position) {
                 Position.IN -> acc.copy(inCount = acc.inCount + 1)
                 Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)

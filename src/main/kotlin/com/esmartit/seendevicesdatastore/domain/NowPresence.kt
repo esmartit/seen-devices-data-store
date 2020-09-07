@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
+package com.esmartit.seendevicesdatastore.domain
 
 import java.time.Instant
 
@@ -10,4 +10,3 @@ data class NowPresence(
     val outCount: Long = 0
 )
 
-data class DailyDevices(val count: Long, val time: Instant)

@@ -1,6 +1,7 @@
 package com.esmartit.seendevicesdatastore.v1.consumer
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.DeviceWithPresenceEvent
+import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceWithPresenceEvent
+import com.esmartit.seendevicesdatastore.v1.services.SeenDevicesPositionService
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

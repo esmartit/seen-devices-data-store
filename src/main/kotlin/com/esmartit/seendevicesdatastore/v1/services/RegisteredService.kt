@@ -1,4 +1,4 @@
-package com.esmartit.seendevicesdatastore.v1.application.dashboard.registered
+package com.esmartit.seendevicesdatastore.v1.services
 
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserReactiveRepository
 import org.springframework.stereotype.Service

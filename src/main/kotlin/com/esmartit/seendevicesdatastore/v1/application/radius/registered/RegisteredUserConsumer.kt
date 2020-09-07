@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.v1.application.radius.registered
 
-import com.esmartit.seendevicesdatastore.v1.application.incomingevents.RegisteredEvent
+import com.esmartit.seendevicesdatastore.domain.incomingevents.RegisteredEvent
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Input
 import org.springframework.cloud.stream.annotation.StreamListener

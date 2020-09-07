@@ -1,5 +1,8 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
 
+import com.esmartit.seendevicesdatastore.domain.DailyDevices
+import com.esmartit.seendevicesdatastore.domain.NowPresence
+import com.esmartit.seendevicesdatastore.v1.services.DetectedService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -41,7 +44,12 @@ class DetectedControllerV2(
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
             .flatMap { service.nowDetectedFlux({ it.isWithinRange() }, twoMinutesAgo).collectList() }
             .map {
-                it.lastOrNull()?.run { DailyDevices(inCount + limitCount + outCount, clock.instant()) }
+                it.lastOrNull()?.run {
+                    DailyDevices(
+                        inCount + limitCount + outCount,
+                        clock.instant()
+                    )
+                }
                     ?: DailyDevices(0, clock.instant())
             }
     }

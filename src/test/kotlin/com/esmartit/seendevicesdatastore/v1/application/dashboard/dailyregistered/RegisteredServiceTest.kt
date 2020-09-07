@@ -1,6 +1,6 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.dailyregistered
 
-import com.esmartit.seendevicesdatastore.v1.application.dashboard.registered.RegisteredService
+import com.esmartit.seendevicesdatastore.v1.services.RegisteredService
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUser
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserReactiveRepository
 import com.nhaarman.mockitokotlin2.mock
