@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.11.2](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.1...v2.11.2) (2020-09-07)
+
+
+### Bug Fixes
+
+* package structure ([c49fdc3](https://github.com/esmartit/seen-devices-data-store/commit/c49fdc3cf4e793f1eea5b8a3b3ee278759dd69a1))
+
 ## [2.11.1](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.0...v2.11.1) (2020-09-06)
 
 
