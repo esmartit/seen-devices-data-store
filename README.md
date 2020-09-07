@@ -1,3 +1,3 @@
 # seen-devices-data-store
 
-testing 19
+testing 2.7.x
