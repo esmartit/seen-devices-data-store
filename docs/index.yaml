@@ -2,8 +2,26 @@ apiVersion: v1
 entries:
   seen-devices-data-store:
   - apiVersion: v2
+    appVersion: 2.11.4
+    created: "2020-09-07T10:17:28.878189379Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - seen-devices-data-store-database
+      version: 7.14.0
+    description: A Helm chart for Kubernetes
+    digest: 0bec4c9d0cbd9a42317e8cd84e6aac09647773e52f2882e31cab55aeaa801213
+    icon: https://esmartit.github.io/seen-devices-data-store/docs/smartpoke.png
+    name: seen-devices-data-store
+    type: application
+    urls:
+    - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-2.11.4.tgz
+    version: 2.11.4
+  - apiVersion: v2
     appVersion: 2.11.3
-    created: "2020-09-07T07:14:50.498557464Z"
+    created: "2020-09-07T10:17:28.874744435Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -21,7 +39,7 @@ entries:
     version: 2.11.3
   - apiVersion: v2
     appVersion: 2.11.1
-    created: "2020-09-07T07:14:50.493535477Z"
+    created: "2020-09-07T10:17:28.869754352Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -39,7 +57,7 @@ entries:
     version: 2.11.1
   - apiVersion: v2
     appVersion: 2.11.0
-    created: "2020-09-07T07:14:50.491096453Z"
+    created: "2020-09-07T10:17:28.862591223Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -57,7 +75,7 @@ entries:
     version: 2.11.0
   - apiVersion: v2
     appVersion: 2.10.0
-    created: "2020-09-07T07:14:50.487682528Z"
+    created: "2020-09-07T10:17:28.85096456Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -75,7 +93,7 @@ entries:
     version: 2.10.0
   - apiVersion: v2
     appVersion: 2.9.1
-    created: "2020-09-07T07:14:50.550259842Z"
+    created: "2020-09-07T10:17:29.001318799Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -93,7 +111,7 @@ entries:
     version: 2.9.1
   - apiVersion: v2
     appVersion: 2.9.0
-    created: "2020-09-07T07:14:50.548016316Z"
+    created: "2020-09-07T10:17:28.99525663Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -111,7 +129,7 @@ entries:
     version: 2.9.0
   - apiVersion: v2
     appVersion: 2.8.5
-    created: "2020-09-07T07:14:50.545700837Z"
+    created: "2020-09-07T10:17:28.979007194Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -129,7 +147,7 @@ entries:
     version: 2.8.5
   - apiVersion: v2
     appVersion: 2.8.3
-    created: "2020-09-07T07:14:50.542589917Z"
+    created: "2020-09-07T10:17:28.975369738Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -147,7 +165,7 @@ entries:
     version: 2.8.3
   - apiVersion: v2
     appVersion: 2.8.2
-    created: "2020-09-07T07:14:50.538846081Z"
+    created: "2020-09-07T10:17:28.967293118Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -165,7 +183,7 @@ entries:
     version: 2.8.2
   - apiVersion: v2
     appVersion: 2.8.1
-    created: "2020-09-07T07:14:50.536240174Z"
+    created: "2020-09-07T10:17:28.963456302Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -183,7 +201,7 @@ entries:
     version: 2.8.1
   - apiVersion: v2
     appVersion: 2.8.0
-    created: "2020-09-07T07:14:50.533975838Z"
+    created: "2020-09-07T10:17:28.95456752Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -201,7 +219,7 @@ entries:
     version: 2.8.0
   - apiVersion: v2
     appVersion: 2.7.6
-    created: "2020-09-07T07:14:50.531740939Z"
+    created: "2020-09-07T10:17:28.946059369Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -219,7 +237,7 @@ entries:
     version: 2.7.6
   - apiVersion: v2
     appVersion: 2.7.5
-    created: "2020-09-07T07:14:50.527093933Z"
+    created: "2020-09-07T10:17:28.940473642Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -237,7 +255,7 @@ entries:
     version: 2.7.5
   - apiVersion: v2
     appVersion: 2.7.4
-    created: "2020-09-07T07:14:50.524813117Z"
+    created: "2020-09-07T10:17:28.926999049Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -255,7 +273,7 @@ entries:
     version: 2.7.4
   - apiVersion: v2
     appVersion: 2.7.3
-    created: "2020-09-07T07:14:50.522546859Z"
+    created: "2020-09-07T10:17:28.921326584Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -273,7 +291,7 @@ entries:
     version: 2.7.3
   - apiVersion: v2
     appVersion: 2.7.2
-    created: "2020-09-07T07:14:50.520310824Z"
+    created: "2020-09-07T10:17:28.917954017Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -291,7 +309,7 @@ entries:
     version: 2.7.2
   - apiVersion: v2
     appVersion: 2.7.1
-    created: "2020-09-07T07:14:50.515581615Z"
+    created: "2020-09-07T10:17:28.913559378Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -309,7 +327,7 @@ entries:
     version: 2.7.1
   - apiVersion: v2
     appVersion: 2.7.0
-    created: "2020-09-07T07:14:50.513266729Z"
+    created: "2020-09-07T10:17:28.908676526Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -327,7 +345,7 @@ entries:
     version: 2.7.0
   - apiVersion: v2
     appVersion: 2.6.5
-    created: "2020-09-07T07:14:50.510475637Z"
+    created: "2020-09-07T10:17:28.903661366Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -345,7 +363,7 @@ entries:
     version: 2.6.5
   - apiVersion: v2
     appVersion: 2.6.4
-    created: "2020-09-07T07:14:50.507734844Z"
+    created: "2020-09-07T10:17:28.898841834Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -363,7 +381,7 @@ entries:
     version: 2.6.4
   - apiVersion: v2
     appVersion: 2.6.3
-    created: "2020-09-07T07:14:50.503167085Z"
+    created: "2020-09-07T10:17:28.885456428Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -381,7 +399,7 @@ entries:
     version: 2.6.3
   - apiVersion: v2
     appVersion: 2.6.2
-    created: "2020-09-07T07:14:50.500851862Z"
+    created: "2020-09-07T10:17:28.881937049Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -651,7 +669,7 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 1.27.1
-    created: "2020-09-07T07:14:50.481981781Z"
+    created: "2020-09-07T10:17:28.842886317Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -669,7 +687,7 @@ entries:
     version: 1.27.1
   - apiVersion: v2
     appVersion: 1.27.0
-    created: "2020-09-07T07:14:50.47965739Z"
+    created: "2020-09-07T10:17:28.835699984Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -687,7 +705,7 @@ entries:
     version: 1.27.0
   - apiVersion: v2
     appVersion: 1.26.0
-    created: "2020-09-07T07:14:50.475408576Z"
+    created: "2020-09-07T10:17:28.831469463Z"
     dependencies:
     - condition: mongodb.enabled
       name: mongodb
@@ -1894,4 +1912,4 @@ entries:
     urls:
     - https://esmartit.github.io/seen-devices-data-store/docs/seen-devices-data-store-1.0.17.tgz
     version: 1.0.17
-generated: "2020-09-07T07:14:50.467518717Z"
+generated: "2020-09-07T10:17:28.818818924Z"
