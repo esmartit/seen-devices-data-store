@@ -3,6 +3,7 @@ package com.esmartit.seendevicesdatastore.v2.application.scanapi
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredInfo
 import com.esmartit.seendevicesdatastore.v1.application.sensorsettings.SensorSetting
 import org.springframework.data.mongodb.core.index.CompoundIndex
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
@@ -12,6 +13,7 @@ data class ScanApiActivity(
     val id: String? = null,
     val apMac: String,
     val seenEpoch: Int,
+    @Indexed(name = "seenTime_idx")
     val seenTime: Instant,
     val rssi: Int,
     val ssid: String?,

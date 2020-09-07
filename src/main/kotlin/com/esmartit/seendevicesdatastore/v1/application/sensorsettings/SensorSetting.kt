@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.v1.application.sensorsettings
 
+import com.esmartit.seendevicesdatastore.v1.repository.Position
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.Output
 import org.springframework.data.mongodb.core.mapping.Document
@@ -24,7 +25,14 @@ data class SensorSetting(
     val spot: String,
     val apMac: String,
     val tags: Map<String, String> = emptyMap()
-)
+) {
+    fun presence(power: Int) = when {
+        power >= inEdge -> Position.IN
+        power >= limitEdge -> Position.LIMIT
+        power >= outEdge -> Position.OUT
+        else -> Position.NO_POSITION
+    }
+}
 
 @RepositoryRestResource(collectionResourceRel = "sensor-settings", path = "sensor-settings")
 interface SensorSettingRepository : MongoRepository<SensorSetting, String> {
