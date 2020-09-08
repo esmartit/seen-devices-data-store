@@ -20,7 +20,8 @@ data class FlatDevice(
     val memberShip: Boolean? = null,
     val registeredDate: Instant? = null,
     val countInAnHour: Int = 0,
-    val isConnected: Boolean = false
+    val isConnected: Boolean = false,
+    val username: String? = null
 ) {
     fun isInRange(): Boolean {
         return status != Position.NO_POSITION

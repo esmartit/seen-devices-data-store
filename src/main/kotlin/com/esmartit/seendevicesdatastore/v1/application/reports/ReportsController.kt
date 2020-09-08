@@ -19,6 +19,7 @@ class ReportsController(private val bigDataService: BigDataService) {
         requestFilters: FilterRequest
     ): Flux<DeviceWithPositionRecord> {
         return bigDataService.filteredFlux(requestFilters)
+            .filter { !it.username.isNullOrBlank() }
             .map { DeviceWithPositionRecord(body = it) }
             .concatWith(
                 Mono.just(

@@ -1,13 +1,13 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.detected
 
 import com.esmartit.seendevicesdatastore.domain.DailyDevices
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.domain.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.v1.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.totaluniquedevices.TotalDevices
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.totaluniquedevices.TotalDevicesReactiveRepository
-import com.esmartit.seendevicesdatastore.v1.services.DetectedService
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
+import com.esmartit.seendevicesdatastore.v1.services.BigDataService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux
 import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.function.BiFunction
@@ -26,9 +27,9 @@ import java.util.function.BiFunction
 class DetectedController(
     private val repository: DevicePositionReactiveRepository,
     private val totalCountRepo: TotalDevicesReactiveRepository,
-    private val service: DetectedService,
     private val clock: Clock,
-    private val brandsRepository: BrandsRepository
+    private val brandsRepository: BrandsRepository,
+    private val bigDataService: BigDataService
 ) {
 
     @GetMapping(path = ["/total-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -40,11 +41,12 @@ class DetectedController(
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyDetected(
-        requestFilters: OnlineQueryFilterRequest
+        requestFilters: FilterRequest
     ): Flux<NowPresence> {
 
         val todayDetected =
-            service.todayDetectedFlux({ requestFilters.handle(it, clock) }) { startOfDay(requestFilters.timezone) }
+            bigDataService.fluxByDateTime(startOfDay(requestFilters.timezone), null, requestFilters)
+                .let { bigDataService.presenceFlux(it) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last(NowPresence(UUID.randomUUID().toString())) }
@@ -65,10 +67,7 @@ class DetectedController(
         val ticker = Flux.interval(fifteenSecs).flatMap { nowFlux() }
 
         return Flux.concat(earlyFlux, ticker).map {
-            DailyDevices(
-                it,
-                clock.instant()
-            )
+            DailyDevices(it, clock.instant())
         }
     }
 
@@ -86,7 +85,7 @@ class DetectedController(
 
 
     private fun startOfDay(zoneId: ZoneId) =
-        clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
+        clock.instant().atZone(zoneId).toLocalDate().atStartOfDay(zoneId).toInstant()
 }
 
 data class BrandCount(val name: String, val value: Long)

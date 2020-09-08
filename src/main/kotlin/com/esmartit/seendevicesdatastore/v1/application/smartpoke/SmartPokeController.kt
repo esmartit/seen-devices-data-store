@@ -1,21 +1,18 @@
 package com.esmartit.seendevicesdatastore.v1.application.smartpoke
 
-import com.esmartit.seendevicesdatastore.v1.services.BigDataService
-import com.esmartit.seendevicesdatastore.v1.services.DeviceWithPositionAndTimeGroup
 import com.esmartit.seendevicesdatastore.domain.DailyDevices
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
-import com.esmartit.seendevicesdatastore.v1.services.DetectedService
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.domain.OnlineQueryFilterRequest
 import com.esmartit.seendevicesdatastore.v1.repository.DevicePositionReactiveRepository
 import com.esmartit.seendevicesdatastore.v1.repository.DeviceWithPosition
+import com.esmartit.seendevicesdatastore.v1.services.BigDataService
+import com.esmartit.seendevicesdatastore.v1.services.DeviceWithPositionAndTimeGroup
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Clock
 import java.time.Duration
@@ -27,20 +24,19 @@ import java.util.UUID
 @RequestMapping("/smartpoke")
 class SmartPokeController(
     private val repository: DevicePositionReactiveRepository,
-    private val service: DetectedService,
     private val clock: Clock,
     private val bigDataService: BigDataService
 ) {
 
     @GetMapping(path = ["/today-connected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: OnlineQueryFilterRequest
+        requestFilters: FilterRequest
     ): Flux<NowPresence> {
 
         val todayConnected =
-            service.todayDetectedFlux({
-                filterTodayConnected(it, requestFilters)
-            }) { startOfDay(requestFilters.timezone) }
+            bigDataService.fluxByDateTime(startOfDay(requestFilters.timezone), null, requestFilters)
+                .filter { it.isConnected }
+                .let { bigDataService.presenceFlux(it) }
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap { todayConnected.last(NowPresence(UUID.randomUUID().toString())) }
@@ -78,8 +74,12 @@ class SmartPokeController(
         val thirtyMinutesAgo =
             { clock.instant().atZone(zoneId).minusMinutes(30).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
+
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux(this::filterNowConnected, thirtyMinutesAgo).collectList() }
+            .flatMap {
+                bigDataService.fluxByDateTime(thirtyMinutesAgo(), null, null)
+                    .let { bigDataService.presenceFlux(it) }.collectList()
+            }
     }
 
     @GetMapping(path = ["/now-connected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -91,7 +91,11 @@ class SmartPokeController(
             { clock.instant().atZone(zoneId).minusMinutes(2).toInstant().truncatedTo(ChronoUnit.MINUTES) }
         val fifteenSecs = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSecs)
-            .flatMap { service.nowDetectedFlux(this::filterNowConnected, twoMinutesAgo).collectList() }
+            .flatMap {
+                bigDataService.fluxByDateTime(twoMinutesAgo(), null, null)
+                    .filter { it.isConnected }
+                    .let { bigDataService.presenceFlux(it) }.collectList()
+            }
             .map {
                 it.lastOrNull()?.run {
                     DailyDevices(
@@ -131,49 +135,13 @@ class SmartPokeController(
             .concatWith(Mono.just(TimeAndCounters(time = "", isLast = true)))
     }
 
-    private fun groupByTime(timeGroup: GroupedFlux<String, DeviceWithPositionAndTimeGroup>) =
-        timeGroup.groupBy { it.deviceWithPosition.clientMac }
-            .flatMap { byMacAddress -> groupByMacAddress(timeGroup.key()!!, byMacAddress) }
-            .filter { it.connected || it.registered }
-            .window(Duration.ofMillis(300))
-            .flatMap { w -> w.reduce(TimeAndCounters(timeGroup.key()!!), this::reduceTime) }
-            .scan { acc, curr ->
-                acc.copy(
-                    connected = acc.connected + curr.connected,
-                    registered = acc.registered + curr.registered
-                )
-            }
-
-    private fun groupByMacAddress(
-        timeGroup: String,
-        byMacAddress: GroupedFlux<String, DeviceWithPositionAndTimeGroup>
-    ) = byMacAddress.reduce(TimeAndDevice(timeGroup, byMacAddress.key()!!), this::reduceDevice)
-
-    private fun reduceDevice(acc: TimeAndDevice, curr: DeviceWithPositionAndTimeGroup): TimeAndDevice {
-        val isConnected = acc.time == curr.detectedTime && curr.deviceWithPosition.isConnected
-        val isRegistered = acc.time == curr.registeredTime
-        return acc.copy(connected = acc.connected || isConnected, registered = acc.registered || isRegistered)
-    }
-
-    private fun reduceTime(acc: TimeAndCounters, curr: TimeAndDevice): TimeAndCounters {
-        val connectedCount = curr.connected.toInt()
-        val registeredCount = curr.registered.toInt()
-        return acc.copy(connected = acc.connected + connectedCount, registered = acc.registered + registeredCount)
-    }
-
     private fun startOfDay(zoneId: ZoneId) =
-        clock.instant().atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toInstant()
+        clock.instant().atZone(zoneId).toLocalDate().atStartOfDay(zoneId).toInstant()
 
     private fun filterNowConnected(device: DeviceWithPosition): Boolean {
         val ssid: String? = device.activity?.ssid
         val isNotNullOrEmpty = ssid?.isNotEmpty() ?: false
         return device.isWithinRange() && isNotNullOrEmpty
-    }
-
-    private fun filterTodayConnected(device: DeviceWithPosition, filters: OnlineQueryFilterRequest): Boolean {
-        val ssid: String? = device.activity?.ssid
-        val isNotNullOrEmpty = ssid?.isNotEmpty() ?: false
-        return device.isWithinRange() && isNotNullOrEmpty && filters.handle(device, clock)
     }
 }
 

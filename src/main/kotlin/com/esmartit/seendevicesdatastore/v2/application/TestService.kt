@@ -188,6 +188,7 @@ private fun ScanApiActivity.toFlatDevice(clock: Clock): FlatDevice {
         stateId = sensorSetting?.tags?.get("state"),
         cityId = sensorSetting?.tags?.get("city"),
         zipCode = sensorSetting?.tags?.get("zipcode"),
-        isConnected = !ssid.isNullOrBlank()
+        isConnected = !ssid.isNullOrBlank(),
+        username = userInfo?.username
     )
 }
