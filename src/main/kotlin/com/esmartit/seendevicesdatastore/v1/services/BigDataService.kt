@@ -142,7 +142,8 @@ private fun DeviceWithPosition.toFlatDevice(clock: Clock): FlatDevice {
         cityId = activity?.accessPoint?.countryLocation?.cityId,
         zipCode = activity?.accessPoint?.countryLocation?.zipCode,
         isConnected = isConnected(),
-        username = userInfo?.username
+        username = userInfo?.username,
+        countInAnHour = countInAnHour
     )
 }
 
