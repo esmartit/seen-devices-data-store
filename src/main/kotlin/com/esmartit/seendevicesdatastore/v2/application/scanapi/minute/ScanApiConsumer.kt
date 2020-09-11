@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import java.time.temporal.ChronoUnit
 
-@Component
+//@Component
 class ScanApiConsumer(
     private val repository: ScanApiRepository,
     private val sensorSettingRepository: SensorSettingRepository,
@@ -28,7 +28,7 @@ class ScanApiConsumer(
     private val dailyScanApiRepository: DailyScanApiRepository
 ) {
 
-    @StreamListener(Sink.INPUT)
+//    @StreamListener(Sink.INPUT)
     fun handle(event: SensorActivityEvent) {
 /*        val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
