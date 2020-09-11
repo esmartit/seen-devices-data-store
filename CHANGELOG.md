@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.11.9](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.8...v2.11.9) (2020-09-11)
+
+
+### Bug Fixes
+
+* mongodb issue ([ae61c22](https://github.com/esmartit/seen-devices-data-store/commit/ae61c2247e6591331ff9db3c7cfe9660f93dc5b6))
+
 ## [2.11.8](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.7...v2.11.8) (2020-09-11)
 
 
