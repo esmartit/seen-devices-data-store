@@ -34,7 +34,7 @@ app:
   kafka:
     host: "event-bus-kafka:9092"
   mongodb:
-    host: "data-store-mongodb-headless.default.svc.cluster.local"
+    host: "data-store-mongodb.default.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
 
