@@ -30,7 +30,7 @@ class ScanApiConsumer(
 
     @StreamListener(Sink.INPUT)
     fun handle(event: SensorActivityEvent) {
-        val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
+/*        val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
         val clientMac = event.device.clientMac
         val seenTime = event.device.seenTime
@@ -70,7 +70,7 @@ class ScanApiConsumer(
         val newDayAct = dailyScanApiActivity.activity.toMutableSet()
             .also { s -> s.removeIf { it.seenTime == hourlyScanApiActivity.seenTime } }
             .also { it.add(hourlyScanApiActivity) }
-        dailyScanApiRepository.save(dailyScanApiActivity.copy(activity = newDayAct))
+        dailyScanApiRepository.save(dailyScanApiActivity.copy(activity = newDayAct))*/
     }
 }
 
