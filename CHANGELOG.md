@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [2.11.11](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.10...v2.11.11) (2020-09-11)
+
+
+### Bug Fixes
+
+* bigdata average presence ([d61bac0](https://github.com/esmartit/seen-devices-data-store/commit/d61bac07cb40d4f11d943564301b580ba8869ce2))
+
 ## [2.11.10](https://github.com/esmartit/seen-devices-data-store/compare/v2.11.9...v2.11.10) (2020-09-11)
 
 
