@@ -2,7 +2,6 @@ package com.esmartit.seendevicesdatastore.domain
 
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.Gender
-import com.esmartit.seendevicesdatastore.v1.repository.Position
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset

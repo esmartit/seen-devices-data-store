@@ -3,7 +3,7 @@ package com.esmartit.seendevicesdatastore.v2.application
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.FlatDevice
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.v1.repository.Position
+import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.daily.DailyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.hourly.HourlyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.minute.ScanApiActivity
@@ -19,7 +19,7 @@ import java.time.ZoneOffset
 import java.util.UUID
 
 @Component
-class TestService(
+class ScanApiService(
     private val clock: Clock,
     private val scanApiReactiveRepository: ScanApiReactiveRepository,
     private val hourlyScanApiReactiveRepository: HourlyScanApiReactiveRepository,

@@ -1,7 +1,6 @@
 package com.esmartit.seendevicesdatastore.domain
 
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.Gender
-import com.esmartit.seendevicesdatastore.v1.repository.Position
 import java.time.Instant
 
 data class FlatDevice(

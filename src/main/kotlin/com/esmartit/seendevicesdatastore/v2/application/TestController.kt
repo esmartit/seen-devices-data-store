@@ -16,15 +16,15 @@ import java.time.ZoneId
 @RequestMapping("/test")
 class TestController(
     private val clock: Clock,
-    private val testService: TestService
+    private val scanApiService: ScanApiService
 ) {
 
     @GetMapping(path = ["/now-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun testGet(@RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId): Flux<List<NowPresence>> {
         val thirtyMinutesAgo = { clock.instant().atZone(zoneId).minusMinutes(30L).toInstant() }
         return Flux.interval(Duration.ofSeconds(0L), Duration.ofSeconds(15))
-            .map { testService.filteredFluxByTime(thirtyMinutesAgo()) }
-            .flatMap { testService.presenceFlux(it).buffer() }
+            .map { scanApiService.filteredFluxByTime(thirtyMinutesAgo()) }
+            .flatMap { scanApiService.presenceFlux(it).buffer() }
     }
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -33,15 +33,15 @@ class TestController(
     ): Flux<NowPresence> {
         val zoneId = filters.timezone
         val startOfDay = { clock.instant().atZone(zoneId).toLocalDate().atStartOfDay(zoneId).toInstant() }
-        TODO()
+        return Flux.empty()
     }
 
     @GetMapping(path = ["/daily-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun testGetDaily(
         filters: FilterRequest
     ): Flux<NowPresence> {
-        val dailyFilteredFlux = testService.dailyFilteredFlux(filters)
-        return testService.presenceFlux(dailyFilteredFlux)
+        val dailyFilteredFlux = scanApiService.dailyFilteredFlux(filters)
+        return scanApiService.presenceFlux(dailyFilteredFlux)
     }
 }
 

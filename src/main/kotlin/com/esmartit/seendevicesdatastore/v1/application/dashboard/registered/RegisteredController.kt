@@ -24,32 +24,20 @@ class RegisteredController(
 
     @GetMapping(path = ["/total-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAllSensorActivity(): Flux<TotalRegistered> {
-        val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
-        val counter = repository.findWithTailableCursorBy()
-        return Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: TotalRegistered -> b })
+        TODO()
     }
 
     @GetMapping(path = ["/daily-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<DailyDevices> {
-        return registeredService.getDailyRegisteredCount(zoneId).map {
-            DailyDevices(
-                it,
-                Instant.now()
-            )
-        }
+        TODO()
     }
 
     @GetMapping(path = ["/now-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getNowRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): Flux<DailyDevices> {
-        return registeredService.getNowRegisteredCount(zoneId).map {
-            DailyDevices(
-                it,
-                Instant.now()
-            )
-        }
+        TODO()
     }
 }
