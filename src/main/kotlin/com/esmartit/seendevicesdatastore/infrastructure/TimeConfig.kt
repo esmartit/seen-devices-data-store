@@ -10,14 +10,14 @@ import java.time.ZoneOffset
 @Configuration
 class TimeConfig {
 
-//    @Bean
-//    @Profile("dev")
-//    fun devClock(): Clock {
-//        return Clock.fixed(Instant.parse("2020-03-13T20:36:31Z"), ZoneOffset.UTC)
-//    }
+    @Bean
+    @Profile("dev")
+    fun devClock(): Clock {
+        return Clock.fixed(Instant.parse("2020-03-13T20:36:31Z"), ZoneOffset.UTC)
+    }
 
     @Bean
-//    @Profile("!dev")
+    @Profile("!dev")
     fun prodClock(): Clock {
         return Clock.systemUTC()
     }

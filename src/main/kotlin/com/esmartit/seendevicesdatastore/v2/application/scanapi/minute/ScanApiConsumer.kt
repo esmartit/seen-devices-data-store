@@ -1,7 +1,6 @@
 package com.esmartit.seendevicesdatastore.v2.application.scanapi.minute
 
-import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceLocation
-import com.esmartit.seendevicesdatastore.domain.incomingevents.DeviceSeen
+import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
 import com.esmartit.seendevicesdatastore.v1.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredInfo
@@ -20,6 +19,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import java.time.Clock
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 @Component
@@ -37,8 +37,6 @@ class ScanApiConsumer(
     @StreamListener(Sink.INPUT)
     fun handle(event: SensorActivityEvent) {
 
-        saveUniqueDevice(event)
-
         val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
         val clientMac = event.device.clientMac
@@ -48,9 +46,9 @@ class ScanApiConsumer(
         val registeredInfo =
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
-        val scanApiEvent = event.toScanApiActivity(sensorSetting, registeredInfo)
-        val maybeScanApi = repository.findByDeviceClientMacAndSeenTime(
-            scanApiEvent.device.clientMac,
+        val scanApiEvent = event.toScanApiActivity(clock, sensorSetting, registeredInfo)
+        val maybeScanApi = repository.findByClientMacAndSeenTime(
+            scanApiEvent.clientMac,
             scanApiEvent.seenTime
         )
         val existingRSSI = maybeScanApi?.rssi ?: -1000
@@ -62,6 +60,8 @@ class ScanApiConsumer(
         val hourlyScanApiActivity = saveHourlyActivity(seenTime, clientMac, newScanApiEvent)
 
         saveDailyActivity(seenTime, clientMac, hourlyScanApiActivity)
+
+        saveUniqueDevice(event)
     }
 
     private fun saveHourlyActivity(
@@ -109,39 +109,26 @@ class ScanApiConsumer(
 }
 
 private fun SensorActivityEvent.toScanApiActivity(
+    clock: Clock,
     sensorSetting: SensorSetting?,
     userInfo: RegisteredInfo?
 ): ScanApiActivity {
     return ScanApiActivity(
-        apMac = apMac,
-        ssid = device.ssid,
-        location = device.location.toLocation(),
+        clientMac = device.clientMac,
         seenTime = device.seenTime.truncatedTo(ChronoUnit.MINUTES),
-        seenEpoch = device.seenEpoch,
-        rssi = device.rssi,
-        device = device.toDevice(),
-        apFloors = apFloors,
-        sensorSetting = sensorSetting,
-        userInfo = userInfo
-    )
-}
-
-private fun DeviceSeen.toDevice(): Device {
-    return Device(
-        clientMac = clientMac,
-        manufacturer = manufacturer,
-        os = os,
-        ipv6 = ipv6,
-        ipv4 = ipv4
-    )
-}
-
-private fun DeviceLocation.toLocation(): Location {
-    return Location(
-        lat = lat,
-        lng = lng,
-        y = y,
-        x = x,
-        unc = unc
+        age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
+        gender = userInfo?.gender,
+        brand = device.manufacturer,
+        status = sensorSetting?.presence(device.rssi) ?: Position.NO_POSITION,
+        memberShip = userInfo?.memberShip,
+        spotId = sensorSetting?.tags?.get("spot_id"),
+        sensorId = sensorSetting?.tags?.get("sensorname"),
+        countryId = sensorSetting?.tags?.get("country"),
+        stateId = sensorSetting?.tags?.get("state"),
+        cityId = sensorSetting?.tags?.get("city"),
+        zipCode = sensorSetting?.tags?.get("zipcode"),
+        isConnected = !device.ssid.isNullOrBlank(),
+        username = userInfo?.username,
+        rssi = device.rssi
     )
 }

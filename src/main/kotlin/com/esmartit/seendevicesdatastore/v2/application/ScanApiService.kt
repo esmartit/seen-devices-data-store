@@ -1,7 +1,6 @@
 package com.esmartit.seendevicesdatastore.v2.application
 
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
-import com.esmartit.seendevicesdatastore.domain.FlatDevice
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.daily.DailyScanApiReactiveRepository
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
@@ -20,7 +18,6 @@ import java.util.UUID
 
 @Component
 class ScanApiService(
-    private val clock: Clock,
     private val scanApiReactiveRepository: ScanApiReactiveRepository,
     private val hourlyScanApiReactiveRepository: HourlyScanApiReactiveRepository,
     private val dailyScanApiReactiveRepository: DailyScanApiReactiveRepository
@@ -30,7 +27,7 @@ class ScanApiService(
         startDateTimeFilter: Instant? = null,
         endDateTimeFilter: Instant? = null,
         filters: FilterRequest? = null
-    ): Flux<FlatDevice> {
+    ): Flux<ScanApiActivity> {
         return when {
             startDateTimeFilter != null && endDateTimeFilter != null -> {
                 scanApiReactiveRepository.findBySeenTimeBetween(startDateTimeFilter, endDateTimeFilter)
@@ -44,16 +41,12 @@ class ScanApiService(
             else -> {
                 scanApiReactiveRepository.findAll()
             }
-        }.map { event ->
-            event.toFlatDevice(clock).takeIf { filters?.handle(it) ?: true }
-                ?: FlatDevice(
-                    event.device.clientMac,
-                    event.seenTime
-                )
+        }.filter {
+            filters?.handle(it) ?: true
         }
     }
 
-    fun filteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun filteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -61,7 +54,7 @@ class ScanApiService(
         return filteredFluxByTime(startDateTimeFilter, endDateTimeFilter, filters)
     }
 
-    fun hourlyFilteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun hourlyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -73,7 +66,7 @@ class ScanApiService(
         startDateTimeFilter: Instant?,
         endDateTimeFilter: Instant?,
         filters: FilterRequest?
-    ): Flux<FlatDevice> {
+    ): Flux<ScanApiActivity> {
         return when {
             startDateTimeFilter != null && endDateTimeFilter != null -> {
                 hourlyScanApiReactiveRepository.findBySeenTimeBetween(startDateTimeFilter, endDateTimeFilter)
@@ -89,17 +82,16 @@ class ScanApiService(
             }
         }.map { event ->
             event.activity
-                .map { it.toFlatDevice(clock) }
                 .filter { filters?.handle(it) ?: true }
                 .maxBy { it.status }?.copy(seenTime = event.seenTime)
-                ?: FlatDevice(
-                    event.clientMac,
-                    event.seenTime
+                ?: ScanApiActivity(
+                    clientMac = event.clientMac,
+                    seenTime = event.seenTime
                 )
         }
     }
 
-    fun dailyFilteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun dailyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -119,18 +111,17 @@ class ScanApiService(
             }
         }.map { event ->
             event.activity.flatMap { it.activity }
-                .map { it.toFlatDevice(clock) }
                 .filter { filters.handle(it) }
                 .maxBy { it.status }?.copy(seenTime = event.seenTime)
-                ?: FlatDevice(
-                    event.clientMac,
-                    event.seenTime
+                ?: ScanApiActivity(
+                    clientMac = event.clientMac,
+                    seenTime = event.seenTime
                 )
         }
     }
 
-    fun presenceFlux(someFlux: Flux<FlatDevice>): Flux<NowPresence> {
-        return someFlux.filter { it.isInRange() }
+    fun scanByTime(someFlux: Flux<ScanApiActivity>): Flux<NowPresence> {
+        return someFlux
             .window(Duration.ofMillis(150))
             .flatMap { w -> w.groupBy { it.seenTime }.flatMap { g -> groupByTime(g) } }
             .groupBy { it.time }
@@ -156,7 +147,7 @@ class ScanApiService(
             ?.toInstant()
     }
 
-    private fun groupByTime(group: GroupedFlux<Instant, FlatDevice>): Mono<NowPresence> {
+    fun groupByTime(group: GroupedFlux<Instant, ScanApiActivity>): Mono<NowPresence> {
         return group.reduce(
             NowPresence(
                 UUID.randomUUID().toString(),
@@ -171,24 +162,4 @@ class ScanApiService(
             }
         }
     }
-}
-
-private fun ScanApiActivity.toFlatDevice(clock: Clock): FlatDevice {
-    return FlatDevice(
-        clientMac = device.clientMac,
-        seenTime = seenTime,
-        age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
-        gender = userInfo?.gender,
-        brand = device.manufacturer,
-        status = sensorSetting?.presence(rssi) ?: Position.NO_POSITION,
-        memberShip = userInfo?.memberShip,
-        spotId = sensorSetting?.tags?.get("spot_id"),
-        sensorId = sensorSetting?.tags?.get("sensorname"),
-        countryId = sensorSetting?.tags?.get("country"),
-        stateId = sensorSetting?.tags?.get("state"),
-        cityId = sensorSetting?.tags?.get("city"),
-        zipCode = sensorSetting?.tags?.get("zipcode"),
-        isConnected = !ssid.isNullOrBlank(),
-        username = userInfo?.username
-    )
 }
