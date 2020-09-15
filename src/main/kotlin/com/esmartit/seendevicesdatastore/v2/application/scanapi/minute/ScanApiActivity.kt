@@ -28,7 +28,7 @@ data class ScanApiActivity(
     val zipCode: String? = "",
     val memberShip: Boolean? = null,
     val registeredDate: Instant? = null,
-    val countInAnHour: Int = 0,
+    val countInAnHour: Double = 0.0,
     val isConnected: Boolean = false,
     val username: String? = null
 ) {

@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Component
@@ -62,7 +63,7 @@ class ScanApiService(
         return hourlyFilteredFlux(startDateTimeFilter, endDateTimeFilter, filters)
     }
 
-    private fun hourlyFilteredFlux(
+    fun hourlyFilteredFlux(
         startDateTimeFilter: Instant?,
         endDateTimeFilter: Instant?,
         filters: FilterRequest?
@@ -88,7 +89,7 @@ class ScanApiService(
                     clientMac = event.clientMac,
                     seenTime = event.seenTime
                 )
-        }
+        }.filter { it.isInRange() }
     }
 
     fun dailyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
@@ -110,14 +111,18 @@ class ScanApiService(
                 dailyScanApiReactiveRepository.findAll()
             }
         }.map { event ->
+
+            val countInAnHour = event.activity.map { it.activity.count() }.average()
+
             event.activity.flatMap { it.activity }
                 .filter { filters.handle(it) }
-                .maxBy { it.status }?.copy(seenTime = event.seenTime)
+                .maxBy { it.status }
+                ?.copy(seenTime = event.seenTime.truncatedTo(ChronoUnit.DAYS), countInAnHour = countInAnHour)
                 ?: ScanApiActivity(
                     clientMac = event.clientMac,
                     seenTime = event.seenTime
                 )
-        }
+        }.filter { it.isInRange() }
     }
 
     fun scanByTime(someFlux: Flux<ScanApiActivity>): Flux<NowPresence> {
