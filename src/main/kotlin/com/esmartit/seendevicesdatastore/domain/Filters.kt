@@ -28,7 +28,8 @@ data class FilterRequest(
     val startDate: String? = null,
     val endDate: String? = null,
     val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY,
-    val inRange: Boolean? = null
+    val inRange: Boolean? = null,
+    val isConnected: Boolean? = null
 ) {
 
     private fun filter(param: Any?, param2: Any?): Boolean {
@@ -55,6 +56,7 @@ data class FilterRequest(
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&
             filter(inRange, event.isInRange()) &&
+            filter(isConnected, event.isConnected) &&
             sensorHour >= startHour &&
             sensorHour <= endHour
     }

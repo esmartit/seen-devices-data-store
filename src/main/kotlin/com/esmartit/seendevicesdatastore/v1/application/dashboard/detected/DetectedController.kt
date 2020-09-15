@@ -39,7 +39,7 @@ class DetectedController(
     fun getDailyDetected(
         filters: FilterRequest
     ): Flux<NowPresence> {
-        val todayDetected = todayFlux(filters)
+        val todayDetected = commonService.todayFlux(filters)
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last(NowPresence(UUID.randomUUID().toString())) }
@@ -53,7 +53,7 @@ class DetectedController(
         val fifteenSeconds = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap {
-                todayFlux(filters)
+                commonService.todayFlux(filters)
                     .map { it.inCount + it.limitCount + it.outCount }
                     .sum()
                     .map { DailyDevices(it, clock.now()) }
@@ -75,15 +75,7 @@ class DetectedController(
                 .collectList()
         }
 
-    private fun todayFlux(filters: FilterRequest): Flux<NowPresence> {
-        val zoneId = filters.timezone
-        return scanApiService.hourlyFilteredFlux(
-            startDateTimeFilter = clock.startOfDay(zoneId).toInstant(),
-            endDateTimeFilter = null,
-            filters = filters
-        ).groupBy { it.seenTime }.flatMap { scanApiService.groupByTime(it) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
-    }
+
 }
 
 data class BrandCount(val name: String, val value: Long)
