@@ -2,7 +2,7 @@ version: '3'
 services:
 
   endpoint:
-    image: esmartit/access-point-incoming-endpoint:2.0.0
+    image: esmartit/access-point-incoming-endpoint:2.0.2
     ports:
       - "9001:9000"
     depends_on:
