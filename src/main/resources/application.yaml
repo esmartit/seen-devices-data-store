@@ -3,7 +3,7 @@ server.port: "${SERVER_PORT:9000}"
 spring:
   data:
     mongodb:
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke"
+      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost:2017}/smartpoke"
   cloud:
     stream:
       kafka:
