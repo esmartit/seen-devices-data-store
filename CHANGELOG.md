@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.0.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.1...v3.0.2) (2020-09-15)
+
+
+### Bug Fixes
+
+* mongodb settings ([8354a65](https://github.com/esmartit/seen-devices-data-store/commit/8354a654c489b1581239615641510baf9c8df567))
+
 ## [3.0.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.0...v3.0.1) (2020-09-15)
 
 
