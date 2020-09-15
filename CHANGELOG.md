@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.0.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.2...v3.0.3) (2020-09-15)
+
+
+### Bug Fixes
+
+* yaml props ([2fa1ffa](https://github.com/esmartit/seen-devices-data-store/commit/2fa1ffa188ef32d473bf75201aaeb52c9cf842c0))
+
 ## [3.0.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.1...v3.0.2) (2020-09-15)
 
 
