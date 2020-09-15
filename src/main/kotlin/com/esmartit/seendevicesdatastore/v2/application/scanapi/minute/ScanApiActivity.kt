@@ -1,41 +1,38 @@
 package com.esmartit.seendevicesdatastore.v2.application.scanapi.minute
 
-import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredInfo
-import com.esmartit.seendevicesdatastore.v1.application.sensorsettings.SensorSetting
+import com.esmartit.seendevicesdatastore.domain.Position
+import com.esmartit.seendevicesdatastore.v1.application.radius.registered.Gender
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
 @Document
-@CompoundIndex(def = "{'device.clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx")
+@CompoundIndex(def = "{'clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx")
 data class ScanApiActivity(
     val id: String? = null,
-    val apMac: String,
-    val seenEpoch: Int,
+    @Indexed(name = "clientMac_idx")
+    val clientMac: String,
     @Indexed(name = "seenTime_idx")
     val seenTime: Instant,
-    val rssi: Int,
-    val ssid: String?,
-    val device: Device,
-    val apFloors: List<String?>,
-    val sensorSetting: SensorSetting? = null,
-    val location: Location,
-    val userInfo: RegisteredInfo? = null
-)
-
-data class Device(
-    val clientMac: String,
-    val ipv4: String?,
-    val ipv6: String?,
-    val manufacturer: String?,
-    val os: String?
-)
-
-data class Location(
-    val lat: Double?,
-    val lng: Double?,
-    val unc: Double?,
-    val x: List<String?>,
-    val y: List<String?>
-)
+    val age: Int = 1900,
+    val rssi: Int = -10000,
+    val countryId: String? = null,
+    val stateId: String? = null,
+    val cityId: String? = null,
+    val spotId: String? = null,
+    val sensorId: String? = null,
+    val brand: String? = null,
+    val status: Position = Position.NO_POSITION,
+    val gender: Gender? = null,
+    val zipCode: String? = "",
+    val memberShip: Boolean? = null,
+    val registeredDate: Instant? = null,
+    val countInAnHour: Double = 0.0,
+    val isConnected: Boolean = false,
+    val username: String? = null
+) {
+    fun isInRange(): Boolean {
+        return status != Position.NO_POSITION
+    }
+}

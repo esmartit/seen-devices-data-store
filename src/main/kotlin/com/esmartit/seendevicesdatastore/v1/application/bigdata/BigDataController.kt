@@ -1,10 +1,13 @@
 package com.esmartit.seendevicesdatastore.v1.application.bigdata
 
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
-import com.esmartit.seendevicesdatastore.domain.FlatDevice
-import com.esmartit.seendevicesdatastore.v1.repository.Position
-import com.esmartit.seendevicesdatastore.v1.services.BigDataService
-import com.esmartit.seendevicesdatastore.v1.services.DeviceWithPositionAndTimeGroup
+import com.esmartit.seendevicesdatastore.domain.Position
+import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup.BY_DAY
+import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup.BY_MONTH
+import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup.BY_WEEK
+import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup.BY_YEAR
+import com.esmartit.seendevicesdatastore.v2.application.ScanApiService
+import com.esmartit.seendevicesdatastore.v2.application.scanapi.minute.ScanApiActivity
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,73 +15,75 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
+import reactor.kotlin.extra.math.sum
 import java.time.Duration
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
 import java.util.UUID
 
 
 @RestController
 @RequestMapping("/bigdata")
 class BigDataController(
-    private val bigDataService: BigDataService
+    private val scanApiService: ScanApiService
 ) {
-
-    @GetMapping(path = ["/find-debug"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun findDebug(
-        requestFilters: FilterRequest
-    ): Flux<FlatDevice> {
-
-        return bigDataService.filteredFlux(requestFilters)
-    }
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnected(
-        requestFilters: FilterRequest
+        filters: FilterRequest
     ): Flux<BigDataPresence> {
 
-        return bigDataService.filteredFluxGrouped(requestFilters)
-            .flatMap(this::groupByTime)
-            .window(Duration.ofMillis(300))
-            .flatMap { w -> w.groupBy { it.id } }
-            .flatMap { g -> g.last(BigDataPresence()) }
-            .concatWith(Mono.just(BigDataPresence()))
+        val woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
+        val timeZone = filters.timezone
+        val timeFun: (ZonedDateTime) -> String = when (filters.groupBy) {
+            BY_DAY -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) }
+            BY_WEEK -> { time -> "${time.year}/${time[woy]}" }
+            BY_MONTH -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy/MM")) }
+            BY_YEAR -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy")) }
+        }
+
+        return scanApiService.dailyFilteredFlux(filters)
+            .map { timeFun(it.seenTime.atZone(timeZone)) to it }
+            .window(Duration.ofMillis(150))
+            .flatMap { w -> w.groupBy { it.first }.flatMap { g -> groupByTime(g) } }
+            .groupBy { it.group }
+            .flatMap { g ->
+                g.scan { t: BigDataPresence, u: BigDataPresence ->
+                    t.copy(
+                        inCount = t.inCount + u.inCount,
+                        limitCount = t.limitCount + u.limitCount,
+                        outCount = t.outCount + u.outCount
+                    )
+                }
+            }.concatWith(Mono.just(BigDataPresence()))
     }
 
     @GetMapping(path = ["/average-presence"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAveragePresence(
-        requestFilters: FilterRequest
-    ) = bigDataService.filteredFlux(requestFilters)
-        .groupBy { it.seenTime.atZone(requestFilters.timezone).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) }
-        .flatMap { g ->
-            g.scan(g.key()!! to mutableMapOf<String, MutableList<Int>>()) { t, u ->
-                t.also {
-                    it.second.computeIfAbsent(u.clientMac) { mutableListOf() }
-                    it.second.computeIfPresent(u.clientMac) { k, l -> l.apply { add(u.countInAnHour) } }
-                }
-            }.map { it.first to it.second.mapValues { l -> l.value.average() }.values.average() }
-        }
-        .scan(mutableMapOf<String, Double>()) { t, u ->
-            t.apply {
-                this[u.first] = u.second
+        filters: FilterRequest
+    ): Flux<AveragePresence> {
+        return scanApiService.dailyFilteredFlux(filters)
+            .window(Duration.ofMillis(300))
+            .flatMap { w ->
+                w.groupBy { it.seenTime }.flatMap { g -> g.sum { it.countInAnHour }.map { g.key() to it } }
             }
-        }.map { it.values.average() }
-        .window(Duration.ofMillis(300))
-        .flatMap { w -> w.last(0.0) }
-        .map { AveragePresence(it) }
-        .concatWith(Mono.just(AveragePresence(0.0, true)))
+            .groupBy { it.first }
+            .flatMap { g -> g.map { it.second.toDouble() }.scan { t, u -> (t + u) / 2 } }
+            .map { AveragePresence(it) }
+            .concatWith(Mono.just(AveragePresence(0.0, true)))
+    }
 
-    private fun groupByTime(group: GroupedFlux<String, DeviceWithPositionAndTimeGroup>): Flux<BigDataPresence> {
-        return group.scan(
+    fun groupByTime(group: GroupedFlux<String, Pair<String, ScanApiActivity>>): Mono<BigDataPresence> {
+        return group.reduce(
             BigDataPresence(
                 id = UUID.randomUUID().toString(),
                 group = group.key()!!,
-                inCount = 0,
-                limitCount = 0,
-                outCount = 0,
                 isLast = false
             )
         ) { acc, curr ->
-            when (curr.deviceWithPosition.status) {
+            when (curr.second.status) {
                 Position.IN -> acc.copy(inCount = acc.inCount + 1)
                 Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
                 Position.OUT -> acc.copy(outCount = acc.outCount + 1)

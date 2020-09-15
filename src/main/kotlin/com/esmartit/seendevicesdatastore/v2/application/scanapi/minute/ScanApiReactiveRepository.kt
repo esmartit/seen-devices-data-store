@@ -15,5 +15,5 @@ interface ScanApiReactiveRepository : ReactiveMongoRepository<ScanApiActivity, S
 
 @Repository
 interface ScanApiRepository : MongoRepository<ScanApiActivity, String> {
-    fun findByDeviceClientMacAndSeenTime(clientMac: String, seenTime: Instant): ScanApiActivity?
+    fun findByClientMacAndSeenTime(clientMac: String, seenTime: Instant): ScanApiActivity?
 }

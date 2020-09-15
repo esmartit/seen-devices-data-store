@@ -2,7 +2,7 @@ package com.esmartit.seendevicesdatastore.domain
 
 import com.esmartit.seendevicesdatastore.v1.application.dashboard.detected.FilterDateGroup
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.Gender
-import com.esmartit.seendevicesdatastore.v1.repository.Position
+import com.esmartit.seendevicesdatastore.v2.application.scanapi.minute.ScanApiActivity
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -27,14 +27,16 @@ data class FilterRequest(
     val memberShip: Boolean? = null,
     val startDate: String? = null,
     val endDate: String? = null,
-    val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY
+    val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY,
+    val inRange: Boolean? = null,
+    val isConnected: Boolean? = null
 ) {
 
     private fun filter(param: Any?, param2: Any?): Boolean {
         return param?.let { it == param2 } ?: true
     }
 
-    fun handle(event: FlatDevice): Boolean {
+    fun handle(event: ScanApiActivity): Boolean {
 
         val sensorHour = event.seenTime.atZone(timezone).hour
         val startHour = startTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 0
@@ -53,6 +55,8 @@ data class FilterRequest(
             filter(status, event.status) &&
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&
+            filter(inRange, event.isInRange()) &&
+            filter(isConnected, event.isConnected) &&
             sensorHour >= startHour &&
             sensorHour <= endHour
     }

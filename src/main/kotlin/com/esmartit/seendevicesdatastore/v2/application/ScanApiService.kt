@@ -1,9 +1,8 @@
 package com.esmartit.seendevicesdatastore.v2.application
 
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
-import com.esmartit.seendevicesdatastore.domain.FlatDevice
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.v1.repository.Position
+import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.daily.DailyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.hourly.HourlyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.v2.application.scanapi.minute.ScanApiActivity
@@ -12,15 +11,14 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Component
-class TestService(
-    private val clock: Clock,
+class ScanApiService(
     private val scanApiReactiveRepository: ScanApiReactiveRepository,
     private val hourlyScanApiReactiveRepository: HourlyScanApiReactiveRepository,
     private val dailyScanApiReactiveRepository: DailyScanApiReactiveRepository
@@ -30,7 +28,7 @@ class TestService(
         startDateTimeFilter: Instant? = null,
         endDateTimeFilter: Instant? = null,
         filters: FilterRequest? = null
-    ): Flux<FlatDevice> {
+    ): Flux<ScanApiActivity> {
         return when {
             startDateTimeFilter != null && endDateTimeFilter != null -> {
                 scanApiReactiveRepository.findBySeenTimeBetween(startDateTimeFilter, endDateTimeFilter)
@@ -44,16 +42,12 @@ class TestService(
             else -> {
                 scanApiReactiveRepository.findAll()
             }
-        }.map { event ->
-            event.toFlatDevice(clock).takeIf { filters?.handle(it) ?: true }
-                ?: FlatDevice(
-                    event.device.clientMac,
-                    event.seenTime
-                )
+        }.filter {
+            filters?.handle(it) ?: true
         }
     }
 
-    fun filteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun filteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -61,7 +55,7 @@ class TestService(
         return filteredFluxByTime(startDateTimeFilter, endDateTimeFilter, filters)
     }
 
-    fun hourlyFilteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun hourlyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -69,11 +63,11 @@ class TestService(
         return hourlyFilteredFlux(startDateTimeFilter, endDateTimeFilter, filters)
     }
 
-    private fun hourlyFilteredFlux(
+    fun hourlyFilteredFlux(
         startDateTimeFilter: Instant?,
         endDateTimeFilter: Instant?,
         filters: FilterRequest?
-    ): Flux<FlatDevice> {
+    ): Flux<ScanApiActivity> {
         return when {
             startDateTimeFilter != null && endDateTimeFilter != null -> {
                 hourlyScanApiReactiveRepository.findBySeenTimeBetween(startDateTimeFilter, endDateTimeFilter)
@@ -89,17 +83,16 @@ class TestService(
             }
         }.map { event ->
             event.activity
-                .map { it.toFlatDevice(clock) }
                 .filter { filters?.handle(it) ?: true }
                 .maxBy { it.status }?.copy(seenTime = event.seenTime)
-                ?: FlatDevice(
-                    event.clientMac,
-                    event.seenTime
+                ?: ScanApiActivity(
+                    clientMac = event.clientMac,
+                    seenTime = event.seenTime
                 )
-        }
+        }.filter { it.isInRange() }
     }
 
-    fun dailyFilteredFlux(filters: FilterRequest): Flux<FlatDevice> {
+    fun dailyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -118,19 +111,22 @@ class TestService(
                 dailyScanApiReactiveRepository.findAll()
             }
         }.map { event ->
+
+            val countInAnHour = event.activity.map { it.activity.count() }.average()
+
             event.activity.flatMap { it.activity }
-                .map { it.toFlatDevice(clock) }
                 .filter { filters.handle(it) }
-                .maxBy { it.status }?.copy(seenTime = event.seenTime)
-                ?: FlatDevice(
-                    event.clientMac,
-                    event.seenTime
+                .maxBy { it.status }
+                ?.copy(seenTime = event.seenTime.truncatedTo(ChronoUnit.DAYS), countInAnHour = countInAnHour)
+                ?: ScanApiActivity(
+                    clientMac = event.clientMac,
+                    seenTime = event.seenTime
                 )
-        }
+        }.filter { it.isInRange() }
     }
 
-    fun presenceFlux(someFlux: Flux<FlatDevice>): Flux<NowPresence> {
-        return someFlux.filter { it.isInRange() }
+    fun scanByTime(someFlux: Flux<ScanApiActivity>): Flux<NowPresence> {
+        return someFlux
             .window(Duration.ofMillis(150))
             .flatMap { w -> w.groupBy { it.seenTime }.flatMap { g -> groupByTime(g) } }
             .groupBy { it.time }
@@ -156,7 +152,7 @@ class TestService(
             ?.toInstant()
     }
 
-    private fun groupByTime(group: GroupedFlux<Instant, FlatDevice>): Mono<NowPresence> {
+    fun groupByTime(group: GroupedFlux<Instant, ScanApiActivity>): Mono<NowPresence> {
         return group.reduce(
             NowPresence(
                 UUID.randomUUID().toString(),
@@ -171,24 +167,4 @@ class TestService(
             }
         }
     }
-}
-
-private fun ScanApiActivity.toFlatDevice(clock: Clock): FlatDevice {
-    return FlatDevice(
-        clientMac = device.clientMac,
-        seenTime = seenTime,
-        age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
-        gender = userInfo?.gender,
-        brand = device.manufacturer,
-        status = sensorSetting?.presence(rssi) ?: Position.NO_POSITION,
-        memberShip = userInfo?.memberShip,
-        spotId = sensorSetting?.tags?.get("spot_id"),
-        sensorId = sensorSetting?.tags?.get("sensorname"),
-        countryId = sensorSetting?.tags?.get("country"),
-        stateId = sensorSetting?.tags?.get("state"),
-        cityId = sensorSetting?.tags?.get("city"),
-        zipCode = sensorSetting?.tags?.get("zipcode"),
-        isConnected = !ssid.isNullOrBlank(),
-        username = userInfo?.username
-    )
 }

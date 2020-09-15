@@ -2,7 +2,7 @@ package com.esmartit.seendevicesdatastore.v1.application.dashboard.dailyregister
 
 import com.esmartit.seendevicesdatastore.v1.services.RegisteredService
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUser
-import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserReactiveRepository
+//import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserReactiveRepository
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.jupiter.api.Test
@@ -17,7 +17,7 @@ class RegisteredServiceTest {
     @Test
     fun `daily registered count`() {
 
-        val clock = Clock.fixed(Instant.parse("2020-03-13T20:36:31Z"), ZoneOffset.UTC)
+       /* val clock = Clock.fixed(Instant.parse("2020-03-13T20:36:31Z"), ZoneOffset.UTC)
         val repo = mock<RegisteredUserReactiveRepository>()
         val zoneId = ZoneOffset.UTC
         val dailyRegisteredService =
@@ -41,6 +41,6 @@ class RegisteredServiceTest {
             .subscribe {
                 println(it)
             }
-//        TimeUnit.SECONDS.sleep(60)
+//        TimeUnit.SECONDS.sleep(60)*/
     }
 }

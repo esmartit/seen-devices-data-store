@@ -1,21 +1,26 @@
 package com.esmartit.seendevicesdatastore.v1.application.dashboard.totaluniquedevices
 
+import com.esmartit.seendevicesdatastore.domain.TotalDevices
+import com.esmartit.seendevicesdatastore.v1.services.ClockService
+import com.esmartit.seendevicesdatastore.v1.services.CommonService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import java.time.Duration
-import java.util.function.BiFunction
 
 @RestController
 @RequestMapping("/sensor-activity")
-class TotalDevicesController(private val repository: TotalDevicesReactiveRepository) {
+class TotalDevicesController(
+    private val commonService: CommonService,
+    private val clockService: ClockService
+) {
 
     @GetMapping(path = ["/unique-devices-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAllSensorActivity(): Flux<TotalDevices> {
-        val ticker = Flux.interval(Duration.ofSeconds(1)).onBackpressureDrop()
-        val counter = repository.findWithTailableCursorBy()
-        return Flux.combineLatest(ticker, counter, BiFunction { _: Long, b: TotalDevices -> b })
+        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15))
+            .flatMap { commonService.allDevicesCount() }
+            .map { TotalDevices(it, clockService.now()) }
     }
 }

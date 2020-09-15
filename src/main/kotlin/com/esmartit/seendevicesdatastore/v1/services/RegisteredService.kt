@@ -3,6 +3,7 @@ package com.esmartit.seendevicesdatastore.v1.services
 import com.esmartit.seendevicesdatastore.v1.application.radius.registered.RegisteredUserReactiveRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.Clock
 import java.time.Duration
 import java.time.ZoneId
@@ -13,6 +14,10 @@ class RegisteredService(
     private val repository: RegisteredUserReactiveRepository,
     private val clock: Clock
 ) {
+
+    fun getTotalRegisteredCount(): Mono<Long> {
+        return repository.count()
+    }
 
     fun getDailyRegisteredCount(zoneId: ZoneId): Flux<Long> {
 

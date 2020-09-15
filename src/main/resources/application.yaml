@@ -18,28 +18,20 @@ spring:
       bindings:
         input:
           destination: "smartpoke-device-presence"
-          group: "smartpoke.data-store.device-presence"
-        unique-devices-detected-count-input:
-          destination: "smartpoke-unique-devices-detected-count"
-          group: "smartpoke.data-store.unique-devices-detected-count"
-        device-position-input:
-          destination: "smartpoke-device-position"
-          group: "smartpoke.data-store.device-position"
+          group: "smartpoke.data-store"
         registered-device-input:
           destination: "smartpoke-registered-users"
-          group: "smartpoke.data-store.registered-users"
+          group: "smartpoke.data-store"
         radius-activity-input:
           destination: "smartpoke-session-activity"
-          group: "smartpoke.data-store.radius-activity"
+          group: "smartpoke.data-store"
         restream-output:
           destination: "smartpoke-device-presence"
-        total-registered-input:
-          destination: "smartpoke-registered-users-count"
-          group: "smartpoke.data-store.total-registered-input"
-        sensor-settings-output:
-          destination: "smartpoke-sensor-settings"
 
 management:
+  health:
+    probes:
+      enabled: true
   endpoints:
     web:
       exposure:

@@ -22,16 +22,15 @@ class ReStreamController(
 ) {
 
     @GetMapping(path = ["/re-stream"])
-    fun getAllSensorActivity(): Flux<DeviceSeenEventReStream> {
+    fun getAllSensorActivity(): Flux<SensorActivity> {
         return repository.findAll()
-            .map { it.toDeviceSeenEvent() }
             .window(Duration.ofMillis(800))
             .flatMap { w -> w.doOnNext { sendEvent(it) } }
             .reduce { _, lastEvent -> lastEvent }
             .flux()
     }
 
-    private fun sendEvent(it: DeviceSeenEventReStream) {
+    private fun sendEvent(it: SensorActivity) {
         reStreamOutput.output().send(
             MessageBuilder
                 .withPayload(it)
@@ -39,29 +38,6 @@ class ReStreamController(
                 .build()
         )
     }
-}
-
-private fun SensorActivity.toDeviceSeenEvent(): DeviceSeenEventReStream {
-    return DeviceSeenEventReStream(
-        accessPoint.macAddress ?: "",
-        accessPoint.groupName ?: "",
-        accessPoint.hotSpot ?: "",
-        accessPoint.sensorName ?: "",
-        accessPoint.spotId ?: "",
-        DeviceSeenReStream(
-            device.macAddress,
-            device.ipv4,
-            device.ipv6,
-            DeviceLocationReStream(location.position[0], location.position[1], location.unc),
-            device.manufacturer,
-            device.os,
-            rssi,
-            seenTime.epochSecond.toInt(),
-            seenTime.toString(),
-            accessPoint.sensorName
-        ),
-        accessPoint.floors
-    )
 }
 
 interface ReStreamOutput {

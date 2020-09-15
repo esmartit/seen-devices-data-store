@@ -2,22 +2,13 @@ version: '3'
 services:
 
   endpoint:
-    image: esmartit/access-point-incoming-endpoint:latest
+    image: esmartit/access-point-incoming-endpoint:2.0.0
     ports:
       - "9001:9000"
     depends_on:
       - kafka
     environment:
       KAFKA_BROKER_HOST: "kafka:9092"
-
-  live_counter:
-    image: esmartit/live-stream-counters:latest
-    ports:
-      - "9002:9000"
-    environment:
-      KAFKA_BROKER_HOST: "kafka:9092"
-    depends_on:
-      - kafka
 
   kafka:
     image: wurstmeister/kafka
@@ -27,7 +18,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: "kafka"
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:1:1,smartpoke-device-position:1:1,smartpoke-unique-devices-detected-count:1:1,smartpoke-hourly-presence-count:1:1,smartpoke-sensor-settings:1:1:compact,smartpoke-daily-unique-devices-detected-count:1:1,smartpoke-minute-presence-count:1:1,smartpoke-minute-unique-devices-detected-count:1:1,smartpoke-registered-users:1:1,smartpoke-session-activity:1:1,smartpoke-registered-users-count:1:1"
+      KAFKA_CREATE_TOPICS: "smartpoke-device-presence:1:1,smartpoke-registered-users:1:1,smartpoke-session-activity:1:1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     depends_on:
       - zookeeper
@@ -38,9 +29,9 @@ services:
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
   mongo:
-    image: mongo:4.0
+    image: bitnami/mongodb:4.4.1-debian-10-r0
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: password
