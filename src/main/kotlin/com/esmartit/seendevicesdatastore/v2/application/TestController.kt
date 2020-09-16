@@ -2,14 +2,14 @@ package com.esmartit.seendevicesdatastore.v2.application
 
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.v1.services.ClockService
+import com.esmartit.seendevicesdatastore.services.ClockService
+import com.esmartit.seendevicesdatastore.services.ScanApiService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import java.time.Duration
 import java.time.ZoneId
 
 @RestController
