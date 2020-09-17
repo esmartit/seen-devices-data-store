@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.0.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.4...v3.0.5) (2020-09-17)
+
+
+### Bug Fixes
+
+* adjusting mongo index ([4a4718e](https://github.com/esmartit/seen-devices-data-store/commit/4a4718e4f6ed4dbdf9bff6515177b360deccc8e1))
+
 ## [3.0.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.3...v3.0.4) (2020-09-16)
 
 
