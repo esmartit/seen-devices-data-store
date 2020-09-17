@@ -74,3 +74,8 @@ mongodb:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9216"
         prometheus.io/path: "/metrics"
+#  persistence:
+#    enabled: true
+#    storageClass: "aws-efs"
+#    accessModes:
+#      - ReadWriteMany

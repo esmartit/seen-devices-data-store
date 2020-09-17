@@ -4,6 +4,7 @@ spring:
   data:
     mongodb:
       uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost:2017}/smartpoke"
+      auto-index-creation: true
   cloud:
     stream:
       kafka:
