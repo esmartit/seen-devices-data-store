@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 0
 
 image:
   repository: esmartit/seen-devices-data-store
@@ -34,7 +34,7 @@ app:
   kafka:
     host: "event-bus-kafka:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.dev-env.svc.cluster.local"
+    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.dev-env.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
 
@@ -58,7 +58,7 @@ mongodb:
   enabled: true
   architecture: replicaset
   systemLogVerbosity: 3
-  replicaCount: 4
+  replicaCount: 2
   auth:
     rootPassword: "password"
     username: "spring"
@@ -74,8 +74,8 @@ mongodb:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9216"
         prometheus.io/path: "/metrics"
-#  persistence:
-#    enabled: true
-#    storageClass: "aws-efs"
-#    accessModes:
-#      - ReadWriteMany
+  persistence:
+    enabled: true
+    storageClass: "aws-efs"
+    accessModes:
+      - ReadWriteMany
