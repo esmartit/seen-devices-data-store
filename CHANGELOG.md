@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.0.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.5...v3.0.6) (2020-09-17)
+
+
+### Bug Fixes
+
+* adjusting kafka commit ([edc2c91](https://github.com/esmartit/seen-devices-data-store/commit/edc2c91d681a21dfd9d506e3b277c65da073655c))
+
 ## [3.0.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.4...v3.0.5) (2020-09-17)
 
 
