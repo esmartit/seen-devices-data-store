@@ -84,7 +84,7 @@ class ScanApiService(
         }.map { event ->
             event.activity
                 .filter { filters?.handle(it) ?: true }
-                .maxBy { it.status }?.copy(seenTime = event.seenTime)
+                .maxBy { it.status.value }?.copy(seenTime = event.seenTime)
                 ?: ScanApiActivity(
                     clientMac = event.clientMac,
                     seenTime = event.seenTime
@@ -116,7 +116,7 @@ class ScanApiService(
 
             event.activity.flatMap { it.activity }
                 .filter { filters.handle(it) }
-                .maxBy { it.status }
+                .maxBy { it.status.value }
                 ?.copy(seenTime = event.seenTime.truncatedTo(ChronoUnit.DAYS), countInAnHour = countInAnHour)
                 ?: ScanApiActivity(
                     clientMac = event.clientMac,

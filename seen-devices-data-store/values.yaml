@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 0
+replicaCount: 6
 
 image:
   repository: esmartit/seen-devices-data-store
@@ -32,13 +32,14 @@ securityContext: {}
 
 app:
   kafka:
-    host: "event-bus-kafka:9092"
+    host: "event-bus-kafka.dev-env.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.dev-env.svc.cluster.local"
+    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.dev-env.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
 
 #  kubectl create secret generic mongodb-user-secret --from-literal=password=password
+
 
 service:
   type: ClusterIP
@@ -58,7 +59,7 @@ mongodb:
   enabled: true
   architecture: replicaset
   systemLogVerbosity: 3
-  replicaCount: 2
+  replicaCount: 4
   auth:
     rootPassword: "password"
     username: "spring"
@@ -66,7 +67,7 @@ mongodb:
     database: "smartpoke"
   pdb:
     create: true
-    minAvailable: 1
+    minAvailable: 2
   metrics:
     enabled: true
     service:
@@ -76,6 +77,6 @@ mongodb:
         prometheus.io/path: "/metrics"
   persistence:
     enabled: true
-    storageClass: "aws-efs"
+    storageClass: "gp2"
     accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
