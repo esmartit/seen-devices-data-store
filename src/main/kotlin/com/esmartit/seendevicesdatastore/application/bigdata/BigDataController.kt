@@ -4,9 +4,9 @@ import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDa
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MONTH
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
-import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position
+import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.services.ScanApiService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import reactor.kotlin.extra.math.sum
 import java.time.Duration
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
@@ -45,6 +45,7 @@ class BigDataController(
         }
 
         return scanApiService.dailyFilteredFlux(filters)
+            .map { it.filter(filters) }
             .map { timeFun(it.seenTime.atZone(timeZone)) to it }
             .window(Duration.ofMillis(150))
             .flatMap { w -> w.groupBy { it.first }.flatMap { g -> groupByTime(g) } }
@@ -64,15 +65,43 @@ class BigDataController(
     fun getAveragePresence(
         filters: FilterRequest
     ): Flux<AveragePresence> {
+//        return scanApiService.dailyFilteredFlux(filters)
+//            .window(Duration.ofMillis(300))
+//            .flatMap { w ->
+//                w.groupBy { it.seenTime }.flatMap { g -> g.sum { it.countInAnHour }.map { g.key() to it } }
+//            }
+//            .groupBy { it.first }
+//            .flatMap { g -> g.map { it.second.toDouble() }.scan { t, u -> (t + u) / 2 } }
+//            .map { AveragePresence(it) }
+//            .concatWith(Mono.just(AveragePresence(0.0, true)))
         return scanApiService.dailyFilteredFlux(filters)
+            .map { it.seenTime to it.sumInADay(filters) }
             .window(Duration.ofMillis(300))
             .flatMap { w ->
-                w.groupBy { it.seenTime }.flatMap { g -> g.sum { it.countInAnHour }.map { g.key() to it } }
+                w.groupBy { it.first }.flatMap { g ->
+                    g.map { it.second }
+                        .collectList()
+                        .map { PartialAveragePresence(g.key()!!, it.sum(), it.size) }
+                }
+            }.scan { t, u ->
+                PartialAveragePresence(u.seenTime, t.value + u.value, t.length + u.length)
+            }.groupBy { it.seenTime }
+            .flatMap { g ->
+                g.map {
+                    it.seenTime to (it.value.toDouble() / it.length)
+                }
+            }.scan(mutableMapOf<Instant, Double>()) { t, u ->
+                t.apply {
+                    this[u.first] = u.second
+                }
             }
-            .groupBy { it.first }
-            .flatMap { g -> g.map { it.second.toDouble() }.scan { t, u -> (t + u) / 2 } }
-            .map { AveragePresence(it) }
-            .concatWith(Mono.just(AveragePresence(0.0, true)))
+            .map {
+                if (it.isEmpty()) {
+                    AveragePresence(0.0)
+                } else {
+                    AveragePresence(it.values.sum() / it.size)
+                }
+            }.concatWith(Mono.just(AveragePresence(0.0, true)))
     }
 
     fun groupByTime(group: GroupedFlux<String, Pair<String, ScanApiActivity>>): Mono<BigDataPresence> {
@@ -102,4 +131,9 @@ data class BigDataPresence(
     val isLast: Boolean = true
 )
 
-data class AveragePresence(val value: Double, val isLast: Boolean = false)
+data class AveragePresence(val value: Double = 0.0, val isLast: Boolean = false)
+data class PartialAveragePresence(val seenTime: Instant, val value: Int, val length: Int)
+data class PartialAveragePresence2(
+    val seenTime: Instant,
+    val partials: MutableList<Pair<Double, Int>> = mutableListOf()
+)

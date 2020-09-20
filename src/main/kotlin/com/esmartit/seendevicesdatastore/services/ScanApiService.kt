@@ -4,6 +4,7 @@ import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiR
 import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiReactiveRepository
+import com.esmartit.seendevicesdatastore.domain.DailyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
@@ -47,22 +48,6 @@ class ScanApiService(
         }
     }
 
-    fun filteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
-
-        val startDateTimeFilter = getStartDateTime(filters)
-        val endDateTimeFilter = getEndDateTime(filters)
-
-        return filteredFluxByTime(startDateTimeFilter, endDateTimeFilter, filters)
-    }
-
-    fun hourlyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
-
-        val startDateTimeFilter = getStartDateTime(filters)
-        val endDateTimeFilter = getEndDateTime(filters)
-
-        return hourlyFilteredFlux(startDateTimeFilter, endDateTimeFilter, filters)
-    }
-
     fun hourlyFilteredFlux(
         startDateTimeFilter: Instant?,
         endDateTimeFilter: Instant?,
@@ -92,7 +77,7 @@ class ScanApiService(
         }.filter { it.isInRange() }
     }
 
-    fun dailyFilteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
+    fun dailyFilteredFlux(filters: FilterRequest): Flux<DailyScanApiActivity> {
 
         val startDateTimeFilter = getStartDateTime(filters)
         val endDateTimeFilter = getEndDateTime(filters)
@@ -110,44 +95,16 @@ class ScanApiService(
             else -> {
                 dailyScanApiReactiveRepository.findAll()
             }
-        }.map { event ->
-
-            val countInAnHour = event.activity.map { it.activity.count() }.average()
-
-            event.activity.flatMap { it.activity }
-                .filter { filters.handle(it) }
-                .maxBy { it.status.value }
-                ?.copy(seenTime = event.seenTime.truncatedTo(ChronoUnit.DAYS), countInAnHour = countInAnHour)
-                ?: ScanApiActivity(
-                    clientMac = event.clientMac,
-                    seenTime = event.seenTime
-                )
-        }.filter { it.isInRange() }
-    }
-
-    fun scanByTime(someFlux: Flux<ScanApiActivity>): Flux<NowPresence> {
-        return someFlux
-            .window(Duration.ofMillis(150))
-            .flatMap { w -> w.groupBy { it.seenTime }.flatMap { g -> groupByTime(g) } }
-            .groupBy { it.time }
-            .flatMap { g ->
-                g.scan { t: NowPresence, u: NowPresence ->
-                    t.copy(
-                        inCount = t.inCount + u.inCount,
-                        limitCount = t.limitCount + u.limitCount,
-                        outCount = t.outCount + u.outCount
-                    )
-                }
-            }
+        }
     }
 
     private fun getStartDateTime(filters: FilterRequest) =
-        filters.startDateTime?.toLocalDate()?.atStartOfDay(ZoneOffset.UTC)?.toInstant()
+        filters.startDateTime?.toLocalDate()?.atStartOfDay(filters.timezone)?.toInstant()
 
     private fun getEndDateTime(filters: FilterRequest): Instant? {
         return filters.endDateTime?.toLocalDate()
             ?.plusDays(1)
-            ?.atStartOfDay(ZoneOffset.UTC)
+            ?.atStartOfDay(filters.timezone)
             ?.minusSeconds(1)
             ?.toInstant()
     }

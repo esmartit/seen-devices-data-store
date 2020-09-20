@@ -1,6 +1,5 @@
 package com.esmartit.seendevicesdatastore.domain
 
-import com.esmartit.seendevicesdatastore.domain.HourlyScanApiActivity
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
@@ -12,5 +11,17 @@ data class DailyScanApiActivity(
     val clientMac: String,
     val seenTime: Instant,
     val activity: Set<HourlyScanApiActivity> = emptySet()
-)
+) {
+    fun sumInADay(filters: FilterRequest): Int {
+        return activity.map { it.countInHour(filters) }.sum()
+    }
+
+    fun filter(filters: FilterRequest): ScanApiActivity {
+        return activity.flatMap { activity.map { it.filter(filters) } }.maxBy { it.status.value }
+            ?: ScanApiActivity(
+                clientMac = clientMac,
+                seenTime = seenTime
+            )
+    }
+}
 
