@@ -46,6 +46,7 @@ class BigDataController(
 
         return scanApiService.dailyFilteredFlux(filters)
             .map { it.filter(filters) }
+            .filter { it.isInRange() }
             .map { timeFun(it.seenTime.atZone(timeZone)) to it }
             .window(Duration.ofMillis(150))
             .flatMap { w -> w.groupBy { it.first }.flatMap { g -> groupByTime(g) } }
@@ -65,15 +66,6 @@ class BigDataController(
     fun getAveragePresence(
         filters: FilterRequest
     ): Flux<AveragePresence> {
-//        return scanApiService.dailyFilteredFlux(filters)
-//            .window(Duration.ofMillis(300))
-//            .flatMap { w ->
-//                w.groupBy { it.seenTime }.flatMap { g -> g.sum { it.countInAnHour }.map { g.key() to it } }
-//            }
-//            .groupBy { it.first }
-//            .flatMap { g -> g.map { it.second.toDouble() }.scan { t, u -> (t + u) / 2 } }
-//            .map { AveragePresence(it) }
-//            .concatWith(Mono.just(AveragePresence(0.0, true)))
         return scanApiService.dailyFilteredFlux(filters)
             .map { it.seenTime to it.sumInADay(filters) }
             .window(Duration.ofMillis(300))

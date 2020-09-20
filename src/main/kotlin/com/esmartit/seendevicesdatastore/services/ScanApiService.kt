@@ -66,15 +66,8 @@ class ScanApiService(
             else -> {
                 hourlyScanApiReactiveRepository.findAll()
             }
-        }.map { event ->
-            event.activity
-                .filter { filters?.handle(it) ?: true }
-                .maxBy { it.status.value }?.copy(seenTime = event.seenTime)
-                ?: ScanApiActivity(
-                    clientMac = event.clientMac,
-                    seenTime = event.seenTime
-                )
-        }.filter { it.isInRange() }
+        }.map { it.filter(filters) }
+            .filter { it.isInRange() }
     }
 
     fun dailyFilteredFlux(filters: FilterRequest): Flux<DailyScanApiActivity> {
@@ -99,14 +92,10 @@ class ScanApiService(
     }
 
     private fun getStartDateTime(filters: FilterRequest) =
-        filters.startDateTime?.toLocalDate()?.atStartOfDay(filters.timezone)?.toInstant()
+        filters.startDateTime?.minusDays(1)?.toInstant()
 
     private fun getEndDateTime(filters: FilterRequest): Instant? {
-        return filters.endDateTime?.toLocalDate()
-            ?.plusDays(1)
-            ?.atStartOfDay(filters.timezone)
-            ?.minusSeconds(1)
-            ?.toInstant()
+        return filters.endDateTime?.plusDays(1)?.toInstant()
     }
 
     fun groupByTime(group: GroupedFlux<Instant, ScanApiActivity>): Mono<NowPresence> {

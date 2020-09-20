@@ -36,7 +36,8 @@ data class FilterRequest(
 
     fun handle(event: ScanApiActivity): Boolean {
 
-        val sensorHour = event.seenTime.atZone(timezone).hour
+        val seenTimeAtZone = event.seenTime.atZone(timezone)
+        val sensorHour = seenTimeAtZone.hour
         val startHour = startTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 0
         val endHour = endTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 23
 
@@ -44,7 +45,11 @@ data class FilterRequest(
             ageStart?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age >= it } } ?: { true }
         val ageEndFilter = ageEnd?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age <= it } } ?: { true }
 
-        return ageStartFilter(event.age) && ageEndFilter(event.age) &&
+        return seenTimeAtZone.isAfter(startDateTime) &&
+            seenTimeAtZone.isBefore(endDateTime?.plusDays(1)?.minusSeconds(1)) &&
+            sensorHour >= startHour &&
+            sensorHour <= endHour &&
+            ageStartFilter(event.age) && ageEndFilter(event.age) &&
             filter(countryId.checkIsNotBlank(), event.countryId) &&
             filter(stateId.checkIsNotBlank(), event.stateId) &&
             filter(cityId.checkIsNotBlank(), event.cityId) &&
@@ -54,9 +59,7 @@ data class FilterRequest(
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&
             filter(inRange, event.isInRange()) &&
-            filter(isConnected, event.isConnected) &&
-            sensorHour >= startHour &&
-            sensorHour <= endHour
+            filter(isConnected, event.isConnected)
     }
 
     val startDateTime: ZonedDateTime? by lazy {

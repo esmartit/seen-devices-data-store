@@ -16,7 +16,7 @@ data class DailyScanApiActivity(
         return activity.map { it.countInHour(filters) }.sum()
     }
 
-    fun filter(filters: FilterRequest): ScanApiActivity {
+    fun filter(filters: FilterRequest?): ScanApiActivity {
         return activity.flatMap { activity.map { it.filter(filters) } }.maxBy { it.status.value }
             ?: ScanApiActivity(
                 clientMac = clientMac,

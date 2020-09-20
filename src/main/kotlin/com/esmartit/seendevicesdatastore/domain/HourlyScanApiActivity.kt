@@ -17,12 +17,13 @@ data class HourlyScanApiActivity(
         return activity.filter { filters.handle(it) }.count()
     }
 
-    fun filter(filters: FilterRequest): ScanApiActivity {
-        return activity.filter { filters.handle(it) }
-            .maxBy { it.status.value } ?: ScanApiActivity(
-            clientMac = clientMac,
-            seenTime = seenTime
-        )
+    fun filter(filters: FilterRequest?): ScanApiActivity {
+        return activity.filter { filters?.handle(it) ?: true }
+            .maxBy { it.status.value }
+            ?: ScanApiActivity(
+                clientMac = clientMac,
+                seenTime = seenTime
+            )
     }
 }
 
