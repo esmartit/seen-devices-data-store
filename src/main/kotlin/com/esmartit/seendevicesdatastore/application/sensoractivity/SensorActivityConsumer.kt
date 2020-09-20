@@ -12,6 +12,11 @@ class SensorActivityConsumer(
 
     @StreamListener(Sink.INPUT)
     fun handle(sensorActivity: SensorActivity) {
-        repository.save(sensorActivity)
+        val clientMac = sensorActivity.device.clientMac
+        val seenTime = sensorActivity.device.seenTime
+        val existingActivity = repository.findByDeviceClientMacAndDeviceSeenTime(clientMac, seenTime)
+        if (existingActivity.isEmpty()) {
+            repository.save(sensorActivity)
+        }
     }
 }
