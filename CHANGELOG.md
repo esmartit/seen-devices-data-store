@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.0.10](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.9...v3.0.10) (2020-09-20)
+
+
+### Bug Fixes
+
+* sensor activity dedup ([aac9fd2](https://github.com/esmartit/seen-devices-data-store/commit/aac9fd2d348f21461f02e5299a3b07aa36101722))
+
 ## [3.0.9](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.8...v3.0.9) (2020-09-20)
 
 
