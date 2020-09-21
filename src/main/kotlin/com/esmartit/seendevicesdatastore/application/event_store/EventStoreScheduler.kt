@@ -18,14 +18,18 @@ class EventStoreScheduler(
     @Scheduled(initialDelay = 120000, fixedDelay = 15000)
     @SchedulerLock(name = "processEvents", lockAtMostFor = "10m", lockAtLeastFor = "10s")
     fun processEvent() {
+        println("processing events...")
         repository.findByProcessed(false)
-            .take(10000)
+            .take(100)
             .doOnNext {
                 val payload = objectMapper.readValue<SensorActivity>(it.payload)
                 service.save(payload)
             }.flatMap {
                 repository.save(it.copy(processed = true))
-            }.subscribe()
+            }.count()
+            .subscribe {
+                println("$it processed events")
+            }
     }
 
     @Scheduled(initialDelay = 240000, fixedDelay = 60000)
