@@ -40,9 +40,9 @@ app:
   eventStore:
     processEvents:
       initialDelay: "120000"
-      fixedDelay: "8000"
+      fixedDelay: "40000"
       lockAtMostFor: "5m"
-      lockAtLeastFor: "10s"
+      lockAtLeastFor: "30s"
       batchSize: "100"
     deleteProcessed:
       initialDelay: "240000"

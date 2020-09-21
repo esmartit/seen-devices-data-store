@@ -33,23 +33,23 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: "PROCESS_EVENTS_INITIAL_DELAY"
-              value: {{ .Values.app.eventStore.processEvents.initialDelay }}
+              value: {{ .Values.app.eventStore.processEvents.initialDelay | quote }}
             - name: "PROCESS_EVENTS_FIXED_DELAY"
-              value: {{ .Values.app.eventStore.processEvents.fixedDelay }}
+              value: {{ .Values.app.eventStore.processEvents.fixedDelay | quote }}
             - name: "PROCESS_EVENTS_LOCK_AT_MOST"
               value: {{ .Values.app.eventStore.processEvents.lockAtMostFor }}
             - name: "PROCESS_EVENTS_LOCK_AT_LEAST"
               value: {{ .Values.app.eventStore.processEvents.lockAtLeastFor }}
             - name: "PROCESS_EVENTS_BATCH_SIZE"
-              value: {{ .Values.app.eventStore.processEvents.batchSize }}
+              value: {{ .Values.app.eventStore.processEvents.batchSize | quote }}
             - name: "DELETE_EVENTS_INITIAL_DELAY"
-              value: {{ .Values.app.eventStore.deleteProcessed.initialDelay }}
+              value: {{ .Values.app.eventStore.deleteProcessed.initialDelay | quote }}
             - name: "DELETE_EVENTS_FIXED_DELAY"
-              value: {{ .Values.app.eventStore.deleteProcessed.fixedDelay }}
+              value: {{ .Values.app.eventStore.deleteProcessed.fixedDelay | quote }}
             - name: "DELETE_EVENTS_LOCK_AT_MOST"
               value: {{ .Values.app.eventStore.deleteProcessed.lockAtMostFor }}
             - name: "DELETE_EVENTS_LOCK_AT_LEAST"
-              value: {{ .Values.app.eventStore.deleteProcessed.lockAtLeastFor }}
+              value: {{ .Values.app.eventStore.deleteProcessed.lockAtLeastFor | quote }}
             - name: "KAFKA_BROKER_HOST"
               value: {{ .Values.app.kafka.host }}
             - name: "MONGODB_HOST"
