@@ -14,8 +14,8 @@ spring:
           auto-create-topics: false
           consumer-properties:
             max.poll.records: 100
-#            max.poll.interval.ms: 300000
-#            auto.offset.reset: earliest
+      #            max.poll.interval.ms: 300000
+      #            auto.offset.reset: earliest
       bindings:
         input:
           destination: "smartpoke-device-presence"
@@ -37,3 +37,17 @@ management:
     web:
       exposure:
         include: metrics, health, prometheus
+
+
+eventStore:
+  processEvents:
+    initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:120000}"
+    fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:8000}"
+    lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
+    lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:10s}"
+    batchSize: "${PROCESS_EVENTS_BATCH_SIZE:100}"
+  deleteProcessed:
+    initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"
+    fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
+    lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"
+    lockAtLeastFor: "${DELETE_EVENTS_LOCK_AT_LEAST:30s}"

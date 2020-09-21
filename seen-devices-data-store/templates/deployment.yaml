@@ -32,6 +32,24 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: "PROCESS_EVENTS_INITIAL_DELAY"
+              value: {{ .Values.app.eventStore.processEvents.initialDelay }}
+            - name: "PROCESS_EVENTS_FIXED_DELAY"
+              value: {{ .Values.app.eventStore.processEvents.fixedDelay }}
+            - name: "PROCESS_EVENTS_LOCK_AT_MOST"
+              value: {{ .Values.app.eventStore.processEvents.lockAtMostFor }}
+            - name: "PROCESS_EVENTS_LOCK_AT_LEAST"
+              value: {{ .Values.app.eventStore.processEvents.lockAtLeastFor }}
+            - name: "PROCESS_EVENTS_BATCH_SIZE"
+              value: {{ .Values.app.eventStore.processEvents.batchSize }}
+            - name: "DELETE_EVENTS_INITIAL_DELAY"
+              value: {{ .Values.app.eventStore.deleteProcessed.initialDelay }}
+            - name: "DELETE_EVENTS_FIXED_DELAY"
+              value: {{ .Values.app.eventStore.deleteProcessed.fixedDelay }}
+            - name: "DELETE_EVENTS_LOCK_AT_MOST"
+              value: {{ .Values.app.eventStore.deleteProcessed.lockAtMostFor }}
+            - name: "DELETE_EVENTS_LOCK_AT_LEAST"
+              value: {{ .Values.app.eventStore.deleteProcessed.lockAtLeastFor }}
             - name: "KAFKA_BROKER_HOST"
               value: {{ .Values.app.kafka.host }}
             - name: "MONGODB_HOST"

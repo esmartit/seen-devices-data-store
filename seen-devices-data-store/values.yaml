@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 8
+replicaCount: 1
 
 image:
   repository: esmartit/seen-devices-data-store
@@ -37,9 +37,19 @@ app:
     host: "data-store-mongodb-0.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.ibacapital.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
-
+  eventStore:
+    processEvents:
+      initialDelay: "120000"
+      fixedDelay: "8000"
+      lockAtMostFor: "5m"
+      lockAtLeastFor: "10s"
+      batchSize: "100"
+    deleteProcessed:
+      initialDelay: "240000"
+      fixedDelay: "60000"
+      lockAtMostFor: "10m"
+      lockAtLeastFor: "30s"
 #  kubectl create secret generic mongodb-user-secret --from-literal=password=password
-
 
 service:
   type: ClusterIP

@@ -5,6 +5,7 @@ import com.esmartit.seendevicesdatastore.domain.SensorActivity
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
@@ -15,12 +16,22 @@ class EventStoreScheduler(
     private val objectMapper: ObjectMapper
 ) {
 
-    @Scheduled(initialDelay = 120000, fixedDelay = 15000)
-    @SchedulerLock(name = "processEvents", lockAtMostFor = "10m", lockAtLeastFor = "10s")
+    @Value("\${eventStore.processEvents.batchSize}")
+    private var batchSize: Long = 1000
+
+    @Scheduled(
+        initialDelayString = "\${eventStore.processEvents.initialDelay}",
+        fixedDelayString = "\${eventStore.processEvents.fixedDelay}"
+    )
+    @SchedulerLock(
+        name = "processEvents",
+        lockAtMostFor = "\${eventStore.processEvents.lockAtMostFor}",
+        lockAtLeastFor = "\${eventStore.processEvents.lockAtLeastFor}"
+    )
     fun processEvent() {
         println("processing events...")
         repository.findByProcessed(false)
-            .take(100)
+            .take(batchSize)
             .doOnNext {
                 val payload = objectMapper.readValue<SensorActivity>(it.payload)
                 service.save(payload)
@@ -32,8 +43,15 @@ class EventStoreScheduler(
             }
     }
 
-    @Scheduled(initialDelay = 240000, fixedDelay = 60000)
-    @SchedulerLock(name = "deleteProcessedEventsTask", lockAtMostFor = "5m", lockAtLeastFor = "30s")
+    @Scheduled(
+        initialDelayString = "\${eventStore.deleteProcessed.initialDelay}",
+        fixedDelayString = "\${eventStore.deleteProcessed.fixedDelay}"
+    )
+    @SchedulerLock(
+        name = "deleteProcessedEventsTask",
+        lockAtMostFor = "\${eventStore.deleteProcessed.lockAtMostFor}",
+        lockAtLeastFor = "\${eventStore.deleteProcessed.lockAtLeastFor}"
+    )
     fun deleteProcessed() {
         repository.deleteByProcessed(true).subscribe {
             println("$it deleted events")
