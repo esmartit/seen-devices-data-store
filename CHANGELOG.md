@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.1.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.1...v3.1.2) (2020-09-21)
+
+
+### Bug Fixes
+
+* shedlock batch size ([890f84b](https://github.com/esmartit/seen-devices-data-store/commit/890f84bf7b2685635eb0bebc1f00463bb84b6b5d))
+
 ## [3.1.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.0...v3.1.1) (2020-09-21)
 
 
