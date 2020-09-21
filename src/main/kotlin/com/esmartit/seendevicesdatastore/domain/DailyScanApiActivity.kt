@@ -22,10 +22,7 @@ data class DailyScanApiActivity(
         return activity.flatMap { activity.map { it.filter(filters) } }.maxBy { it.status.value }
             ?: ScanApiActivity(
                 clientMac = clientMac,
-                seenTime = seenTime,
-                groupName = sensorSetting?.tags?.get("groupname"),
-                hotspot = sensorSetting?.tags?.get("hotspot"),
-                zone = sensorSetting?.tags?.get("zone")
+                seenTime = seenTime
             )
     }
 }
