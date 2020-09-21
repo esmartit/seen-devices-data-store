@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+## [3.1.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.5...v3.1.6) (2020-09-21)
+
+
+### Bug Fixes
+
+* compile error ([677b3a7](https://github.com/esmartit/seen-devices-data-store/commit/677b3a7aa42c2c755ec8fd793d296c03f45e1308))
+* missing tags ([9132159](https://github.com/esmartit/seen-devices-data-store/commit/9132159b14135a7c9513dff76cd1f88357207295))
+
 ## [3.1.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.4...v3.1.5) (2020-09-21)
 
 
