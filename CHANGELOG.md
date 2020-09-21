@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.1.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.0...v3.1.1) (2020-09-21)
+
+
+### Bug Fixes
+
+* should not be unique ([5f9bc23](https://github.com/esmartit/seen-devices-data-store/commit/5f9bc2370a5e05fe0038cdf01024f8924bbcba79))
+
 # [3.1.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.10...v3.1.0) (2020-09-21)
 
 
