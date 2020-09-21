@@ -131,6 +131,9 @@ private fun SensorActivity.toScanApiActivity(
         stateId = sensorSetting?.tags?.get("state"),
         cityId = sensorSetting?.tags?.get("city"),
         zipCode = sensorSetting?.tags?.get("zipcode"),
+        groupName = sensorSetting?.tags?.get("groupname"),
+        hotspot = sensorSetting?.tags?.get("hotspot"),
+        zone = sensorSetting?.tags?.get("zone"),
         isConnected = !device.ssid.isNullOrBlank(),
         username = userInfo?.username,
         rssi = device.rssi

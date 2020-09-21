@@ -29,7 +29,10 @@ data class ScanApiActivity(
     val memberShip: Boolean? = null,
     val registeredDate: Instant? = null,
     val isConnected: Boolean = false,
-    val username: String? = null
+    val username: String? = null,
+    val groupName: String? = null,
+    val hotspot: String? = null,
+    val zone: String? = null
 ) {
     fun isInRange(): Boolean {
         return status != Position.NO_POSITION

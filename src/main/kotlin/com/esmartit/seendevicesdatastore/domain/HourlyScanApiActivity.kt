@@ -24,7 +24,10 @@ data class HourlyScanApiActivity(
             .maxBy { it.status.value }
             ?: ScanApiActivity(
                 clientMac = clientMac,
-                seenTime = seenTime
+                seenTime = seenTime,
+                groupName = sensorSetting?.tags?.get("groupname"),
+                hotspot = sensorSetting?.tags?.get("hotspot"),
+                zone = sensorSetting?.tags?.get("zone")
             )
     }
 }
