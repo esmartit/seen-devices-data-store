@@ -5,7 +5,11 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
 @Document
-@CompoundIndex(def = "{'device.clientMac':1, 'device.seenTime':1}", name = "sensor_activity_macAddress_seenTime_idx")
+@CompoundIndex(
+    unique = true,
+    def = "{'device.clientMac':1, 'device.seenTime':1}",
+    name = "sensor_activity_macAddress_seenTime_idx"
+)
 data class SensorActivity(
     val id: String? = null,
     val apMac: String,
