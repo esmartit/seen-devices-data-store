@@ -6,7 +6,7 @@ import java.time.Instant
 
 @Document
 @CompoundIndex(
-//    unique = true,
+    unique = true,
     def = "{'device.clientMac':1, 'device.seenTime':1}",
     name = "sensor_activity_macAddress_seenTime_idx"
 )

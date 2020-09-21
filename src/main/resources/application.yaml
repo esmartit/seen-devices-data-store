@@ -42,9 +42,9 @@ management:
 eventStore:
   processEvents:
     initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:120000}"
-    fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:8000}"
+    fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:40000}"
     lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
-    lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:10s}"
+    lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:30s}"
     batchSize: "${PROCESS_EVENTS_BATCH_SIZE:100}"
   deleteProcessed:
     initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"

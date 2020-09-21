@@ -6,7 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
 @Document
-@CompoundIndex(def = "{'clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx")
+@CompoundIndex(
+    unique = true,
+    def = "{'clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx")
 data class ScanApiActivity(
     val id: String? = null,
     @Indexed(name = "clientMac_idx")
