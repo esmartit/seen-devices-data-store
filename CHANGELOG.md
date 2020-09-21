@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.1.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.10...v3.1.0) (2020-09-21)
+
+
+### Features
+
+* adding shedlock ([ee5758c](https://github.com/esmartit/seen-devices-data-store/commit/ee5758cc8e617f10d1ee669c873d9da1138f221d))
+
 ## [3.0.10](https://github.com/esmartit/seen-devices-data-store/compare/v3.0.9...v3.0.10) (2020-09-20)
 
 
