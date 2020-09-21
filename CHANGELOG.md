@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.1.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.4...v3.1.5) (2020-09-21)
+
+
+### Bug Fixes
+
+* helm deploy ([1fd1384](https://github.com/esmartit/seen-devices-data-store/commit/1fd138446bb75719adc20f11f095d8667b83c740))
+
 ## [3.1.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.3...v3.1.4) (2020-09-21)
 
 
