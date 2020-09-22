@@ -15,7 +15,7 @@ import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.RegisteredInfo
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
-import com.mongodb.DuplicateKeyException
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
