@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.2.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.6...v3.2.0) (2020-09-22)
+
+
+### Features
+
+* consume refactor ([f19a4ed](https://github.com/esmartit/seen-devices-data-store/commit/f19a4edd30d70d616d5dbfc5f10bcc73518afbe3))
+
 ## [3.1.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.5...v3.1.6) (2020-09-21)
 
 
