@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.2.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.2.1...v3.2.2) (2020-09-22)
+
+
+### Bug Fixes
+
+* development yaml ([9b7e768](https://github.com/esmartit/seen-devices-data-store/commit/9b7e768b60ba3d9a8525dc6d126eb2a8da20015d))
+
 ## [3.2.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.2.0...v3.2.1) (2020-09-22)
 
 
