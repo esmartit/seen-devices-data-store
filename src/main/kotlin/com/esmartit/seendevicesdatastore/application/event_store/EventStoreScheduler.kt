@@ -1,7 +1,7 @@
 package com.esmartit.seendevicesdatastore.application.event_store
 
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiStoreService
-import com.esmartit.seendevicesdatastore.domain.SensorActivity
+import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
@@ -31,14 +31,15 @@ class EventStoreScheduler(
     fun processEvent() {
         println("processing events...")
         repository.findByProcessed(false)
-            .take(batchSize)
-            .doOnNext {
-                val payload = objectMapper.readValue<SensorActivity>(it.payload)
-                service.save(payload)
-            }.flatMap {
-                repository.save(it.copy(processed = true))
-            }.count()
-            .subscribe {
+            .limitRequest(batchSize)
+            .flatMap { event ->
+                objectMapper.readValue<ScanApiActivity>(event.payload)
+                    .let { service.save(it) }
+                    .flatMap { repository.save(event.copy(processed = true)) }
+            }
+            .count()
+            .block()
+            .also {
                 println("$it processed events")
             }
     }

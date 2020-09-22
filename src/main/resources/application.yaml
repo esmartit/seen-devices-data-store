@@ -41,12 +41,14 @@ management:
 
 eventStore:
   processEvents:
+    enabled: "${PROCESS_EVENTS_ENABLED:true}"
     initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:120000}"
     fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:40000}"
     lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
     lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:30s}"
     batchSize: "${PROCESS_EVENTS_BATCH_SIZE:100}"
   deleteProcessed:
+    enabled: "${DELETED_EVENTS_ENABLED:true}"
     initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"
     fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
     lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"

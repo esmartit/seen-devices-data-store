@@ -7,7 +7,8 @@ import java.time.Instant
 @Document
 @CompoundIndex(
     unique = true,
-    def = "{'clientMac':1, 'seenTime':1}", name = "hourly_scan_api_activity_clientMac_seenTime_idx")
+    def = "{'clientMac':1, 'seenTime':1}", name = "hourly_scan_api_activity_clientMac_seenTime_idx"
+)
 data class HourlyScanApiActivity(
     val id: String? = null,
     val clientMac: String,
@@ -26,6 +27,13 @@ data class HourlyScanApiActivity(
                 clientMac = clientMac,
                 seenTime = seenTime
             )
+    }
+
+    fun addActivity(event: ScanApiActivity): HourlyScanApiActivity {
+        val newAct = activity.toMutableSet()
+            .also { s -> s.removeIf { it.seenTime == event.seenTime } }
+            .also { it.add(event) }
+        return this.copy(activity = newAct)
     }
 }
 

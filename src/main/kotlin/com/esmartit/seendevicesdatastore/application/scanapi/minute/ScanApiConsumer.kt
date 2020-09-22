@@ -10,13 +10,15 @@ import org.springframework.cloud.stream.messaging.Sink
 
 @EnableBinding(Sink::class)
 class ScanApiConsumer(
+    private val scanApiStoreService: ScanApiStoreService,
     private val repository: StoredEventRepository,
     private val objectMapper: ObjectMapper
 ) {
 
     @StreamListener(Sink.INPUT)
     fun handle(event: SensorActivityEvent) {
-        repository.save(StoredEvent(payload = objectMapper.writeValueAsString(event)))
+        val scanApiActivity = scanApiStoreService.createScanApiActivity(event)
+        repository.save(StoredEvent(payload = objectMapper.writeValueAsString(scanApiActivity)))
     }
 }
 

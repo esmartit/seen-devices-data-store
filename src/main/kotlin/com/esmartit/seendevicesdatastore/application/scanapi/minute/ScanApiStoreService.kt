@@ -2,23 +2,24 @@ package com.esmartit.seendevicesdatastore.application.scanapi.minute
 
 import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
-import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiRepository
-import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiRepository
+import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiReactiveRepository
+import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityRepository
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSetting
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDevice
-import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceRepository
+import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.DailyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.HourlyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.RegisteredInfo
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
-import com.esmartit.seendevicesdatastore.domain.SensorActivity
+import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
+import com.mongodb.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 import java.time.Clock
-import java.time.Instant
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
@@ -28,18 +29,26 @@ class ScanApiStoreService(
     private val sensorSettingRepository: SensorSettingRepository,
     private val radiusActivityRepository: RadiusActivityRepository,
     private val registeredUserRepository: RegisteredUserRepository,
-    private val hourlyScanApiRepository: HourlyScanApiRepository,
-    private val dailyScanApiRepository: DailyScanApiRepository,
-    private val uniqueDeviceRepository: UniqueDeviceRepository,
+    private val hourlyScanApiRepository: HourlyScanApiReactiveRepository,
+    private val dailyScanApiRepository: DailyScanApiReactiveRepository,
+    private val uniqueDeviceRepository: UniqueDeviceReactiveRepository,
     private val sensorActivityRepository: SensorActivityRepository,
     private val clock: Clock
 ) {
 
-    fun save(event: SensorActivity) {
+    fun save(newScanApiEvent: ScanApiActivity): Mono<UniqueDevice> {
+        return saveHourlyActivity(newScanApiEvent)
+            .flatMap { saveDailyActivity(it) }
+            .flatMap { saveUniqueDevice(newScanApiEvent) }
+            .onErrorResume(DuplicateKeyException::class.java) {
+                Mono.just(UniqueDevice(clientMac = newScanApiEvent.clientMac, created = clock.instant()))
+            }
+    }
+
+    fun createScanApiActivity(event: SensorActivityEvent): ScanApiActivity {
         val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
         val clientMac = event.device.clientMac
-        val seenTime = event.device.seenTime
         val clientMacNormalized = clientMac.replace(":", "").toLowerCase()
         val radiusActivity = radiusActivityRepository.findLastByClientMac(clientMacNormalized, PageRequest.of(0, 1))
         val registeredInfo =
@@ -55,64 +64,34 @@ class ScanApiStoreService(
         if (scanApiEvent.rssi > existingRSSI) {
             newScanApiEvent = repository.save(newScanApiEvent)
         }
-
-        val hourlyScanApiActivity = saveHourlyActivity(seenTime, clientMac, newScanApiEvent)
-
-        saveDailyActivity(seenTime, clientMac, hourlyScanApiActivity)
-
-        saveUniqueDevice(event)
-
-        val existingActivity = sensorActivityRepository.findByDeviceClientMacAndDeviceSeenTime(clientMac, seenTime)
-        if (existingActivity.isEmpty()) {
-            sensorActivityRepository.save(event)
-        }
+        return newScanApiEvent
     }
 
-    private fun saveHourlyActivity(
-        seenTime: Instant,
-        clientMac: String,
-        newScanApiEvent: ScanApiActivity
-    ): HourlyScanApiActivity {
-        val seenTimeHour = seenTime.truncatedTo(ChronoUnit.HOURS)
-        var hourlyScanApiActivity =
-            hourlyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeHour) ?: HourlyScanApiActivity(
-                clientMac = clientMac,
-                seenTime = seenTimeHour
+    private fun saveHourlyActivity(newScanApiEvent: ScanApiActivity): Mono<HourlyScanApiActivity> {
+        val clientMac = newScanApiEvent.clientMac
+        val seenTimeHour = newScanApiEvent.seenTime.truncatedTo(ChronoUnit.HOURS)
+        return hourlyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeHour)
+            .defaultIfEmpty(HourlyScanApiActivity(clientMac = clientMac, seenTime = seenTimeHour))
+            .flatMap { hourlyScanApiRepository.save(it.addActivity(newScanApiEvent)) }
+    }
+
+    private fun saveDailyActivity(hourlyScanApiActivity: HourlyScanApiActivity): Mono<DailyScanApiActivity> {
+        val clientMac = hourlyScanApiActivity.clientMac
+        val seenTimeDay = hourlyScanApiActivity.seenTime.truncatedTo(ChronoUnit.DAYS)
+        return dailyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeDay)
+            .defaultIfEmpty(DailyScanApiActivity(clientMac = clientMac, seenTime = seenTimeDay))
+            .flatMap { dailyScanApiRepository.save(it.addActivity(hourlyScanApiActivity)) }
+    }
+
+    private fun saveUniqueDevice(event: ScanApiActivity): Mono<UniqueDevice> {
+        return uniqueDeviceRepository.findByClientMac(event.clientMac)
+            .switchIfEmpty(
+                uniqueDeviceRepository.save(UniqueDevice(clientMac = event.clientMac, created = clock.instant()))
             )
-        val newAct = hourlyScanApiActivity.activity.toMutableSet()
-            .also { s -> s.removeIf { it.seenTime == newScanApiEvent.seenTime } }
-            .also { it.add(newScanApiEvent) }
-        hourlyScanApiActivity = hourlyScanApiRepository.save(hourlyScanApiActivity.copy(activity = newAct))
-        return hourlyScanApiActivity
-    }
-
-    private fun saveDailyActivity(
-        seenTime: Instant,
-        clientMac: String,
-        hourlyScanApiActivity: HourlyScanApiActivity
-    ) {
-        val seenTimeDay = seenTime.truncatedTo(ChronoUnit.DAYS)
-        val dailyScanApiActivity =
-            dailyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeDay) ?: DailyScanApiActivity(
-                clientMac = clientMac,
-                seenTime = seenTimeDay
-            )
-        val newDayAct = dailyScanApiActivity.activity.toMutableSet()
-            .also { s -> s.removeIf { it.seenTime == hourlyScanApiActivity.seenTime } }
-            .also { it.add(hourlyScanApiActivity) }
-        dailyScanApiRepository.save(dailyScanApiActivity.copy(activity = newDayAct))
-    }
-
-    private fun saveUniqueDevice(event: SensorActivity) {
-        val uniqueDevice = uniqueDeviceRepository.findByClientMac(event.device.clientMac)
-            ?: UniqueDevice(clientMac = event.device.clientMac, created = clock.instant())
-        if (uniqueDevice.id.isNullOrBlank()) {
-            uniqueDeviceRepository.save(uniqueDevice)
-        }
     }
 }
 
-private fun SensorActivity.toScanApiActivity(
+private fun SensorActivityEvent.toScanApiActivity(
     clock: Clock,
     sensorSetting: SensorSetting?,
     userInfo: RegisteredInfo?
