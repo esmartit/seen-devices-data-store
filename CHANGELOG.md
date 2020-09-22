@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.2.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.2.0...v3.2.1) (2020-09-22)
+
+
+### Bug Fixes
+
+* enabling lock ([4c10efa](https://github.com/esmartit/seen-devices-data-store/commit/4c10efa6f750d32944ee26a9b87cd2e2fdb0ef86))
+
 # [3.2.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.1.6...v3.2.0) (2020-09-22)
 
 
