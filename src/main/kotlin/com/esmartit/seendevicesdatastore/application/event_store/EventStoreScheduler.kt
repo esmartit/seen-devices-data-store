@@ -19,6 +19,12 @@ class EventStoreScheduler(
     @Value("\${eventStore.processEvents.batchSize}")
     private var batchSize: Long = 1000
 
+    @Value("\${eventStore.processEvents.enabled}")
+    private var processEventsEnabled: Boolean = true
+
+    @Value("\${eventStore.deleteProcessed.enabled}")
+    private var deleteProcessedEnabled: Boolean = true
+
     @Scheduled(
         initialDelayString = "\${eventStore.processEvents.initialDelay}",
         fixedDelayString = "\${eventStore.processEvents.fixedDelay}"
@@ -29,19 +35,21 @@ class EventStoreScheduler(
         lockAtLeastFor = "\${eventStore.processEvents.lockAtLeastFor}"
     )
     fun processEvent() {
-        println("processing events...")
-        repository.findByProcessed(false)
-            .limitRequest(batchSize)
-            .flatMap { event ->
-                objectMapper.readValue<ScanApiActivity>(event.payload)
-                    .let { service.save(it) }
-                    .flatMap { repository.save(event.copy(processed = true)) }
-            }
-            .count()
-            .block()
-            .also {
-                println("$it processed events")
-            }
+        if (processEventsEnabled) {
+            println("processing events...")
+            repository.findByProcessed(false)
+                .limitRequest(batchSize)
+                .flatMap { event ->
+                    objectMapper.readValue<ScanApiActivity>(event.payload)
+                        .let { service.save(it) }
+                        .flatMap { repository.save(event.copy(processed = true)) }
+                }
+                .count()
+                .block()
+                .also {
+                    println("$it processed events")
+                }
+        }
     }
 
     @Scheduled(
@@ -54,8 +62,10 @@ class EventStoreScheduler(
         lockAtLeastFor = "\${eventStore.deleteProcessed.lockAtLeastFor}"
     )
     fun deleteProcessed() {
-        repository.deleteByProcessed(true).subscribe {
-            println("$it deleted events")
+        if (deleteProcessedEnabled) {
+            repository.deleteByProcessed(true).subscribe {
+                println("$it deleted events")
+            }
         }
     }
 }

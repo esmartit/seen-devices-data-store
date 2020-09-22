@@ -32,6 +32,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: "PROCESS_EVENTS_ENABLED"
+              value: {{ .Values.app.eventStore.processEvents.enabled }}
             - name: "PROCESS_EVENTS_INITIAL_DELAY"
               value: {{ .Values.app.eventStore.processEvents.initialDelay | quote }}
             - name: "PROCESS_EVENTS_FIXED_DELAY"
@@ -42,6 +44,8 @@ spec:
               value: {{ .Values.app.eventStore.processEvents.lockAtLeastFor }}
             - name: "PROCESS_EVENTS_BATCH_SIZE"
               value: {{ .Values.app.eventStore.processEvents.batchSize | quote }}
+            - name: "DELETED_EVENTS_ENABLED"
+              value: {{ .Values.app.eventStore.deleteProcessed.enabled }}
             - name: "DELETE_EVENTS_INITIAL_DELAY"
               value: {{ .Values.app.eventStore.deleteProcessed.initialDelay | quote }}
             - name: "DELETE_EVENTS_FIXED_DELAY"
