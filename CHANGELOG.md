@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.4.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.4.0...v3.4.1) (2020-09-23)
+
+
+### Bug Fixes
+
+* enabling delete processed events ([16537f1](https://github.com/esmartit/seen-devices-data-store/commit/16537f125da7818a347cdcd9ae133e42d6796f2c))
+
 # [3.4.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.3.1...v3.4.0) (2020-09-23)
 
 
