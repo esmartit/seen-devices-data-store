@@ -61,9 +61,9 @@ class EventStoreScheduler(
     )
     fun deleteProcessed() {
         if (deleteProcessedEnabled) {
-//            repository.deleteByProcessed(true).subscribe {
-//                println("$it deleted events")
-//            }
+            repository.deleteByProcessed(true).subscribe {
+                println("$it deleted events")
+            }
         }
     }
 }

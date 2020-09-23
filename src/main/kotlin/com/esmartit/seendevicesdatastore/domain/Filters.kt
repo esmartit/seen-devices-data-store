@@ -45,8 +45,8 @@ data class FilterRequest(
             ageStart?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age >= it } } ?: { true }
         val ageEndFilter = ageEnd?.takeIf { it.isNotBlank() }?.toInt()?.let { { age: Int -> age <= it } } ?: { true }
 
-        return seenTimeAtZone.isAfter(startDateTime) &&
-            seenTimeAtZone.isBefore(endDateTime?.plusDays(1)?.minusSeconds(1)) &&
+        return startDateTime?.isBefore(seenTimeAtZone) ?: true &&
+            endDateTime?.plusDays(1)?.minusSeconds(1)?.isAfter(seenTimeAtZone) ?: true &&
             sensorHour >= startHour &&
             sensorHour <= endHour &&
             ageStartFilter(event.age) && ageEndFilter(event.age) &&
