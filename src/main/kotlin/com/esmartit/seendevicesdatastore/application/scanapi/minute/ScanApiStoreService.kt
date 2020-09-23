@@ -61,13 +61,13 @@ class ScanApiStoreService(
                         repository.save(it)
                     }
                     scanApiEvent.rssi > it.rssi -> {
-                        repository.save(scanApiEvent)
+                        repository.save(scanApiEvent.copy(id = it.id))
                     }
                     else -> {
                         Mono.empty()
                     }
                 }
-            }
+            }.onErrorResume(DuplicateKeyException::class.java) { Mono.empty() }
     }
 
     private fun saveHourlyActivity(newScanApiEvent: ScanApiActivity): Mono<HourlyScanApiActivity> {
