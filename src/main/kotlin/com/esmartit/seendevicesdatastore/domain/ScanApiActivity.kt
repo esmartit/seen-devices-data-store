@@ -8,9 +8,10 @@ import java.time.Instant
 @Document
 @CompoundIndex(
     unique = true,
-    def = "{'clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx")
+    def = "{'clientMac':1, 'seenTime':1}", name = "scan_api_activity_clientMac_seenTime_idx"
+)
 data class ScanApiActivity(
-    val id: String? = null,
+    val id: String,
     @Indexed(name = "clientMac_idx")
     val clientMac: String,
     @Indexed(name = "seenTime_idx")

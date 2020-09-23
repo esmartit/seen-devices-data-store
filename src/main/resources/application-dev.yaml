@@ -1,9 +1,26 @@
-logging:
-  level:
-    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#logging:
+#  level:
+#    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 spring:
   data:
     mongodb:
 #      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
       uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:spring}@${MONGODB_HOST:localhost:27017}/smartpoke"
+
+
+
+eventStore:
+  processEvents:
+    enabled: "true"
+    initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:5000}"
+    fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:40000}"
+    lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
+    lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:30s}"
+    batchSize: "${PROCESS_EVENTS_BATCH_SIZE:1000}"
+  deleteProcessed:
+    enabled: "true"
+    initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"
+    fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
+    lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"
+    lockAtLeastFor: "${DELETE_EVENTS_LOCK_AT_LEAST:30s}"

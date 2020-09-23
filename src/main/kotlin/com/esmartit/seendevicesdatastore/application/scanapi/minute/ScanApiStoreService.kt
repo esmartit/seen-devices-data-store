@@ -13,7 +13,7 @@ import com.esmartit.seendevicesdatastore.domain.HourlyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.RegisteredInfo
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
-import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
+import com.esmartit.seendevicesdatastore.domain.SensorActivity
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
@@ -34,47 +34,39 @@ class ScanApiStoreService(
     private val clock: Clock
 ) {
 
-    fun save(newScanApiEvent: ScanApiActivity): Mono<UniqueDevice> {
-        return saveHourlyActivity(newScanApiEvent)
+    fun save(newScanApiEvent: SensorActivity): Mono<UniqueDevice> {
+        return createScanApiActivity(newScanApiEvent)
+            .flatMap { saveHourlyActivity(it) }
             .flatMap { saveDailyActivity(it) }
             .flatMap { saveUniqueDevice(newScanApiEvent) }
             .onErrorResume(DuplicateKeyException::class.java) {
-                Mono.just(UniqueDevice(clientMac = newScanApiEvent.clientMac, created = clock.instant()))
+                Mono.just(UniqueDevice(id = newScanApiEvent.clientMac))
             }
     }
 
-    fun createScanApiActivity(event: SensorActivityEvent): Mono<ScanApiActivity> {
+    fun createScanApiActivity(event: SensorActivity): Mono<ScanApiActivity> {
         val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
-        val clientMac = event.device.clientMac
+        val clientMac = event.clientMac
         val clientMacNormalized = clientMac.replace(":", "").toLowerCase()
         val radiusActivity = radiusActivityRepository.findLastByClientMac(clientMacNormalized, PageRequest.of(0, 1))
         val registeredInfo =
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
         val scanApiEvent = event.toScanApiActivity(clock, sensorSetting, registeredInfo)
-        return repository.findByClientMacAndSeenTime(scanApiEvent.clientMac, scanApiEvent.seenTime)
-            .defaultIfEmpty(scanApiEvent)
-            .flatMap {
-                when {
-                    it.id.isNullOrBlank() -> {
-                        repository.save(it)
-                    }
-                    scanApiEvent.rssi > it.rssi -> {
-                        repository.save(scanApiEvent.copy(id = it.id))
-                    }
-                    else -> {
-                        Mono.empty()
-                    }
-                }
-            }.onErrorResume(DuplicateKeyException::class.java) { Mono.empty() }
+        return repository.save(scanApiEvent)
     }
 
     private fun saveHourlyActivity(newScanApiEvent: ScanApiActivity): Mono<HourlyScanApiActivity> {
         val clientMac = newScanApiEvent.clientMac
         val seenTimeHour = newScanApiEvent.seenTime.truncatedTo(ChronoUnit.HOURS)
         return hourlyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeHour)
-            .defaultIfEmpty(HourlyScanApiActivity(clientMac = clientMac, seenTime = seenTimeHour))
+            .defaultIfEmpty(
+                HourlyScanApiActivity(
+                    id = "$clientMac;${seenTimeHour.epochSecond}",
+                    clientMac = clientMac, seenTime = seenTimeHour
+                )
+            )
             .flatMap { hourlyScanApiRepository.save(it.addActivity(newScanApiEvent)) }
     }
 
@@ -82,30 +74,33 @@ class ScanApiStoreService(
         val clientMac = hourlyScanApiActivity.clientMac
         val seenTimeDay = hourlyScanApiActivity.seenTime.truncatedTo(ChronoUnit.DAYS)
         return dailyScanApiRepository.findByClientMacAndSeenTime(clientMac, seenTimeDay)
-            .defaultIfEmpty(DailyScanApiActivity(clientMac = clientMac, seenTime = seenTimeDay))
+            .defaultIfEmpty(
+                DailyScanApiActivity(
+                    id = "$clientMac;${seenTimeDay.epochSecond}",
+                    clientMac = clientMac, seenTime = seenTimeDay
+                )
+            )
             .flatMap { dailyScanApiRepository.save(it.addActivity(hourlyScanApiActivity)) }
     }
 
-    private fun saveUniqueDevice(event: ScanApiActivity): Mono<UniqueDevice> {
-        return uniqueDeviceRepository.findByClientMac(event.clientMac)
-            .switchIfEmpty(
-                uniqueDeviceRepository.save(UniqueDevice(clientMac = event.clientMac, created = clock.instant()))
-            )
+    private fun saveUniqueDevice(event: SensorActivity): Mono<UniqueDevice> {
+        return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac))
     }
 }
 
-private fun SensorActivityEvent.toScanApiActivity(
+private fun SensorActivity.toScanApiActivity(
     clock: Clock,
     sensorSetting: SensorSetting?,
     userInfo: RegisteredInfo?
 ): ScanApiActivity {
     return ScanApiActivity(
-        clientMac = device.clientMac,
-        seenTime = device.seenTime.truncatedTo(ChronoUnit.MINUTES),
+        id = "$clientMac;${seenTime.epochSecond}",
+        clientMac = clientMac,
+        seenTime = seenTime,
         age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
         gender = userInfo?.gender,
-        brand = device.manufacturer,
-        status = sensorSetting?.presence(device.rssi) ?: Position.NO_POSITION,
+        brand = manufacturer,
+        status = sensorSetting?.presence(rssi) ?: Position.NO_POSITION,
         memberShip = userInfo?.memberShip,
         spotId = sensorSetting?.tags?.get("spot_id"),
         sensorId = sensorSetting?.tags?.get("sensorname"),
@@ -116,8 +111,8 @@ private fun SensorActivityEvent.toScanApiActivity(
         groupName = sensorSetting?.tags?.get("groupname"),
         hotspot = sensorSetting?.tags?.get("hotspot"),
         zone = sensorSetting?.tags?.get("zone"),
-        isConnected = !device.ssid.isNullOrBlank(),
+        isConnected = !ssid.isNullOrBlank(),
         username = userInfo?.username,
-        rssi = device.rssi
+        rssi = rssi
     )
 }

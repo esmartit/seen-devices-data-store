@@ -1,27 +1,38 @@
 package com.esmartit.seendevicesdatastore.application.scanapi.minute
 
-import com.esmartit.seendevicesdatastore.application.event_store.StoredEvent
-import com.esmartit.seendevicesdatastore.application.event_store.StoredEventReactiveRepository
+import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityRepository
+import com.esmartit.seendevicesdatastore.domain.DeviceLocation
+import com.esmartit.seendevicesdatastore.domain.SensorActivity
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.stream.annotation.EnableBinding
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.cloud.stream.messaging.Sink
-import reactor.core.publisher.Mono
 
 @EnableBinding(Sink::class)
 class ScanApiConsumer(
-    private val scanApiStoreService: ScanApiStoreService,
-    private val repository: StoredEventReactiveRepository,
-    private val objectMapper: ObjectMapper
+    private val sensorActivityRepository: SensorActivityRepository
 ) {
 
     @StreamListener(Sink.INPUT)
     fun handle(event: SensorActivityEvent) {
-        scanApiStoreService.createScanApiActivity(event)
-            .flatMap { Mono.fromCallable { objectMapper.writeValueAsString(it) } }
-            .flatMap { repository.save(StoredEvent(payload = it)) }
-            .subscribe()
+        sensorActivityRepository.save(event.toSensorActivity())
     }
+}
+
+private fun SensorActivityEvent.toSensorActivity(): SensorActivity {
+    return SensorActivity(
+        id = "${device.clientMac};${device.seenTime.epochSecond}",
+        clientMac = device.clientMac,
+        seenTime = device.seenTime,
+        apMac = apMac,
+        rssi = device.rssi,
+        ssid = device.ssid,
+        manufacturer = device.manufacturer,
+        os = device.os,
+        ipv4 = device.ipv4,
+        ipv6 = device.ipv6,
+        location = device.location.let { DeviceLocation(it.lat, it.lng, it.unc, it.x, it.y) },
+        apFloors = apFloors
+    )
 }
 

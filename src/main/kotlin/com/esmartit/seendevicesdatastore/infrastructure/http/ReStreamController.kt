@@ -34,7 +34,7 @@ class ReStreamController(
         reStreamOutput.output().send(
             MessageBuilder
                 .withPayload(it)
-                .setHeader(KafkaHeaders.MESSAGE_KEY, it.device.clientMac.toByteArray())
+                .setHeader(KafkaHeaders.MESSAGE_KEY, it.clientMac.toByteArray())
                 .build()
         )
     }

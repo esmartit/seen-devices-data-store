@@ -6,28 +6,22 @@ import java.time.Instant
 
 @Document
 @CompoundIndex(
-    unique = true,
-    def = "{'device.clientMac':1, 'device.seenTime':1}",
-    name = "sensor_activity_macAddress_seenTime_idx"
+    unique = true, def = "{'clientMac':1, 'seenTime':1}", name = "sensor_activity_clientMac_seenTime_idx"
 )
 data class SensorActivity(
-    val id: String? = null,
-    val apMac: String,
-    val device: DeviceSeen,
-    val apFloors: List<String?>
-)
-
-data class DeviceSeen(
+    val id: String,
     val clientMac: String,
+    val seenTime: Instant,
+    val apMac: String,
+    val rssi: Int,
+    val ssid: String?,
+    val manufacturer: String?,
+    val os: String?,
     val ipv4: String?,
     val ipv6: String?,
     val location: DeviceLocation,
-    val manufacturer: String?,
-    val os: String?,
-    val rssi: Int,
-    val seenEpoch: Int,
-    val seenTime: Instant,
-    val ssid: String?
+    val apFloors: List<String?>,
+    val processed: Boolean = false
 )
 
 data class DeviceLocation(

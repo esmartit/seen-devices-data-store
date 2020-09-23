@@ -10,7 +10,7 @@ import java.time.Instant
     def = "{'clientMac':1, 'seenTime':1}", name = "hourly_scan_api_activity_clientMac_seenTime_idx"
 )
 data class HourlyScanApiActivity(
-    val id: String? = null,
+    val id: String,
     val clientMac: String,
     val seenTime: Instant,
     val activity: Set<ScanApiActivity> = emptySet()
@@ -24,6 +24,7 @@ data class HourlyScanApiActivity(
         return activity.filter { filters?.handle(it) ?: true }
             .maxBy { it.status.value }
             ?: ScanApiActivity(
+                id = "$clientMac;${seenTime.epochSecond}",
                 clientMac = clientMac,
                 seenTime = seenTime
             )

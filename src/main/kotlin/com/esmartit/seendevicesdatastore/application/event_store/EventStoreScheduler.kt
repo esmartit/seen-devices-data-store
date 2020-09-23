@@ -1,9 +1,8 @@
 package com.esmartit.seendevicesdatastore.application.event_store
 
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiStoreService
-import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
+import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityReactiveRepository
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class EventStoreScheduler(
-    private val repository: StoredEventReactiveRepository,
+    private val repository: SensorActivityReactiveRepository,
     private val service: ScanApiStoreService,
     private val objectMapper: ObjectMapper
 ) {
@@ -40,8 +39,7 @@ class EventStoreScheduler(
             repository.findByProcessed(false)
                 .limitRequest(batchSize)
                 .flatMap { event ->
-                    objectMapper.readValue<ScanApiActivity>(event.payload)
-                        .let { service.save(it) }
+                    service.save(event)
                         .flatMap { repository.save(event.copy(processed = true)) }
                 }
                 .count()
@@ -63,9 +61,9 @@ class EventStoreScheduler(
     )
     fun deleteProcessed() {
         if (deleteProcessedEnabled) {
-            repository.deleteByProcessed(true).subscribe {
-                println("$it deleted events")
-            }
+//            repository.deleteByProcessed(true).subscribe {
+//                println("$it deleted events")
+//            }
         }
     }
 }
