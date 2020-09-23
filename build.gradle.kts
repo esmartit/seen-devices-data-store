@@ -31,6 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.cloud:spring-cloud-stream")
 	implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
+//	implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
 	implementation("org.springframework.kafka:spring-kafka")
 
 	implementation("net.javacrumbs.shedlock:shedlock-provider-mongo-reactivestreams:4.14.0")

@@ -1,6 +1,8 @@
 spring.application.name: smartpoke-data-store
 server.port: "${SERVER_PORT:9000}"
 spring:
+  jmx:
+    enabled: false
   data:
     mongodb:
       uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost:2017}/smartpoke"
@@ -42,11 +44,11 @@ management:
 eventStore:
   processEvents:
     enabled: "${PROCESS_EVENTS_ENABLED:true}"
-    initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:120000}"
+    initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:30000}"
     fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:40000}"
     lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
     lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:30s}"
-    batchSize: "${PROCESS_EVENTS_BATCH_SIZE:100}"
+    batchSize: "${PROCESS_EVENTS_BATCH_SIZE:1000}"
   deleteProcessed:
     enabled: "${DELETED_EVENTS_ENABLED:true}"
     initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"

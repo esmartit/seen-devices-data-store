@@ -4,7 +4,6 @@ import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivit
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiReactiveRepository
-import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityRepository
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSetting
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDevice
@@ -25,14 +24,13 @@ import java.time.temporal.ChronoUnit
 
 @Component
 class ScanApiStoreService(
-    private val repository: ScanApiRepository,
+    private val repository: ScanApiReactiveRepository,
     private val sensorSettingRepository: SensorSettingRepository,
     private val radiusActivityRepository: RadiusActivityRepository,
     private val registeredUserRepository: RegisteredUserRepository,
     private val hourlyScanApiRepository: HourlyScanApiReactiveRepository,
     private val dailyScanApiRepository: DailyScanApiReactiveRepository,
     private val uniqueDeviceRepository: UniqueDeviceReactiveRepository,
-    private val sensorActivityRepository: SensorActivityRepository,
     private val clock: Clock
 ) {
 
@@ -45,7 +43,7 @@ class ScanApiStoreService(
             }
     }
 
-    fun createScanApiActivity(event: SensorActivityEvent): ScanApiActivity {
+    fun createScanApiActivity(event: SensorActivityEvent): Mono<ScanApiActivity> {
         val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
 
         val clientMac = event.device.clientMac
@@ -55,16 +53,21 @@ class ScanApiStoreService(
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
         val scanApiEvent = event.toScanApiActivity(clock, sensorSetting, registeredInfo)
-        val maybeScanApi = repository.findByClientMacAndSeenTime(
-            scanApiEvent.clientMac,
-            scanApiEvent.seenTime
-        )
-        val existingRSSI = maybeScanApi?.rssi ?: -1000
-        var newScanApiEvent = scanApiEvent.copy(id = maybeScanApi?.id)
-        if (scanApiEvent.rssi > existingRSSI) {
-            newScanApiEvent = repository.save(newScanApiEvent)
-        }
-        return newScanApiEvent
+        return repository.findByClientMacAndSeenTime(scanApiEvent.clientMac, scanApiEvent.seenTime)
+            .defaultIfEmpty(scanApiEvent)
+            .flatMap {
+                when {
+                    it.id.isNullOrBlank() -> {
+                        repository.save(it)
+                    }
+                    scanApiEvent.rssi > it.rssi -> {
+                        repository.save(scanApiEvent)
+                    }
+                    else -> {
+                        Mono.empty()
+                    }
+                }
+            }
     }
 
     private fun saveHourlyActivity(newScanApiEvent: ScanApiActivity): Mono<HourlyScanApiActivity> {

@@ -32,21 +32,21 @@ securityContext: {}
 
 app:
   kafka:
-    host: "event-bus-kafka.ibacapital.svc.cluster.local:9092"
+    host: "event-bus-kafka.dev-env.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.ibacapital.svc.cluster.local"
+    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.dev-env.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.dev-env.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
   eventStore:
     processEvents:
-      enabled: "false"
+      enabled: "true"
       initialDelay: "120000"
       fixedDelay: "35000"
       lockAtMostFor: "5m"
       lockAtLeastFor: "30s"
       batchSize: "1000"
     deleteProcessed:
-      enabled: "false"
+      enabled: "true"
       initialDelay: "240000"
       fixedDelay: "60000"
       lockAtMostFor: "10m"
