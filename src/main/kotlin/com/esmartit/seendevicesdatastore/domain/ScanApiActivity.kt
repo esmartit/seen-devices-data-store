@@ -33,7 +33,8 @@ data class ScanApiActivity(
     val username: String? = null,
     val groupName: String? = null,
     val hotspot: String? = null,
-    val zone: String? = null
+    val zone: String? = null,
+    val processed: Boolean = false
 ) {
     fun isInRange(): Boolean {
         return status != Position.NO_POSITION

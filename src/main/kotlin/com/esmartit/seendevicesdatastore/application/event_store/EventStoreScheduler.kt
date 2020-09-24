@@ -36,17 +36,17 @@ class EventStoreScheduler(
     fun processEvent() {
         if (processEventsEnabled) {
             println("processing events...")
-            repository.findByProcessed(false)
-                .limitRequest(batchSize)
-                .flatMap { event ->
-                    service.save(event)
-                        .flatMap { repository.save(event.copy(processed = true)) }
-                }
-                .count()
-                .block()
-                .also {
-                    println("$it processed events")
-                }
+//            repository.findByProcessed(false)
+//                .limitRequest(batchSize)
+//                .flatMap { event ->
+//                    service.save(event)
+//                        .flatMap { repository.save(event.copy(processed = true)) }
+//                }
+//                .count()
+//                .block()
+//                .also {
+//                    println("$it processed events")
+//                }
         }
     }
 

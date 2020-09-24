@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 16
 
 image:
   repository: esmartit/seen-devices-data-store
@@ -41,10 +41,10 @@ app:
     processEvents:
       enabled: "true"
       initialDelay: "120000"
-      fixedDelay: "35000"
+      fixedDelay: "10000"
       lockAtMostFor: "5m"
-      lockAtLeastFor: "30s"
-      batchSize: "1000"
+      lockAtLeastFor: "10s"
+      batchSize: "100"
     deleteProcessed:
       enabled: "true"
       initialDelay: "240000"

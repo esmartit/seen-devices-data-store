@@ -2,20 +2,17 @@ package com.esmartit.seendevicesdatastore.services
 
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiReactiveRepository
-import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.DailyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
+import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Duration
 import java.time.Instant
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Component
@@ -24,6 +21,12 @@ class ScanApiService(
     private val hourlyScanApiReactiveRepository: HourlyScanApiReactiveRepository,
     private val dailyScanApiReactiveRepository: DailyScanApiReactiveRepository
 ) {
+
+    fun filteredFlux(filters: FilterRequest): Flux<ScanApiActivity> {
+        val startDateTimeFilter = getStartDateTime(filters)
+        val endDateTimeFilter = getEndDateTime(filters)
+        return filteredFluxByTime(startDateTimeFilter, endDateTimeFilter, filters)
+    }
 
     fun filteredFluxByTime(
         startDateTimeFilter: Instant? = null,

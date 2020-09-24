@@ -4,16 +4,12 @@ import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivit
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.DailyScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.hourly.HourlyScanApiReactiveRepository
-import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSetting
-import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDevice
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.DailyScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.HourlyScanApiActivity
-import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.RegisteredInfo
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
-import com.esmartit.seendevicesdatastore.domain.SensorActivity
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
@@ -25,7 +21,6 @@ import java.time.temporal.ChronoUnit
 @Component
 class ScanApiStoreService(
     private val repository: ScanApiReactiveRepository,
-    private val sensorSettingRepository: SensorSettingRepository,
     private val radiusActivityRepository: RadiusActivityRepository,
     private val registeredUserRepository: RegisteredUserRepository,
     private val hourlyScanApiRepository: HourlyScanApiReactiveRepository,
@@ -34,7 +29,7 @@ class ScanApiStoreService(
     private val clock: Clock
 ) {
 
-    fun save(newScanApiEvent: SensorActivity): Mono<UniqueDevice> {
+    fun save(newScanApiEvent: ScanApiActivity): Mono<UniqueDevice> {
         return createScanApiActivity(newScanApiEvent)
             .flatMap { saveHourlyActivity(it) }
             .flatMap { saveDailyActivity(it) }
@@ -44,8 +39,7 @@ class ScanApiStoreService(
             }
     }
 
-    fun createScanApiActivity(event: SensorActivity): Mono<ScanApiActivity> {
-        val sensorSetting = sensorSettingRepository.findByApMac(event.apMac)
+    fun createScanApiActivity(event: ScanApiActivity): Mono<ScanApiActivity> {
 
         val clientMac = event.clientMac
         val clientMacNormalized = clientMac.replace(":", "").toLowerCase()
@@ -53,7 +47,7 @@ class ScanApiStoreService(
         val registeredInfo =
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
-        val scanApiEvent = event.toScanApiActivity(clock, sensorSetting, registeredInfo)
+        val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
         return repository.save(scanApiEvent)
     }
 
@@ -83,36 +77,17 @@ class ScanApiStoreService(
             .flatMap { dailyScanApiRepository.save(it.addActivity(hourlyScanApiActivity)) }
     }
 
-    private fun saveUniqueDevice(event: SensorActivity): Mono<UniqueDevice> {
+    private fun saveUniqueDevice(event: ScanApiActivity): Mono<UniqueDevice> {
         return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac))
     }
 }
 
-private fun SensorActivity.toScanApiActivity(
+private fun ScanApiActivity.toScanApiActivity(
     clock: Clock,
-    sensorSetting: SensorSetting?,
     userInfo: RegisteredInfo?
 ): ScanApiActivity {
-    return ScanApiActivity(
-        id = "$clientMac;${seenTime.epochSecond}",
-        clientMac = clientMac,
-        seenTime = seenTime,
-        age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
+    return this.copy(age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
         gender = userInfo?.gender,
-        brand = manufacturer,
-        status = sensorSetting?.presence(rssi) ?: Position.NO_POSITION,
         memberShip = userInfo?.memberShip,
-        spotId = sensorSetting?.tags?.get("spot_id"),
-        sensorId = sensorSetting?.tags?.get("sensorname"),
-        countryId = sensorSetting?.tags?.get("country"),
-        stateId = sensorSetting?.tags?.get("state"),
-        cityId = sensorSetting?.tags?.get("city"),
-        zipCode = sensorSetting?.tags?.get("zipcode"),
-        groupName = sensorSetting?.tags?.get("groupname"),
-        hotspot = sensorSetting?.tags?.get("hotspot"),
-        zone = sensorSetting?.tags?.get("zone"),
-        isConnected = !ssid.isNullOrBlank(),
-        username = userInfo?.username,
-        rssi = rssi
-    )
+        username = userInfo?.username)
 }

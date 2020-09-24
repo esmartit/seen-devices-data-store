@@ -1,9 +1,8 @@
 package com.esmartit.seendevicesdatastore.application.sensorsettings
 
 import com.esmartit.seendevicesdatastore.domain.Position
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.repository.MongoRepository
-import org.springframework.data.rest.core.annotation.RepositoryRestResource
 
 @Document
 data class SensorSetting(
@@ -14,6 +13,7 @@ data class SensorSetting(
     val outEdge: Int,
     val sensorId: String,
     val spot: String,
+    @Indexed(unique = true)
     val apMac: String,
     val tags: Map<String, String> = emptyMap()
 ) {
@@ -25,7 +25,3 @@ data class SensorSetting(
     }
 }
 
-@RepositoryRestResource(collectionResourceRel = "sensor-settings", path = "sensor-settings")
-interface SensorSettingRepository : MongoRepository<SensorSetting, String> {
-    fun findByApMac(apMac: String): SensorSetting?
-}
