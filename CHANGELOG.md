@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.5.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.4.1...v3.5.0) (2020-09-24)
+
+
+### Features
+
+* using integration flow ([ef31f50](https://github.com/esmartit/seen-devices-data-store/commit/ef31f50d96d0f466bd1e9973ae07df9c9787bcff))
+
 ## [3.4.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.4.0...v3.4.1) (2020-09-23)
 
 
