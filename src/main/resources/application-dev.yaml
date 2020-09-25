@@ -12,7 +12,7 @@ spring:
 
 eventStore:
   processEvents:
-    enabled: "true"
+    enabled: "false"
     initialDelay: "2000"
     fixedDelay: "10000"
     lockAtMostFor: "5m"

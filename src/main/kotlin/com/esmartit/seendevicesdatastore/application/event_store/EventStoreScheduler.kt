@@ -1,8 +1,7 @@
 package com.esmartit.seendevicesdatastore.application.event_store
 
+import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiStoreService
-import com.esmartit.seendevicesdatastore.application.sensoractivity.SensorActivityReactiveRepository
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -10,9 +9,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class EventStoreScheduler(
-    private val repository: SensorActivityReactiveRepository,
-    private val service: ScanApiStoreService,
-    private val objectMapper: ObjectMapper
+    private val repository: ScanApiReactiveRepository,
+    private val service: ScanApiStoreService
 ) {
 
     @Value("\${eventStore.processEvents.batchSize}")
@@ -36,17 +34,17 @@ class EventStoreScheduler(
     fun processEvent() {
         if (processEventsEnabled) {
             println("processing events...")
-//            repository.findByProcessed(false)
-//                .limitRequest(batchSize)
-//                .flatMap { event ->
-//                    service.save(event)
-//                        .flatMap { repository.save(event.copy(processed = true)) }
-//                }
-//                .count()
-//                .block()
-//                .also {
-//                    println("$it processed events")
-//                }
+            repository.findByProcessed(false)
+                .limitRequest(batchSize)
+                .flatMap { event ->
+                    service.save(event)
+                        .flatMap { repository.save(event.copy(processed = true)) }
+                }
+                .count()
+                .block()
+                .also {
+                    println("$it processed events")
+                }
         }
     }
 
@@ -61,9 +59,8 @@ class EventStoreScheduler(
     )
     fun deleteProcessed() {
         if (deleteProcessedEnabled) {
-            repository.deleteByProcessed(true).subscribe {
-                println("$it deleted events")
-            }
+//            repository.deleteByProcessed(true).subscribe {
+//                println("$it deleted events")
         }
     }
 }

@@ -14,6 +14,7 @@ interface ScanApiReactiveRepository : ReactiveMongoRepository<ScanApiActivity, S
     fun findBySeenTimeBetween(startDateTimeFilter: Instant, end: Instant): Flux<ScanApiActivity>
     fun findBySeenTimeLessThanEqual(end: Instant): Flux<ScanApiActivity>
     fun findByClientMacAndSeenTime(clientMac: String, seenTime: Instant): Mono<ScanApiActivity>
+    fun findByProcessed(processed: Boolean): Flux<ScanApiActivity>
 }
 
 @Repository
