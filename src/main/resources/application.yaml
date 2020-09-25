@@ -21,6 +21,7 @@ spring:
       bindings:
         input:
           destination: "smartpoke-device-presence"
+          consumer.concurrency: 4
           group: "smartpoke.data-store"
         registered-device-input:
           destination: "smartpoke-registered-users"
