@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.5.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.5.1...v3.5.2) (2020-09-25)
+
+
+### Bug Fixes
+
+* kafka concurrency ([95f87da](https://github.com/esmartit/seen-devices-data-store/commit/95f87daf9308fdd22c0c36f8f1acecec59573730))
+
 ## [3.5.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.5.0...v3.5.1) (2020-09-25)
 
 
