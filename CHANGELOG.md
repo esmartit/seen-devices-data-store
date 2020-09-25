@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.5.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.5.0...v3.5.1) (2020-09-25)
+
+
+### Bug Fixes
+
+* scheduler ([1b771c2](https://github.com/esmartit/seen-devices-data-store/commit/1b771c2ca1cd0c151b499c2a53e0c2d660bb9292))
+
 # [3.5.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.4.1...v3.5.0) (2020-09-24)
 
 
