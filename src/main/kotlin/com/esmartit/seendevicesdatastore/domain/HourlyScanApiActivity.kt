@@ -23,6 +23,7 @@ data class HourlyScanApiActivity(
     fun filter(filters: FilterRequest?): ScanApiActivity {
         return activity.filter { filters?.handle(it) ?: true }
             .maxBy { it.status.value }
+            ?.copy(seenTime = seenTime)
             ?: ScanApiActivity(
                 id = "$clientMac;${seenTime.epochSecond}",
                 clientMac = clientMac,

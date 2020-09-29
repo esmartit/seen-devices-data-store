@@ -21,6 +21,7 @@ data class DailyScanApiActivity(
 
     fun filter(filters: FilterRequest?): ScanApiActivity {
         return activity.flatMap { activity.map { it.filter(filters) } }.maxBy { it.status.value }
+            ?.copy(seenTime = seenTime)
             ?: ScanApiActivity(
                 id = "$clientMac;${seenTime.epochSecond}",
                 clientMac = clientMac,
