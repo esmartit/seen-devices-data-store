@@ -29,7 +29,7 @@ class SmartPokeController(
     fun getDailyConnected(
         filters: FilterRequest
     ): Flux<NowPresence> {
-        val todayDetected = commonService.todayFlux(filters.copy(isConnected = true))
+        val todayDetected = commonService.todayFluxGrouped(filters.copy(isConnected = true))
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last(NowPresence(UUID.randomUUID().toString())) }
@@ -43,7 +43,7 @@ class SmartPokeController(
         val fifteenSeconds = Duration.ofSeconds(15)
         return Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap {
-                commonService.todayFlux(filters.copy(isConnected = true))
+                commonService.todayFluxGrouped(filters.copy(isConnected = true))
                     .map { it.inCount + it.limitCount + it.outCount }
                     .sum()
                     .map { DailyDevices(it, clock.now()) }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.kotlin.extra.math.sum
 import java.time.Duration
 import java.time.ZoneId
 import java.util.UUID
@@ -39,7 +38,7 @@ class DetectedController(
     fun getDailyDetected(
         filters: FilterRequest
     ): Flux<NowPresence> {
-        val todayDetected = commonService.todayFlux(filters)
+        val todayDetected = commonService.todayFluxGrouped(filters)
         val fifteenSeconds = Duration.ofSeconds(15)
         val latest = Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap { todayDetected.last(NowPresence(UUID.randomUUID().toString())) }
@@ -54,8 +53,9 @@ class DetectedController(
         return Flux.interval(Duration.ofSeconds(0), fifteenSeconds).onBackpressureDrop()
             .flatMap {
                 commonService.todayFlux(filters)
-                    .map { it.inCount + it.limitCount + it.outCount }
-                    .sum()
+                    .map { it.clientMac }
+                    .distinct()
+                    .count()
                     .map { DailyDevices(it, clock.now()) }
             }
     }
