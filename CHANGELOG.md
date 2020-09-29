@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.6.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.1...v3.6.2) (2020-09-29)
+
+
+### Bug Fixes
+
+* truncated by time ([146442d](https://github.com/esmartit/seen-devices-data-store/commit/146442d679a1ee25b2afc4ceb54b9ad067e52b7d))
+
 ## [3.6.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.0...v3.6.1) (2020-09-29)
 
 
