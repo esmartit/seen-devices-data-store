@@ -19,8 +19,9 @@ class ReportsController(private val scanApiService: ScanApiService) {
         filters: FilterRequest
     ): Flux<MutableList<DeviceWithPositionRecord>> {
         return scanApiService.filteredFlux(filters)
+            .filter { it.isInRange() }
             .map { DeviceWithPositionRecord(it) }
-            .buffer(100)
+            .buffer(500)
             .concatWith(Mono.just(listOf(DeviceWithPositionRecord(isLast = true))))
     }
 }
