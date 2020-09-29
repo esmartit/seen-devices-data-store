@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("/sensor-activity/v2")
@@ -28,7 +29,9 @@ class DetectedControllerV2(
     ): Flux<List<NowPresence>> {
         return Flux.interval(Duration.ofSeconds(0L), Duration.ofSeconds(15))
             .flatMap {
-                commonService.timeFlux(zoneId, 30L).groupBy { it.seenTime }.flatMap { scanApiService.groupByTime(it) }
+                commonService.timeFlux(zoneId, 30L)
+                    .groupBy { it.seenTime.truncatedTo(ChronoUnit.MINUTES) }
+                    .flatMap { scanApiService.groupByTime(it) }
                     .sort { o1, o2 -> o1.time.compareTo(o2.time) }
                     .collectList()
             }
@@ -41,7 +44,9 @@ class DetectedControllerV2(
 
         return Flux.interval(Duration.ofSeconds(0L), Duration.ofSeconds(15))
             .flatMap {
-                commonService.timeFlux(zoneId, 5L).groupBy { it.seenTime }.flatMap { scanApiService.groupByTime(it) }
+                commonService.timeFlux(zoneId, 5L)
+                    .groupBy { it.seenTime.truncatedTo(ChronoUnit.MINUTES) }
+                    .flatMap { scanApiService.groupByTime(it) }
                     .last(NowPresence())
             }
             .map { it.inCount + it.limitCount + it.outCount }
