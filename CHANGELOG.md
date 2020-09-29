@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.6.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.3...v3.6.4) (2020-09-29)
+
+
+### Bug Fixes
+
+* filtering out of range ([d19bb8a](https://github.com/esmartit/seen-devices-data-store/commit/d19bb8a84b746b83a73e26d4accd23679e5b950f))
+
 ## [3.6.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.2...v3.6.3) (2020-09-29)
 
 
