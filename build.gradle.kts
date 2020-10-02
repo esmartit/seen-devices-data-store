@@ -34,6 +34,8 @@ dependencies {
 //	implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
 	implementation("org.springframework.kafka:spring-kafka")
 
+	implementation("org.springframework.integration:spring-integration-file")
+
 	implementation("net.javacrumbs.shedlock:shedlock-provider-mongo-reactivestreams:4.14.0")
 	implementation("net.javacrumbs.shedlock:shedlock-spring:4.14.0")
 

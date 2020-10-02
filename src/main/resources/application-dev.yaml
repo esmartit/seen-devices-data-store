@@ -6,7 +6,7 @@ spring:
   data:
     mongodb:
 #      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:spring}@${MONGODB_HOST:localhost:27017}/smartpoke"
+      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:test}@${MONGODB_HOST:localhost:27017}/smartpoke"
 
 
 
@@ -24,3 +24,31 @@ eventStore:
     fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
     lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"
     lockAtLeastFor: "${DELETE_EVENTS_LOCK_AT_LEAST:30s}"
+
+
+inbound:
+  failed:
+    path: inbound/failed
+  file:
+    poller:
+      fixed:
+        delay: 1000
+      max:
+        messages:
+          per:
+            poll: 5
+      thread:
+        pool:
+          size: 4
+  filename:
+    regex: ([^\s]+(\.(?i)(json))$)
+  out:
+    path: inbound/out
+  processed:
+    path: inbound/processed
+  read:
+    path: inbound/read
+out:
+  filename:
+    dateFormat: yyyy_MM_dd_HH_mm_ss_SSS
+    suffix: .txt
