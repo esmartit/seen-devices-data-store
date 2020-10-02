@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.7.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.4...v3.7.0) (2020-10-02)
+
+
+### Features
+
+* file import ([1687d05](https://github.com/esmartit/seen-devices-data-store/commit/1687d0530dedb7969f076128e673b2cbebeef14f))
+
 ## [3.6.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.6.3...v3.6.4) (2020-09-29)
 
 
