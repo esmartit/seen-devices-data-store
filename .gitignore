@@ -33,7 +33,7 @@ out/
 
 gradle/
 gradlew*
-
 migration/
+inbound/
 
 .DS_Store
