@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.7.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.1...v3.7.2) (2020-10-02)
+
+
+### Bug Fixes
+
+* file paths ([67e0eb4](https://github.com/esmartit/seen-devices-data-store/commit/67e0eb40438f5045a4d7bbc4058b1e211a0fcc64))
+
 ## [3.7.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.0...v3.7.1) (2020-10-02)
 
 
