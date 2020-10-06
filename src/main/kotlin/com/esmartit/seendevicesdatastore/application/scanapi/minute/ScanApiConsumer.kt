@@ -40,7 +40,8 @@ private fun SensorActivityEvent.toScanApiActivity(sensorSetting: SensorSetting?)
         cityId = sensorSetting?.tags?.get("city"),
         zipCode = sensorSetting?.tags?.get("zipcode"),
         groupName = sensorSetting?.tags?.get("groupname"),
-        hotspot = sensorSetting?.tags?.get("hotspot")
+        hotspot = sensorSetting?.tags?.get("hotspot"),
+        ssid = device.ssid
     )
 }
 

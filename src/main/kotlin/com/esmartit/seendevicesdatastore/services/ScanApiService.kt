@@ -69,8 +69,7 @@ class ScanApiService(
             else -> {
                 hourlyScanApiReactiveRepository.findAll()
             }
-        }.map { it.filter(filters) }
-            .filter { it.isInRange() }
+        }.map { it.filter(filters) }.filter { it.isInRange() }
     }
 
     fun dailyFilteredFlux(filters: FilterRequest): Flux<DailyScanApiActivity> {

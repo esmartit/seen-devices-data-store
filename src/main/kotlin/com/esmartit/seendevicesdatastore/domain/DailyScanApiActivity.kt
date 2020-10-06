@@ -1,6 +1,7 @@
 package com.esmartit.seendevicesdatastore.domain
 
 import org.springframework.data.mongodb.core.index.CompoundIndex
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
@@ -12,6 +13,7 @@ import java.time.Instant
 data class DailyScanApiActivity(
     val id: String,
     val clientMac: String,
+    @Indexed(name = "seenTime_idx")
     val seenTime: Instant,
     val activity: Set<HourlyScanApiActivity> = emptySet()
 ) {

@@ -34,6 +34,7 @@ data class ScanApiActivity(
     val groupName: String? = null,
     val hotspot: String? = null,
     val zone: String? = null,
+    val ssid: String? = null,
     val processed: Boolean = false
 ) {
     fun isInRange(): Boolean {

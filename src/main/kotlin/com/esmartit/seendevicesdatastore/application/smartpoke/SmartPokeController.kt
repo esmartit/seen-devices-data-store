@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux
 import reactor.kotlin.extra.math.sum
 import java.time.Duration
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @RestController
@@ -59,7 +60,8 @@ class SmartPokeController(
             .flatMap {
                 commonService.timeFlux(zoneId, 30L)
                     .filter { it.isConnected }
-                    .groupBy { it.seenTime }.flatMap { scanApiService.groupByTime(it) }
+                    .groupBy { it.seenTime.truncatedTo(ChronoUnit.MINUTES) }
+                    .flatMap { scanApiService.groupByTime(it) }
                     .sort { o1, o2 -> o1.time.compareTo(o2.time) }
                     .collectList()
             }
@@ -74,11 +76,10 @@ class SmartPokeController(
             .flatMap {
                 commonService.timeFlux(zoneId, 5L)
                     .filter { it.isConnected }
-                    .groupBy { it.seenTime }
-                    .flatMap { scanApiService.groupByTime(it) }
-                    .last()
+                    .map { it.clientMac }
+                    .distinct()
+                    .count()
             }
-            .map { it.inCount + it.limitCount + it.outCount }
             .map { DailyDevices(it, clock.now()) }
     }
 
