@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+## [3.7.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.2...v3.7.3) (2020-10-06)
+
+
+### Bug Fixes
+
+* hot spot endpoints ([4180373](https://github.com/esmartit/seen-devices-data-store/commit/4180373c02ec04c7de4d6033aa4c9831e5fb6830))
+* hot spot endpoints ([1c725e1](https://github.com/esmartit/seen-devices-data-store/commit/1c725e1e46a144525616ce717f331494cb289b02))
+
 ## [3.7.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.1...v3.7.2) (2020-10-02)
 
 
