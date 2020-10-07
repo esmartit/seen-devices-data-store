@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.7.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.4...v3.7.5) (2020-10-07)
+
+
+### Bug Fixes
+
+* testing new jenkins 2 ([20afb6d](https://github.com/esmartit/seen-devices-data-store/commit/20afb6d1accdf589cac171ae7cac6c00ac6d781a))
+
 ## [3.7.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.3...v3.7.4) (2020-10-07)
 
 
