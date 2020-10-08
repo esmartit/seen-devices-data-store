@@ -24,7 +24,7 @@ class RegisteredController(
     fun getAllSensorActivity(): Flux<TotalDevices> {
         return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15))
             .flatMap { registeredService.getTotalRegisteredCount() }
-            .map { TotalDevices(it, clock.now()) }
+            .map { TotalDevices(it.toInt(), clock.now()) }
     }
 
     @GetMapping(path = ["/daily-registered-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])

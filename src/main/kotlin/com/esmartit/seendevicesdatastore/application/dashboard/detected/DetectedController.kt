@@ -4,10 +4,19 @@ import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.domain.DailyDevices
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
+import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
+import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.TotalDevices
 import com.esmartit.seendevicesdatastore.services.ClockService
 import com.esmartit.seendevicesdatastore.services.CommonService
 import com.esmartit.seendevicesdatastore.services.ScanApiService
+import org.bson.Document
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation.count
+import org.springframework.data.mongodb.core.aggregation.Aggregation.group
+import org.springframework.data.mongodb.core.aggregation.Aggregation.match
+import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
+import org.springframework.data.mongodb.core.query.Criteria.where
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,14 +33,20 @@ class DetectedController(
     private val commonService: CommonService,
     private val scanApiService: ScanApiService,
     private val brandsRepository: BrandsRepository,
-    private val clock: ClockService
+    private val clock: ClockService,
+    private val template: ReactiveMongoTemplate
 ) {
 
     @GetMapping(path = ["/total-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getAllSensorActivity(): Flux<TotalDevices> {
+        val aggregation = newAggregation(
+            match(where("status").ne(NO_POSITION)),
+            group("clientMac"),
+            count().`as`("total")
+        )
         return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15))
-            .flatMap { commonService.allDevicesCount() }
-            .map { TotalDevices(it, clock.now()) }
+            .flatMap { template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java) }
+            .map { TotalDevices(it.getInteger("total"), clock.now()) }
     }
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
