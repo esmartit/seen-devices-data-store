@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.7.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.5...v3.7.6) (2020-10-08)
+
+
+### Bug Fixes
+
+* reactive mongo template ([4e57761](https://github.com/esmartit/seen-devices-data-store/commit/4e57761c89e86564ba37166e86dfba7d9e4cf417))
+
 ## [3.7.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.4...v3.7.5) (2020-10-07)
 
 
