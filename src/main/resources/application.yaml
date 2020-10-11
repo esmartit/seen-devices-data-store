@@ -60,7 +60,7 @@ eventStore:
 
 inbound:
   failed:
-    path: /app/inbound/failed
+    path: inbound/failed
   file:
     poller:
       fixed:
@@ -75,11 +75,11 @@ inbound:
   filename:
     regex: ([^\s]+(\.(?i)(json))$)
   out:
-    path: /app/inbound/out
+    path: inbound/out
   processed:
-    path: /app/inbound/processed
+    path: inbound/processed
   read:
-    path: /app/inbound/read
+    path: inbound/read
 out:
   filename:
     dateFormat: yyyy_MM_dd_HH_mm_ss_SSS

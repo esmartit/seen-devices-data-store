@@ -89,5 +89,6 @@ private fun ScanApiActivity.toScanApiActivity(
     return this.copy(age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
         gender = userInfo?.gender,
         memberShip = userInfo?.memberShip,
-        username = userInfo?.username)
+        username = userInfo?.username,
+        userZipCode = userInfo?.zipCode)
 }
