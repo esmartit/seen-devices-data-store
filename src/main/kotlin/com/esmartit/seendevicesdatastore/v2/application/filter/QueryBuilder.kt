@@ -99,8 +99,8 @@ class StatusFilterBuilder : QueryBuilder() {
 class UserInfoFilterBuilder : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
         val criteria = context.criteria
-        val ageStart = context.filterRequest.ageStart?.takeUnless { it.isBlank() }
-        val ageEnd = context.filterRequest.ageEnd?.takeUnless { it.isBlank() }
+        val ageStart = context.filterRequest.ageStart?.takeUnless { it.isBlank() }?.toInt()
+        val ageEnd = context.filterRequest.ageEnd?.takeUnless { it.isBlank() }?.toInt()
         if (ageStart != null && ageEnd != null) {
             criteria.and("age").gte(ageStart).lte(ageEnd)
         } else if (ageStart != null) {
