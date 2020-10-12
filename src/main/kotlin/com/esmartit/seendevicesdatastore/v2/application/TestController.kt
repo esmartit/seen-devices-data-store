@@ -1,13 +1,10 @@
 package com.esmartit.seendevicesdatastore.v2.application
 
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
-import org.bson.Document
+import com.esmartit.seendevicesdatastore.services.QueryService
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.data.mongodb.core.aggregation.Aggregation.count
-import org.springframework.data.mongodb.core.aggregation.Aggregation.group
-import org.springframework.data.mongodb.core.aggregation.Aggregation.match
-import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
 import org.springframework.data.mongodb.core.query.Criteria.where
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.MediaType
@@ -23,20 +20,12 @@ import java.time.ZoneId
 @RestController
 @RequestMapping("/test")
 class TestController(
-    private val reactiveMongoTemplate: ReactiveMongoTemplate
+    private val template: ReactiveMongoTemplate,
+    private val queryService: QueryService
 ) {
 
     @GetMapping(path = ["/total-devices-all"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun totalCount(): Flux<Document> {
-
-        val aggregation = newAggregation(
-            match(where("status").ne(NO_POSITION)),
-            group("clientMac"),
-            count().`as`("total")
-        )
-
-        return reactiveMongoTemplate.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
-    }
+    fun totalCount(filters: FilterRequest) = queryService.find(filters)
 
     @GetMapping(path = ["/total-devices-today"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun todayCount(
@@ -49,7 +38,7 @@ class TestController(
             where("status").ne(NO_POSITION)
                 .and("seenTime").gte(startOfDay)
         )
-        return reactiveMongoTemplate.findDistinct(
+        return template.findDistinct(
             query,
             "clientMac",
             ScanApiActivity::class.java,
@@ -57,4 +46,3 @@ class TestController(
         ).count().toFlux()
     }
 }
-

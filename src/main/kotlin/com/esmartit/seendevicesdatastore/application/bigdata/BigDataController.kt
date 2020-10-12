@@ -1,12 +1,9 @@
 package com.esmartit.seendevicesdatastore.application.bigdata
 
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_DAY
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MONTH
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position
-import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
+import com.esmartit.seendevicesdatastore.services.DeviceAndPosition
+import com.esmartit.seendevicesdatastore.services.QueryService
 import com.esmartit.seendevicesdatastore.services.ScanApiService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,17 +14,14 @@ import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Duration
 import java.time.Instant
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.WeekFields
-import java.util.Locale
 import java.util.UUID
 
 
 @RestController
 @RequestMapping("/bigdata")
 class BigDataController(
-    private val scanApiService: ScanApiService
+    private val scanApiService: ScanApiService,
+    private val queryService: QueryService
 ) {
 
     @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -35,21 +29,9 @@ class BigDataController(
         filters: FilterRequest
     ): Flux<BigDataPresence> {
 
-        val woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
-        val timeZone = filters.timezone
-        val timeFun: (ZonedDateTime) -> String = when (filters.groupBy) {
-            BY_DAY -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) }
-            BY_WEEK -> { time -> "${time.year}/${time[woy]}" }
-            BY_MONTH -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy/MM")) }
-            BY_YEAR -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy")) }
-        }
-
-        return scanApiService.dailyFilteredFlux(filters)
-            .map { it.filter(filters) }
-            .filter { it.isInRange() }
-            .map { timeFun(it.seenTime.atZone(timeZone)) to it }
+        return queryService.find(filters)
             .window(Duration.ofMillis(150))
-            .flatMap { w -> w.groupBy { it.first }.flatMap { g -> groupByTime(g) } }
+            .flatMap { w -> w.groupBy { it.group }.flatMap { g -> groupByTime(g) } }
             .groupBy { it.group }
             .flatMap { g ->
                 g.scan { t: BigDataPresence, u: BigDataPresence ->
@@ -96,7 +78,7 @@ class BigDataController(
             }.concatWith(Mono.just(AveragePresence(0.0, true)))
     }
 
-    fun groupByTime(group: GroupedFlux<String, Pair<String, ScanApiActivity>>): Mono<BigDataPresence> {
+    fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<BigDataPresence> {
         return group.reduce(
             BigDataPresence(
                 id = UUID.randomUUID().toString(),
@@ -104,7 +86,7 @@ class BigDataController(
                 isLast = false
             )
         ) { acc, curr ->
-            when (curr.second.status) {
+            when (curr.position) {
                 Position.IN -> acc.copy(inCount = acc.inCount + 1)
                 Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
                 Position.OUT -> acc.copy(outCount = acc.outCount + 1)

@@ -8,7 +8,9 @@ import java.time.ZonedDateTime
 
 
 data class FilterRequest(
-    val timezone: ZoneId = ZoneOffset.UTC,
+    val timezone: ZoneId = ZoneId.of("UTC"),
+    val startDate: String? = null,
+    val endDate: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
     val countryId: String? = null,
@@ -16,15 +18,13 @@ data class FilterRequest(
     val cityId: String? = null,
     val spotId: String? = null,
     val sensorId: String? = null,
+    val zipCode: String? = null,
     val brands: List<String> = emptyList(),
-    val status: Position? = null,
+    val status: List<Position> = emptyList(),
     val ageStart: String? = null,
     val ageEnd: String? = null,
     val gender: Gender? = null,
-    val zipCode: String? = null,
     val memberShip: Boolean? = null,
-    val startDate: String? = null,
-    val endDate: String? = null,
     val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY,
     val inRange: Boolean? = null,
     val isConnected: Boolean? = null
@@ -55,7 +55,7 @@ data class FilterRequest(
             filter(cityId.checkIsNotBlank(), event.cityId) &&
             filter(zipCode.checkIsNotBlank(), event.zipCode) &&
             filter(sensorId.checkIsNotBlank(), event.sensorId) &&
-            filter(status, event.status) &&
+            filter(status.firstOrNull(), event.status) &&
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&
             filter(inRange, event.isInRange()) &&

@@ -32,9 +32,9 @@ securityContext: {}
 
 app:
   kafka:
-    host: "event-bus-kafka.ibacapital.svc.cluster.local:9092"
+    host: "event-bus-kafka.demo.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.ibacapital.svc.cluster.local,data-store-mongodb-3.data-store-mongodb-headless.ibacapital.svc.cluster.local"
+    host: "data-store-mongodb-0.data-store-mongodb-headless.demo.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.demo.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.demo.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
   eventStore:
@@ -71,7 +71,7 @@ mongodb:
   enabled: true
   architecture: replicaset
   systemLogVerbosity: 3
-  replicaCount: 4
+  replicaCount: 3
   auth:
     rootPassword: "password"
     username: "spring"

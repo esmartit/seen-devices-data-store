@@ -1,12 +1,12 @@
-#logging:
-#  level:
-#    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
-#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 spring:
   data:
     mongodb:
 #      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:test}@${MONGODB_HOST:localhost:27017}/smartpoke"
+      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:spring}@${MONGODB_HOST:localhost:27017}/smartpoke"
 
 
 
