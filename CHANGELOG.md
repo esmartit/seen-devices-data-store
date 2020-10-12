@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.0...v3.8.1) (2020-10-12)
+
+
+### Bug Fixes
+
+* mongodb queries and big data ([54ea76f](https://github.com/esmartit/seen-devices-data-store/commit/54ea76f631930827dd94ce9241dc3f56af53bd3a))
+
 # [3.8.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.7.6...v3.8.0) (2020-10-12)
 
 
