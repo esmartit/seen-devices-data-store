@@ -3,7 +3,6 @@ package com.esmartit.seendevicesdatastore.domain
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 
@@ -18,13 +17,14 @@ data class FilterRequest(
     val cityId: String? = null,
     val spotId: String? = null,
     val sensorId: String? = null,
-    val zipCode: String? = null,
-    val brands: List<String> = emptyList(),
-    val status: List<Position> = emptyList(),
+    val zipCodeId: String? = null,
+    val brands: String? = null,
+    val status: String? = null,
     val ageStart: String? = null,
     val ageEnd: String? = null,
     val gender: Gender? = null,
     val memberShip: Boolean? = null,
+    val zipCode: String? = null,
     val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY,
     val inRange: Boolean? = null,
     val isConnected: Boolean? = null
@@ -55,7 +55,7 @@ data class FilterRequest(
             filter(cityId.checkIsNotBlank(), event.cityId) &&
             filter(zipCode.checkIsNotBlank(), event.zipCode) &&
             filter(sensorId.checkIsNotBlank(), event.sensorId) &&
-            filter(status.firstOrNull(), event.status) &&
+            filter(status?.split(",")?.firstOrNull(), event.status) &&
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&
             filter(inRange, event.isInRange()) &&

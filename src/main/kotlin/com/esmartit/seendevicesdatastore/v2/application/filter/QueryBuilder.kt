@@ -73,14 +73,16 @@ class LocationFilterBuilder : QueryBuilder() {
         context.filterRequest.cityId?.takeUnless { it.isBlank() }?.also { criteria.and("cityId").isEqualTo(it) }
         context.filterRequest.spotId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
         context.filterRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
-        context.filterRequest.zipCode?.takeUnless { it.isBlank() }?.also { criteria.and("zipCode").isEqualTo(it) }
+        context.filterRequest.zipCodeId?.takeUnless { it.isBlank() }?.split(",")?.also {
+            criteria.and("zipCode").`in`(it)
+        }
     }
 }
 
 class BrandFilterBuilder : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
         val criteria = context.criteria
-        context.filterRequest.brands.takeUnless { it.isEmpty() }?.also {
+        context.filterRequest.brands?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("brand").`in`(it)
         }
     }
@@ -88,18 +90,17 @@ class BrandFilterBuilder : QueryBuilder() {
 
 class StatusFilterBuilder : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
-        val criteria = context.criteria.and("status").ne(Position.NO_POSITION)
-        context.filterRequest.status.takeUnless { it.isEmpty() }?.also {
-            criteria.`in`(it)
-        }
+        val criteria = context.criteria.and("status")
+        context.filterRequest.status?.takeUnless { it.isBlank() }?.also { criteria.isEqualTo(it) }
+            ?: criteria.ne(Position.NO_POSITION)
     }
 }
 
 class UserInfoFilterBuilder : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
         val criteria = context.criteria
-        val ageStart = context.filterRequest.ageStart
-        val ageEnd = context.filterRequest.ageEnd
+        val ageStart = context.filterRequest.ageStart?.takeUnless { it.isBlank() }
+        val ageEnd = context.filterRequest.ageEnd?.takeUnless { it.isBlank() }
         if (ageStart != null && ageEnd != null) {
             criteria.and("age").gte(ageStart).lte(ageEnd)
         } else if (ageStart != null) {
@@ -109,5 +110,8 @@ class UserInfoFilterBuilder : QueryBuilder() {
         }
         context.filterRequest.memberShip?.also { criteria.and("memberShip").isEqualTo(it) }
         context.filterRequest.gender?.also { criteria.and("gender").isEqualTo(it) }
+        context.filterRequest.zipCode?.takeUnless { it.isBlank() }?.split(",")?.also {
+            criteria.and("userZipCode").`in`(it)
+        }
     }
 }
