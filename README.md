@@ -1,7 +1,8 @@
 # seen-devices-data-store
 
 testing 2.7.x
-new jenkins test
+new release
+
 
 
 mongorestore --username root --password password --gzip --archive=/bitnami/mongodb/ibacapital-2019.gzip
