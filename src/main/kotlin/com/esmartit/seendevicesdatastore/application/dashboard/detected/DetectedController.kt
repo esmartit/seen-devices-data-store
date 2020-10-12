@@ -96,5 +96,5 @@ class DetectedController(
 data class BrandCount(val name: String, val value: Long)
 
 enum class FilterDateGroup {
-    BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
+    BY_MINUTE, BY_HOUR, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
 }

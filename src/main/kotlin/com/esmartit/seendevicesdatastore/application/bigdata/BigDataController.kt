@@ -42,6 +42,7 @@ class BigDataController(
             BY_WEEK -> { time -> "${time.year}/${time[woy]}" }
             BY_MONTH -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy/MM")) }
             BY_YEAR -> { time -> time.format(DateTimeFormatter.ofPattern("yyyy")) }
+            else -> TODO()
         }
 
         return scanApiService.dailyFilteredFlux(filters)

@@ -33,7 +33,12 @@ class DateFilterBuilder : QueryBuilder() {
         val startDate = context.filterRequest.startDate?.takeUnless { it.isBlank() }
             ?.let { LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone).toInstant() }
         val endDate = context.filterRequest.endDate?.takeUnless { it.isBlank() }
-            ?.let { LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone).plusDays(1).toInstant() }
+            ?.let {
+                LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone)
+                    .plusDays(1)
+                    .minusSeconds(1)
+                    .toInstant()
+            }
         val criteria = context.criteria
         if (startDate != null && endDate != null) {
             criteria.and("seenTime").gte(startDate).lte(endDate)
