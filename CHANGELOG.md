@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.1...v3.8.2) (2020-10-12)
+
+
+### Bug Fixes
+
+* age filter ([af0cf03](https://github.com/esmartit/seen-devices-data-store/commit/af0cf03d70d87c51810e1694fb378bb2c0693ef4))
+
 ## [3.8.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.0...v3.8.1) (2020-10-12)
 
 
