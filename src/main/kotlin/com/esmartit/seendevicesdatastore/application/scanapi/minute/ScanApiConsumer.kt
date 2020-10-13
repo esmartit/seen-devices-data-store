@@ -31,6 +31,7 @@ class ScanApiConsumer(
             clientMac = device.clientMac,
             seenTime = device.seenTime,
             brand = brand.name,
+            manufacturer = device.manufacturer,
             isConnected = !device.ssid.isNullOrBlank(),
             rssi = device.rssi,
             status = sensorSetting?.presence(device.rssi) ?: Position.NO_POSITION,

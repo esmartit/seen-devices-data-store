@@ -27,6 +27,7 @@ data class ScanApiActivity(
     val groupName: String? = null,
     val hotspot: String? = null,
     val brand: String? = null,
+    val manufacturer: String? = null,
     val status: Position = Position.NO_POSITION,
     val gender: Gender? = null,
     val memberShip: Boolean? = null,
