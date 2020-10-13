@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.2...v3.8.3) (2020-10-13)
+
+
+### Bug Fixes
+
+* adding brand and manufacturer ([ebbf6f7](https://github.com/esmartit/seen-devices-data-store/commit/ebbf6f7bf7e97fab5b612850fad7c3ce48c27ba1))
+
 ## [3.8.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.1...v3.8.2) (2020-10-12)
 
 
