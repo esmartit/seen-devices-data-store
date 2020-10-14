@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.3...v3.8.4) (2020-10-14)
+
+
+### Bug Fixes
+
+* adding presence filter ([9eee6ef](https://github.com/esmartit/seen-devices-data-store/commit/9eee6ef12daa7b123a5c058894dfa67da30d6eb3))
+
 ## [3.8.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.2...v3.8.3) (2020-10-13)
 
 
