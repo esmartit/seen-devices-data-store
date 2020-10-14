@@ -18,6 +18,7 @@ import com.esmartit.seendevicesdatastore.v2.application.filter.QueryBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
 import org.bson.Document
+import org.bson.Document.parse
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
@@ -25,10 +26,12 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
+import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.AggregationOptions
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq.valueOf
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.CaseOperator.`when`
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.switchCases
+import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import java.util.ArrayDeque
@@ -37,6 +40,17 @@ import java.util.ArrayDeque
 class QueryService(private val template: ReactiveMongoTemplate) {
 
     fun find(filters: FilterRequest): Flux<DeviceAndPosition> {
+        return findRaw(filters)
+            .map {
+                DeviceAndPosition(
+                    it["dateAtZone", ""],
+                    it["clientMac", ""],
+                    Position.byValue(it["statusNumeral", 0])
+                )
+            }
+    }
+
+    fun findRaw(filters: FilterRequest): Flux<Document> {
         val filterContext = FilterContext(
             filterRequest = filters,
             chain = ArrayDeque<QueryBuilder>(
@@ -76,18 +90,19 @@ class QueryService(private val template: ReactiveMongoTemplate) {
                     ).defaultTo(-1)
                 ).`as`("statusNumeral"),
             match(filterContext.criteria),
+            group("clientMac")
+                .addToSet("dateAtZone").`as`("dateAtZone")
+                .addToSet(parse("{dateAtZone:\"\$dateAtZone\",statusNumeral:\"\$statusNumeral\"}")).`as`("root"),
+            project("_id", "root").and("dateAtZone").size().`as`("presence"),
+            match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
+                ?: Criteria()),
+            unwind("root"),
+            project("root.dateAtZone", "root.statusNumeral").and("_id").`as`("clientMac").andExclude("_id"),
             group("dateAtZone", "clientMac").max("statusNumeral").`as`("statusNumeral"),
             sort(Sort.Direction.ASC, "_id"),
             project("_id.dateAtZone", "_id.clientMac", "statusNumeral").andExclude("_id")
         ).withOptions(AggregationOptions.builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
-            .map {
-                DeviceAndPosition(
-                    it["dateAtZone", ""],
-                    it["clientMac", ""],
-                    Position.byValue(it["statusNumeral", 0])
-                )
-            }
     }
 }
 

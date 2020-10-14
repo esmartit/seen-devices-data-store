@@ -25,7 +25,7 @@ class TestController(
 ) {
 
     @GetMapping(path = ["/total-devices-all"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun totalCount(filters: FilterRequest) = queryService.find(filters)
+    fun totalCount(filters: FilterRequest) = queryService.findRaw(filters)
 
     @GetMapping(path = ["/total-devices-today"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun todayCount(

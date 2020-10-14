@@ -12,6 +12,7 @@ data class FilterRequest(
     val endDate: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
+    val presence: String? = null,
     val countryId: String? = null,
     val stateId: String? = null,
     val cityId: String? = null,
