@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.5...v3.8.6) (2020-10-15)
+
+
+### Bug Fixes
+
+* online today and today connected with queries bug ([39dbfe0](https://github.com/esmartit/seen-devices-data-store/commit/39dbfe002e61b80232bc8de334aca30ba51631a8))
+
 ## [3.8.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.4...v3.8.5) (2020-10-15)
 
 
