@@ -112,7 +112,7 @@ class UserInfoFilterBuilder : QueryBuilder() {
             criteria.and("age").lte(ageEnd)
         }
         context.filterRequest.memberShip?.also { criteria.and("memberShip").isEqualTo(it) }
-        context.filterRequest.isConnected?.also { criteria.and("connected").isEqualTo(it) }
+        context.filterRequest.isConnected?.also { criteria.and("isConnected").isEqualTo(it) }
         context.filterRequest.gender?.also { criteria.and("gender").isEqualTo(it) }
         context.filterRequest.zipCode?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("userZipCode").`in`(it)

@@ -70,7 +70,7 @@ class DetectedController(
         filters: FilterRequest
     ): Flux<NowPresence> {
         return todayFlux(filters).concatWith(interval(ofSeconds(0), ofSeconds(15))
-            .flatMap { todayFlux(filters).last() })
+            .flatMap { todayFlux(filters).last(NowPresence(id = UUID.randomUUID().toString())) })
     }
 
     @GetMapping(path = ["/today-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
