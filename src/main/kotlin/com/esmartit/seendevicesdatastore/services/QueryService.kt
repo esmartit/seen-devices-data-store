@@ -6,17 +6,9 @@ import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDa
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MONTH
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
-import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
-import com.esmartit.seendevicesdatastore.v2.application.filter.BrandFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.FilterContext
-import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.QueryBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
 import org.bson.Document
 import org.bson.Document.parse
 import org.springframework.data.domain.Sort
@@ -34,54 +26,44 @@ import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Sw
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
-import java.util.ArrayDeque
 
 @Component
 class QueryService(private val template: ReactiveMongoTemplate) {
+    fun find(context: FilterContext): Flux<DeviceAndPosition> {
 
-    fun find(filters: FilterRequest): Flux<DeviceAndPosition> {
-        return findRaw(filters)
+        return findRaw(context)
             .map {
                 DeviceAndPosition(
-                    it["dateAtZone", ""],
+                    it["groupDate", ""],
                     it["clientMac", ""],
                     Position.byValue(it["statusNumeral", 0])
                 )
             }
     }
 
-    fun findRaw(filters: FilterRequest): Flux<Document> {
-        val filterContext = FilterContext(
-            filterRequest = filters,
-            chain = ArrayDeque<QueryBuilder>(
-                listOf(
-                    DateFilterBuilder(),
-                    HourFilterBuilder(),
-                    LocationFilterBuilder(),
-                    BrandFilterBuilder(),
-                    StatusFilterBuilder(),
-                    UserInfoFilterBuilder()
-                )
-            )
-        )
+    fun findRaw(context: FilterContext): Flux<Document> {
+
+        val filters = context.filterRequest
 
         val format = when (filters.groupBy) {
             BY_MINUTE -> "%Y-%m-%dT%H:%M"
-            BY_HOUR -> "%Y-%m-%dT%H"
+            BY_HOUR -> "%Y-%m-%dT%H:00"
             BY_DAY -> "%Y-%m-%d"
             BY_WEEK -> "%V"
             BY_MONTH -> "%Y-%m"
             BY_YEAR -> "%Y"
         }
 
-        filterContext.next(filterContext)
+        context.next(context)
         val aggregation = newAggregation(
             project(ScanApiActivity::class.java)
                 .andExclude("_id")
                 .andExpression("{\$hour: { date: \"\$seenTime\", timezone: \"${filters.timezone}\" }}")
                 .`as`("hourAtZone")
-                .andExpression("{ \$dateToString: { format: \"$format\", date: \"\$seenTime\", timezone: \"${filters.timezone}\" } }")
+                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$seenTime\", timezone: \"${filters.timezone}\" } }")
                 .`as`("dateAtZone")
+                .andExpression("{ \$dateToString: { format: \"$format\", date: \"\$seenTime\", timezone: \"${filters.timezone}\" } }")
+                .`as`("groupDate")
                 .and(
                     switchCases(
                         `when`(valueOf("status").equalToValue("OUT")).then(1),
@@ -89,18 +71,19 @@ class QueryService(private val template: ReactiveMongoTemplate) {
                         `when`(valueOf("status").equalToValue("IN")).then(3)
                     ).defaultTo(-1)
                 ).`as`("statusNumeral"),
-            match(filterContext.criteria),
+            match(context.criteria),
             group("clientMac")
                 .addToSet("dateAtZone").`as`("dateAtZone")
-                .addToSet(parse("{dateAtZone:\"\$dateAtZone\",statusNumeral:\"\$statusNumeral\"}")).`as`("root"),
+                .addToSet(parse("{groupDate:\"\$groupDate\",dateAtZone:\"\$dateAtZone\",statusNumeral:\"\$statusNumeral\"}"))
+                .`as`("root"),
             project("_id", "root").and("dateAtZone").size().`as`("presence"),
             match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
                 ?: Criteria()),
             unwind("root"),
-            project("root.dateAtZone", "root.statusNumeral").and("_id").`as`("clientMac").andExclude("_id"),
-            group("dateAtZone", "clientMac").max("statusNumeral").`as`("statusNumeral"),
-            sort(Sort.Direction.ASC, "_id"),
-            project("_id.dateAtZone", "_id.clientMac", "statusNumeral").andExclude("_id")
+            project("root.groupDate", "root.statusNumeral").and("_id").`as`("clientMac").andExclude("_id"),
+            group("groupDate", "clientMac").max("statusNumeral").`as`("statusNumeral"),
+            project("_id.groupDate", "_id.clientMac", "statusNumeral").andExclude("_id"),
+            sort(Sort.Direction.ASC, "groupDate")
         ).withOptions(AggregationOptions.builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }

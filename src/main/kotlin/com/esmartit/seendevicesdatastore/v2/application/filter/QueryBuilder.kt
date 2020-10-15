@@ -4,8 +4,9 @@ import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.isEqualTo
+import java.time.Instant
 import java.time.LocalDate
-import java.util.Deque
+import java.util.ArrayDeque
 
 abstract class QueryBuilder {
     fun build(context: FilterContext) {
@@ -19,11 +20,13 @@ abstract class QueryBuilder {
 data class FilterContext(
     val criteria: Criteria = Criteria(),
     val filterRequest: FilterRequest,
-    private val chain: Deque<QueryBuilder>
+    private val chain: List<QueryBuilder>
 ) {
+    var internalChain: ArrayDeque<QueryBuilder> = ArrayDeque(chain)
+
     fun next(context: FilterContext) {
-        if (chain.isNotEmpty()) {
-            chain.pop().build(context)
+        if (internalChain.isNotEmpty()) {
+            internalChain.pop().build(context)
         }
     }
 }
@@ -109,9 +112,16 @@ class UserInfoFilterBuilder : QueryBuilder() {
             criteria.and("age").lte(ageEnd)
         }
         context.filterRequest.memberShip?.also { criteria.and("memberShip").isEqualTo(it) }
+        context.filterRequest.isConnected?.also { criteria.and("connected").isEqualTo(it) }
         context.filterRequest.gender?.also { criteria.and("gender").isEqualTo(it) }
         context.filterRequest.zipCode?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("userZipCode").`in`(it)
         }
+    }
+}
+
+class CustomDateFilterBuilder(private val customDate: Instant) : QueryBuilder() {
+    override fun internalBuild(context: FilterContext) {
+        context.criteria.and("seenTime").gte(customDate)
     }
 }

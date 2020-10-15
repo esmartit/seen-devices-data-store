@@ -4,6 +4,13 @@ import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.services.QueryService
+import com.esmartit.seendevicesdatastore.v2.application.filter.BrandFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.FilterContext
+import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria.where
 import org.springframework.data.mongodb.core.query.Query
@@ -25,7 +32,19 @@ class TestController(
 ) {
 
     @GetMapping(path = ["/total-devices-all"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun totalCount(filters: FilterRequest) = queryService.findRaw(filters)
+    fun totalCount(filters: FilterRequest) = queryService.findRaw(
+        FilterContext(
+            filterRequest = filters,
+            chain = listOf(
+                DateFilterBuilder(),
+                HourFilterBuilder(),
+                LocationFilterBuilder(),
+                BrandFilterBuilder(),
+                StatusFilterBuilder(),
+                UserInfoFilterBuilder()
+            )
+        )
+    )
 
     @GetMapping(path = ["/total-devices-today"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun todayCount(

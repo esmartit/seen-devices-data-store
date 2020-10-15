@@ -104,7 +104,7 @@ class ScanApiService(
         return group.reduce(
             NowPresence(
                 UUID.randomUUID().toString(),
-                group.key()!!
+                group.key()!!.toString()
             )
         ) { acc, curr ->
             when (curr.status) {
