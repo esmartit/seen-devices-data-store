@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.10](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.9...v3.8.10) (2020-10-16)
+
+
+### Bug Fixes
+
+* build deploy ([acb090a](https://github.com/esmartit/seen-devices-data-store/commit/acb090ab0a7b9f67ed47e9c08e2255d3b257d439))
+
 ## [3.8.9](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.8...v3.8.9) (2020-10-16)
 
 
