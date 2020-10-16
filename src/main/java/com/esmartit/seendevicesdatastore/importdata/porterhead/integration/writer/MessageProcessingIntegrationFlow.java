@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.file.FileNameGenerator;
+import org.springframework.integration.handler.LoggingHandler;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class MessageProcessingIntegrationFlow {
                     return getMerakiPayload((String) m);
                 })
                 .handle(fileWritingMessageHandler)
-//                .log(LoggingHandler.Level.INFO)
+                .log(LoggingHandler.Level.INFO)
                 .get();
     }
 

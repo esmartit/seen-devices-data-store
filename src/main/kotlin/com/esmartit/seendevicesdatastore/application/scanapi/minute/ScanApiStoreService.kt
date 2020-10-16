@@ -31,8 +31,8 @@ class ScanApiStoreService(
 
     fun save(newScanApiEvent: ScanApiActivity): Mono<UniqueDevice> {
         return createScanApiActivity(newScanApiEvent)
-            .flatMap { saveHourlyActivity(it) }
-            .flatMap { saveDailyActivity(it) }
+//            .flatMap { saveHourlyActivity(it) }
+//            .flatMap { saveDailyActivity(it) }
             .flatMap { saveUniqueDevice(newScanApiEvent) }
             .onErrorResume(DuplicateKeyException::class.java) {
                 Mono.just(UniqueDevice(id = newScanApiEvent.clientMac))
