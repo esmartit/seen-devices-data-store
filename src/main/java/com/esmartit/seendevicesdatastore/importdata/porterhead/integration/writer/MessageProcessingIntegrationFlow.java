@@ -49,7 +49,6 @@ public class MessageProcessingIntegrationFlow {
                     return getMerakiPayload((String) m);
                 })
                 .handle(fileWritingMessageHandler)
-                .log(LoggingHandler.Level.INFO)
                 .get();
     }
 
