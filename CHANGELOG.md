@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.8.9](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.8...v3.8.9) (2020-10-16)
+
+
+### Bug Fixes
+
+* removing llog ([abbf6fe](https://github.com/esmartit/seen-devices-data-store/commit/abbf6fe8007dccdede6dbb2edd89adc083f3ef16))
+
 ## [3.8.8](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.7...v3.8.8) (2020-10-16)
 
 
