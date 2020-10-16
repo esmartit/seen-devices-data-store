@@ -1,5 +1,13 @@
 # Semantic Versioning Changelog
 
+## [3.8.8](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.7...v3.8.8) (2020-10-16)
+
+
+### Bug Fixes
+
+* data import ([fb2a6f0](https://github.com/esmartit/seen-devices-data-store/commit/fb2a6f0d153a85b7d30fdbff8329ec82b23b4482))
+* data import ([343c159](https://github.com/esmartit/seen-devices-data-store/commit/343c159cb2dfec222022161e55b39961b59ef471))
+
 ## [3.8.7](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.6...v3.8.7) (2020-10-15)
 
 
