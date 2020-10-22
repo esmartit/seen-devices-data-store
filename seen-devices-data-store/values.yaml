@@ -90,6 +90,6 @@ mongodb:
   persistence:
     enabled: true
     storageClass: "gp2"
-    size: 100Gi
+    size: 8Gi
     accessModes:
       - ReadWriteOnce

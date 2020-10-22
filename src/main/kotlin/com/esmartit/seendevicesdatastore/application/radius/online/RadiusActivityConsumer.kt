@@ -31,7 +31,12 @@ private fun FreeRadiusEvent.toInfo(): RadiusActivityInfo {
         callingStationId = callingStationId.replace("-", "").toLowerCase(),
         connectInfo = connectInfo,
         eventTimeStamp = Instant.ofEpochSecond(eventTimeStamp),
-        serviceType = serviceType
+        serviceType = serviceType,
+        nasIpAddress = nasIpAddress,
+        acctTerminateCause = acctTerminateCause,
+        acctSessionTime = acctSessionTime,
+        acctOutputOctets = acctOutputOctets,
+        acctInputOctets = acctInputOctets
     )
 }
 
