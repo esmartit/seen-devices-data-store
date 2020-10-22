@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.10...v3.9.0) (2020-10-22)
+
+
+### Features
+
+* adding additional fields to radius activity ([77d19d8](https://github.com/esmartit/seen-devices-data-store/commit/77d19d8a1968d6c2fb68a7d221eb2da5c9f8bb25))
+
 ## [3.8.10](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.9...v3.8.10) (2020-10-16)
 
 
