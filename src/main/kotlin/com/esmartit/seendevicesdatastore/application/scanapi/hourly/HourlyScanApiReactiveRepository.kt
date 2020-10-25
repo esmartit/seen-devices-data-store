@@ -13,5 +13,4 @@ interface HourlyScanApiReactiveRepository :
     fun findBySeenTimeGreaterThanEqual(time: Instant): Flux<HourlyScanApiActivity>
     fun findBySeenTimeBetween(start: Instant, end: Instant): Flux<HourlyScanApiActivity>
     fun findBySeenTimeLessThanEqual(end: Instant): Flux<HourlyScanApiActivity>
-    fun findByClientMacAndSeenTime(clientMac: String, seenTime: Instant): Mono<HourlyScanApiActivity>
 }

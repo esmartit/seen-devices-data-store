@@ -1,22 +1,13 @@
 package com.esmartit.seendevicesdatastore.application.smartpoke
 
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup
 import com.esmartit.seendevicesdatastore.domain.DailyDevices
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.domain.Position
+import com.esmartit.seendevicesdatastore.domain.TotalDevices
 import com.esmartit.seendevicesdatastore.services.ClockService
 import com.esmartit.seendevicesdatastore.services.CommonService
-import com.esmartit.seendevicesdatastore.services.DeviceAndPosition
 import com.esmartit.seendevicesdatastore.services.QueryService
 import com.esmartit.seendevicesdatastore.services.ScanApiService
-import com.esmartit.seendevicesdatastore.v2.application.filter.BrandFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.CustomDateFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.FilterContext
-import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Flux.interval
-import reactor.core.publisher.GroupedFlux
-import reactor.core.publisher.Mono
-import reactor.kotlin.extra.math.sum
 import java.time.Duration.ofSeconds
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -45,22 +33,20 @@ class SmartPokeController(
     fun getDailyConnected(
         filters: FilterRequest
     ): Flux<NowPresence> {
-        return todayFlux(filters).concatWith(interval(ofSeconds(0), ofSeconds(15))
-            .flatMap { todayFlux(filters).last(NowPresence(id = UUID.randomUUID().toString())) })
+        val isConnected = filters.copy(isConnected = true)
+        return queryService.todayDetected(isConnected)
+            .concatWith(interval(ofSeconds(0), ofSeconds(15))
+                .flatMap {
+                    queryService.todayDetected(isConnected).last(NowPresence(id = UUID.randomUUID().toString()))
+                })
     }
 
     @GetMapping(path = ["/today-connected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyConnectedCount(
         filters: FilterRequest
-    ): Flux<DailyDevices> {
-        val fifteenSeconds = ofSeconds(15)
-        return interval(ofSeconds(0), fifteenSeconds).onBackpressureDrop()
-            .flatMap {
-                commonService.todayFluxGrouped(filters.copy(isConnected = true))
-                    .map { it.inCount + it.limitCount + it.outCount }
-                    .sum()
-                    .map { DailyDevices(it, clock.now()) }
-            }
+    ): Flux<TotalDevices> {
+        val isConnected = filters.copy(isConnected = true)
+        return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTotalDevicesToday(isConnected) }
     }
 
     @GetMapping(path = ["/now-connected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -98,43 +84,6 @@ class SmartPokeController(
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getConnectedRegistered(requestFilters: FilterRequest): Flux<TimeAndCounters> {
         TODO()
-    }
-
-    private fun todayFlux(filters: FilterRequest): Flux<NowPresence> {
-        return queryService.find(todayContext(filters))
-            .groupBy { it.group }
-            .flatMap { g -> groupByTime(g) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
-    }
-
-    private fun todayContext(filters: FilterRequest): FilterContext {
-        return FilterContext(
-            filterRequest = filters.copy(groupBy = FilterDateGroup.BY_HOUR, isConnected = true),
-            chain = listOf(
-                CustomDateFilterBuilder(clock.startOfDay(filters.timezone).toInstant()),
-                HourFilterBuilder(),
-                LocationFilterBuilder(),
-                BrandFilterBuilder(),
-                StatusFilterBuilder(),
-                UserInfoFilterBuilder()
-            )
-        )
-    }
-
-    fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<NowPresence> {
-        return group.reduce(
-            NowPresence(
-                id = UUID.randomUUID().toString(),
-                time = group.key()!!
-            )
-        ) { acc, curr ->
-            when (curr.position) {
-                Position.IN -> acc.copy(inCount = acc.inCount + 1)
-                Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
-                Position.OUT -> acc.copy(outCount = acc.outCount + 1)
-                Position.NO_POSITION -> acc
-            }
-        }
     }
 }
 
