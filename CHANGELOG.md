@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.9.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.9.0...v3.9.1) (2020-10-25)
+
+
+### Bug Fixes
+
+* adjusting endpoints ([d056081](https://github.com/esmartit/seen-devices-data-store/commit/d056081b51ea9850c31c5a9675712835d64da5a6))
+
 # [3.9.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.8.10...v3.9.0) (2020-10-22)
 
 
