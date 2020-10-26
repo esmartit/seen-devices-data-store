@@ -41,11 +41,11 @@ import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Sw
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Criteria.where
-import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
 import java.time.ZoneId
 import java.util.UUID
 
@@ -158,13 +158,23 @@ class QueryService(
             .map { TotalDevices(it.getInteger("total"), clockService.now()) }
     }
 
-    fun getTodayDevicesGroupedByBrand(zoneId: ZoneId): Flux<BrandCount> {
-        val context = createTodayContext(FilterRequest(timezone = zoneId)).also { it.next(it) }
-        return template.find(Query(context.criteria), ScanApiActivity::class.java)
-            .map { brandsRepository.findByName(it.brand ?: "other") }
-            .groupBy { it.name }
-            .flatMap { group -> group.count().map { BrandCount(group.key()!!, it) } }
+    fun getTodayDevicesGroupedByBrand(zoneId: ZoneId): Flux<List<BrandCount>> {
+        val filters = FilterRequest(timezone = zoneId, groupBy = BY_DAY)
+        val context = createTodayContext(filters).also { it.next(it) }
 
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("clientMac").addToSet("brand").`as`("brand"),
+            project("brand").andExclude("_id"),
+            unwind("brand"),
+            group("brand").count().`as`("count")
+        ).withOptions(builder().allowDiskUse(true).build())
+
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+            .map { BrandCount(it.getString("_id"), it.getInteger("count")) }
+            .collectList()
+            .toFlux()
     }
 
     fun todayDetected(filters: FilterRequest): Flux<NowPresence> {

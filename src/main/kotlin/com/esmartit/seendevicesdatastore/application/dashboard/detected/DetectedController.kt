@@ -44,12 +44,12 @@ class DetectedController(
     @GetMapping(path = ["/today-brands"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyBrands(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
-    ): Flux<BrandCount> {
+    ): Flux<List<BrandCount>> {
         return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTodayDevicesGroupedByBrand(zoneId) }
     }
 }
 
-data class BrandCount(val name: String, val value: Long)
+data class BrandCount(val name: String, val value: Int)
 
 enum class FilterDateGroup {
     BY_MINUTE, BY_HOUR, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
