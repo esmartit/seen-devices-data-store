@@ -44,9 +44,7 @@ class DetectedController(
     @GetMapping(path = ["/today-brands"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyBrands(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
-    ): Flux<List<BrandCount>> {
-        return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTodayDevicesGroupedByBrand(zoneId) }
-    }
+    ) = interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTodayDevicesGroupedByBrand(zoneId) }
 }
 
 data class BrandCount(val name: String, val value: Int)

@@ -87,14 +87,14 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
-    fun getDetailedReport(context: FilterContext): Flux<ScanApiActivity> {
+    fun getDetailedReport(context: FilterContext): Flux<Document> {
         context.next(context)
         val filters = context.filterRequest
         val aggregation = newAggregation(
             scanApiProjection(filters),
             match(context.criteria)
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivity::class.java, ScanApiActivity::class.java)
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
     fun createContext(filters: FilterRequest): FilterContext {
@@ -201,6 +201,7 @@ class QueryService(
         }
 
         return project(ScanApiActivity::class.java)
+            .andExclude("_id")
             .andExpression("{\$hour: { date: \"\$seenTime\", timezone: \"${filters.timezone}\" }}")
             .`as`("hourAtZone")
             .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$seenTime\", timezone: \"${filters.timezone}\" } }")
