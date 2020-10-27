@@ -45,9 +45,13 @@ class DetectedController(
     fun getDailyBrands(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ) = interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTodayDevicesGroupedByBrand(zoneId) }
-}
 
-data class BrandCount(val name: String, val value: Int)
+    @GetMapping(path = ["/today-countries"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDailyCountries(
+            @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
+    ) = interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTodayDevicesGroupedByCountry(zoneId) }
+
+}
 
 enum class FilterDateGroup {
     BY_MINUTE, BY_HOUR, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
