@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.9.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.9.4...v3.9.5) (2020-10-27)
+
+
+### Bug Fixes
+
+* Add spotMap and create Brand and Country data Class in domain. ([#48](https://github.com/esmartit/seen-devices-data-store/issues/48)) ([f914983](https://github.com/esmartit/seen-devices-data-store/commit/f914983454ef6af6b118af283e291fd5c5f7122f))
+
 ## [3.9.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.9.3...v3.9.4) (2020-10-27)
 
 
