@@ -1,6 +1,5 @@
 package com.esmartit.seendevicesdatastore.services
 
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.BrandCount
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_DAY
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_HOUR
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MINUTE
@@ -8,6 +7,8 @@ import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDa
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
+import com.esmartit.seendevicesdatastore.domain.BrandCount
+import com.esmartit.seendevicesdatastore.domain.CountryCount
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
@@ -163,6 +164,25 @@ class QueryService(
             .map { BrandCount(it.getString("_id"), it.getInteger("count")) }
             .collectList()
             .toFlux()
+    }
+
+    fun getTodayDevicesGroupedByCountry(zoneId: ZoneId): Flux<List<CountryCount>> {
+        val filters = FilterRequest(timezone = zoneId, groupBy = BY_DAY)
+        val context = createTodayContext(filters).also { it.next(it) }
+
+        val aggregation = newAggregation(
+                scanApiProjection(filters),
+                match(context.criteria),
+                group("clientMac").addToSet("countryId").`as`("countryId"),
+                project("countryId").andExclude("_id"),
+                unwind("countryId"),
+                group("countryId").count().`as`("count")
+        ).withOptions(builder().allowDiskUse(true).build())
+
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+                .map { CountryCount(it.getString("_id"), it.getInteger("count")) }
+                .collectList()
+                .toFlux()
     }
 
     fun todayDetected(filters: FilterRequest): Flux<NowPresence> {
