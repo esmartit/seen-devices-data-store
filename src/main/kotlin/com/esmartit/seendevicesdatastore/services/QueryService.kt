@@ -1,6 +1,5 @@
 package com.esmartit.seendevicesdatastore.services
 
-import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.BrandCount
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_DAY
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_HOUR
@@ -31,7 +30,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
-import org.springframework.data.mongodb.core.aggregation.Aggregation.replaceRoot
 import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.AggregationOptions.builder
@@ -52,7 +50,6 @@ import java.util.UUID
 @Component
 class QueryService(
     private val template: ReactiveMongoTemplate,
-    private val brandsRepository: BrandsRepository,
     private val clockService: ClockService
 ) {
 
@@ -90,23 +87,14 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
-    fun findScanApi(context: FilterContext): Flux<Document> {
+    fun getDetailedReport(context: FilterContext): Flux<ScanApiActivity> {
         context.next(context)
         val filters = context.filterRequest
-        val aggregation = newAggregation(scanApiProjection(filters),
-            match(context.criteria),
-            group("clientMac")
-                .addToSet("dateAtZone").`as`("dateAtZone")
-                .addToSet("\$\$ROOT").`as`("root"),
-            project("_id", "root").and("dateAtZone").size().`as`("presence"),
-            match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
-                ?: Criteria()),
-            unwind("root"),
-            replaceRoot("root"),
-            sort(Sort.Direction.ASC, "groupDate")
-        )
-            .withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria)
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, ScanApiActivity::class.java)
     }
 
     fun createContext(filters: FilterRequest): FilterContext {
@@ -213,7 +201,6 @@ class QueryService(
         }
 
         return project(ScanApiActivity::class.java)
-            .andExclude("_id")
             .andExpression("{\$hour: { date: \"\$seenTime\", timezone: \"${filters.timezone}\" }}")
             .`as`("hourAtZone")
             .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$seenTime\", timezone: \"${filters.timezone}\" } }")
