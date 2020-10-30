@@ -88,6 +88,23 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun avgDwellTime(context: FilterContext): Flux<Document> {
+        context.next(context)
+        val filters = context.filterRequest
+        val aggregation = newAggregation(
+                scanApiProjection(filters),
+                match(context.criteria),
+                group("clientMac")
+                        .addToSet("dateAtZone").`as`("dateAtZone")
+                        .max("seenTime").`as`("maxDwell")
+                        .min("seenTime").`as`("minDwell"),
+                project("_id")
+                        .andExpression("(maxDwell - minDwell) / 1000").`as`("dwellTime"),
+                group().avg("dwellTime").`as`("avgDwellTime")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
     fun getDetailedReport(context: FilterContext): Flux<Document> {
         context.next(context)
         val filters = context.filterRequest
