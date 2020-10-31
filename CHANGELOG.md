@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.9.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.9.5...v3.9.6) (2020-10-31)
+
+
+### Bug Fixes
+
+* avg dwell time ([466bbec](https://github.com/esmartit/seen-devices-data-store/commit/466bbecf17e88294741d0e3c6f055ff6c8473cf5))
+
 ## [3.9.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.9.4...v3.9.5) (2020-10-27)
 
 
