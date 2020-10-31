@@ -11,7 +11,7 @@ import java.util.ArrayDeque
 abstract class QueryBuilder {
     fun build(context: FilterContext) {
         internalBuild(context)
-        context.next(context)
+        context.next()
     }
 
     protected abstract fun internalBuild(context: FilterContext)
@@ -22,11 +22,11 @@ data class FilterContext(
     val filterRequest: FilterRequest,
     private val chain: List<QueryBuilder>
 ) {
-    var internalChain: ArrayDeque<QueryBuilder> = ArrayDeque(chain)
+    private var internalChain: ArrayDeque<QueryBuilder> = ArrayDeque(chain)
 
-    fun next(context: FilterContext) {
+    fun next() {
         if (internalChain.isNotEmpty()) {
-            internalChain.pop().build(context)
+            internalChain.pop().build(this)
         }
     }
 }

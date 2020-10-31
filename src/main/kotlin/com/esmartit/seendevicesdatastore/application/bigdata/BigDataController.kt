@@ -20,7 +20,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Duration
-import java.time.Instant
 import java.util.UUID
 
 
@@ -68,9 +67,8 @@ class BigDataController(
         filters: FilterRequest
     ): Flux<AveragePresence> {
 
-        val createContext = queryService.createContext(filters)
-        return queryService.avgDwellTime(createContext)
-                .map{ AveragePresence() }
+        return queryService.avgDwellTime(filters)
+            .concatWith(Mono.just(AveragePresence(isLast = true)))
     }
 
     fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<BigDataPresence> {
@@ -100,4 +98,4 @@ data class BigDataPresence(
     val isLast: Boolean = true
 )
 
-data class AveragePresence(val value: Double = 0.0)
+data class AveragePresence(val value: Double = 0.0, val isLast: Boolean = false)
