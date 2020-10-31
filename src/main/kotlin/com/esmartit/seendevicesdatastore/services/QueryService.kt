@@ -95,8 +95,7 @@ class QueryService(
         val aggregation = newAggregation(
             scanApiProjection(filters),
             match(context.criteria),
-            group("clientMac")
-                .addToSet("dateAtZone").`as`("dateAtZone")
+            group("dateAtZone", "clientMac")
                 .max("seenTime").`as`("maxDwell")
                 .min("seenTime").`as`("minDwell"),
             project("_id")
