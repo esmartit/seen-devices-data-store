@@ -116,6 +116,19 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun getDetailedbyTimeReport(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("spotId", "sensorId", "groupDate")
+                    .count().`as`("total"),
+            project("spotId", "sensorId", "groupDate", "total").andExclude("_id"),
+            sort(Sort.Direction.ASC, "spotId", "sensorId", "groupDate")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
     fun createContext(filters: FilterRequest): FilterContext {
         return FilterContext(
             filterRequest = filters,

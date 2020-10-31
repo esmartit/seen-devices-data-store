@@ -26,6 +26,19 @@ class ReportsController(private val queryService: QueryService) {
             .buffer(500)
             .concatWith(Mono.just(listOf(DeviceWithPositionRecord(isLast = true))))
     }
+
+    @GetMapping(path = ["/listbytime"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDetailedbyTime(
+            filters: FilterRequest
+    ): Flux<MutableList<DeviceWithPositionRecord>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getDetailedbyTimeReport(createContext)
+                .map { DeviceWithPositionRecord(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(DeviceWithPositionRecord(isLast = true))))
+    }
+
 }
 
 data class DeviceWithPositionRecord(val body: Document? = null, val isLast: Boolean = false)
