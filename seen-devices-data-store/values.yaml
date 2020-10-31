@@ -77,6 +77,7 @@ mongodb:
     username: "spring"
     password: "spring"
     database: "smartpoke"
+#    replicaSetKey: "abcdefg"
   pdb:
     create: true
     minAvailable: 2

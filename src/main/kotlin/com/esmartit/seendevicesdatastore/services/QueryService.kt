@@ -1,14 +1,15 @@
 package com.esmartit.seendevicesdatastore.services
 
+import com.esmartit.seendevicesdatastore.application.bigdata.AveragePresence
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_DAY
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_HOUR
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MINUTE
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MONTH
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
-import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.BrandCount
 import com.esmartit.seendevicesdatastore.domain.CountryCount
+import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
@@ -68,7 +69,7 @@ class QueryService(
 
     fun findRaw(context: FilterContext): Flux<Document> {
         val filters = context.filterRequest
-        context.next(context)
+        context.next()
         val aggregation = newAggregation(
             scanApiProjection(filters),
             match(context.criteria),
@@ -88,8 +89,25 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun avgDwellTime(filters: FilterRequest): Flux<AveragePresence> {
+        val context = createContext(filters)
+        context.next()
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("dateAtZone", "clientMac")
+                .max("seenTime").`as`("maxDwell")
+                .min("seenTime").`as`("minDwell"),
+            project("_id")
+                .andExpression("(maxDwell - minDwell) / 1000").`as`("dwellTime"),
+            group().avg("dwellTime").`as`("avgDwellTime")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+            .map { AveragePresence(value = it["avgDwellTime", 0.0]) }
+    }
+
     fun getDetailedReport(context: FilterContext): Flux<Document> {
-        context.next(context)
+        context.next()
         val filters = context.filterRequest
         val aggregation = newAggregation(
             scanApiProjection(filters),
@@ -137,7 +155,7 @@ class QueryService(
     }
 
     fun getTotalDevicesToday(filters: FilterRequest): Flux<TotalDevices> {
-        val context = createTodayContext(filters).also { it.next(it) }
+        val context = createTodayContext(filters).also { it.next() }
         val aggregation = newAggregation(
             match(context.criteria),
             group("clientMac"),
@@ -149,7 +167,7 @@ class QueryService(
 
     fun getTodayDevicesGroupedByBrand(zoneId: ZoneId): Flux<List<BrandCount>> {
         val filters = FilterRequest(timezone = zoneId, groupBy = BY_DAY)
-        val context = createTodayContext(filters).also { it.next(it) }
+        val context = createTodayContext(filters).also { it.next() }
 
         val aggregation = newAggregation(
             scanApiProjection(filters),
@@ -168,21 +186,21 @@ class QueryService(
 
     fun getTodayDevicesGroupedByCountry(zoneId: ZoneId): Flux<List<CountryCount>> {
         val filters = FilterRequest(timezone = zoneId, groupBy = BY_DAY)
-        val context = createTodayContext(filters).also { it.next(it) }
+        val context = createTodayContext(filters).also { it.next() }
 
         val aggregation = newAggregation(
-                scanApiProjection(filters),
-                match(context.criteria),
-                group("clientMac").addToSet("countryId").`as`("countryId"),
-                project("countryId").andExclude("_id"),
-                unwind("countryId"),
-                group("countryId").count().`as`("count")
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("clientMac").addToSet("countryId").`as`("countryId"),
+            project("countryId").andExclude("_id"),
+            unwind("countryId"),
+            group("countryId").count().`as`("count")
         ).withOptions(builder().allowDiskUse(true).build())
 
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
-                .map { CountryCount(it.getString("_id"), it.getInteger("count")) }
-                .collectList()
-                .toFlux()
+            .map { CountryCount(it.getString("_id"), it.getInteger("count")) }
+            .collectList()
+            .toFlux()
     }
 
     fun todayDetected(filters: FilterRequest): Flux<NowPresence> {

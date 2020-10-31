@@ -20,7 +20,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Duration
-import java.time.Instant
 import java.util.UUID
 
 
@@ -67,34 +66,9 @@ class BigDataController(
     fun getAveragePresence(
         filters: FilterRequest
     ): Flux<AveragePresence> {
-        return scanApiService.dailyFilteredFlux(filters)
-            .map { it.seenTime to it.sumInADay(filters) }
-            .window(Duration.ofMillis(300))
-            .flatMap { w ->
-                w.groupBy { it.first }.flatMap { g ->
-                    g.map { it.second }
-                        .collectList()
-                        .map { PartialAveragePresence(g.key()!!, it.sum(), it.size) }
-                }
-            }.scan { t, u ->
-                PartialAveragePresence(u.seenTime, t.value + u.value, t.length + u.length)
-            }.groupBy { it.seenTime }
-            .flatMap { g ->
-                g.map {
-                    it.seenTime to (it.value.toDouble() / it.length)
-                }
-            }.scan(mutableMapOf<Instant, Double>()) { t, u ->
-                t.apply {
-                    this[u.first] = u.second
-                }
-            }
-            .map {
-                if (it.isEmpty()) {
-                    AveragePresence(0.0)
-                } else {
-                    AveragePresence(it.values.sum() / it.size)
-                }
-            }.concatWith(Mono.just(AveragePresence(0.0, true)))
+
+        return queryService.avgDwellTime(filters)
+            .concatWith(Mono.just(AveragePresence(isLast = true)))
     }
 
     fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<BigDataPresence> {
@@ -125,8 +99,3 @@ data class BigDataPresence(
 )
 
 data class AveragePresence(val value: Double = 0.0, val isLast: Boolean = false)
-data class PartialAveragePresence(val seenTime: Instant, val value: Int, val length: Int)
-data class PartialAveragePresence2(
-    val seenTime: Instant,
-    val partials: MutableList<Pair<Double, Int>> = mutableListOf()
-)
