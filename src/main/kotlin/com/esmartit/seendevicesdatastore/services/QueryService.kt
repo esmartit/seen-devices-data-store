@@ -116,6 +116,19 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun getDetailedbyUsername(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("groupDate", "username"),
+            project("groupDate", "username").andExclude("_id"),
+            match(where("username").exists(true))
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
     fun getDetailedbyTimeReport(context: FilterContext): Flux<Document> {
         context.next()
         val filters = context.filterRequest
@@ -129,6 +142,7 @@ class QueryService(
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
+
     fun createContext(filters: FilterRequest): FilterContext {
         return FilterContext(
             filterRequest = filters,
