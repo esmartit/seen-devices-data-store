@@ -16,6 +16,7 @@ import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.TotalDevices
+import com.esmartit.seendevicesdatastore.domain.TotalDevicesAll
 import com.esmartit.seendevicesdatastore.v2.application.filter.BrandFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.CustomDateFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterBuilder
@@ -151,7 +152,7 @@ class QueryService(
             scanApiProjection(filters),
             match(context.criteria),
             group("spotId", "sensorId", "groupDate")
-                    .count().`as`("total"),
+                .count().`as`("total"),
             project("spotId", "sensorId", "groupDate", "total").andExclude("_id"),
             sort(Sort.Direction.ASC, "spotId", "sensorId", "groupDate")
         ).withOptions(builder().allowDiskUse(true).build())
@@ -186,15 +187,9 @@ class QueryService(
         )
     }
 
-    fun getTotalDevicesAll(): Flux<TotalDevices> {
-        val aggregation = newAggregation(
-            match(where("status").ne(NO_POSITION)),
-            group("clientMac"),
-            count().`as`("total")
-        ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
-            .map { TotalDevices(it.getInteger("total"), clockService.now()) }
-    }
+    fun getTotalDevicesAll() =
+        template.findAll(TotalDevicesAll::class.java)
+            .map { TotalDevices(it.count, clockService.now()) }
 
     fun getTotalDevicesToday(filters: FilterRequest): Flux<TotalDevices> {
         val context = createTodayContext(filters).also { it.next() }

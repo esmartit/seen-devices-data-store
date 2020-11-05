@@ -12,14 +12,14 @@ spring:
 
 eventStore:
   processEvents:
-    enabled: "false"
+    enabled: "true"
     initialDelay: "2000"
-    fixedDelay: "10000"
+    fixedDelay: "5000"
     lockAtMostFor: "5m"
     lockAtLeastFor: "10s"
-    batchSize: "100"
+    batchSize: "1000"
   deleteProcessed:
-    enabled: "true"
+    enabled: "false"
     initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"
     fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
     lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"
