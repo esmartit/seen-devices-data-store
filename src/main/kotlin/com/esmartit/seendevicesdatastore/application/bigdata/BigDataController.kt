@@ -20,6 +20,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.time.Instant
 import java.util.UUID
 
 
@@ -71,6 +72,16 @@ class BigDataController(
             .concatWith(Mono.just(AveragePresence(isLast = true)))
     }
 
+    @GetMapping(path = ["/count-unique-devices"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDevicesBigData(
+            filters: FilterRequest
+    ): Flux<TotalDevicesBigData> {
+
+        return queryService.getTotalDevicesBigData(filters)
+            .concatWith(Mono.just(TotalDevicesBigData(isLast = true)))
+    }
+
+
     fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<BigDataPresence> {
         return group.reduce(
             BigDataPresence(
@@ -99,3 +110,5 @@ data class BigDataPresence(
 )
 
 data class AveragePresence(val value: Double = 0.0, val isLast: Boolean = false)
+
+data class TotalDevicesBigData(val count: Int = 0, val isLast: Boolean = false)

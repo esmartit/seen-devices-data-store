@@ -1,6 +1,7 @@
 package com.esmartit.seendevicesdatastore.services
 
 import com.esmartit.seendevicesdatastore.application.bigdata.AveragePresence
+import com.esmartit.seendevicesdatastore.application.bigdata.TotalDevicesBigData
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_DAY
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_HOUR
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MINUTE
@@ -104,6 +105,20 @@ class QueryService(
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
             .map { AveragePresence(value = it["avgDwellTime", 0.0]) }
+    }
+
+    fun getTotalDevicesBigData(filters: FilterRequest): Flux<TotalDevicesBigData> {
+        val context = createContext(filters)
+        context.next()
+        val aggregation = newAggregation(
+                scanApiProjection(filters),
+                match(context.criteria),
+                group("clientMac"),
+                group().count().`as`("total")
+
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+                .map { TotalDevicesBigData(count = it["total", 0]) }
     }
 
     fun getDetailedReport(context: FilterContext): Flux<Document> {
