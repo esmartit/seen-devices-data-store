@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-
 data class FilterRequest(
     val timezone: ZoneId = ZoneId.of("UTC"),
     val startDate: String? = null,
