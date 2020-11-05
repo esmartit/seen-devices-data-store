@@ -22,9 +22,8 @@ class DetectedController(
 ) {
 
     @GetMapping(path = ["/total-detected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getAllSensorActivity(): Flux<TotalDevices> {
-        return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTotalDevicesAll() }
-    }
+    fun getAllSensorActivity() =
+        interval(ofSeconds(0), ofSeconds(15)).flatMap { queryService.getTotalDevicesAll() }
 
     @GetMapping(path = ["/today-detected"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDailyDetected(

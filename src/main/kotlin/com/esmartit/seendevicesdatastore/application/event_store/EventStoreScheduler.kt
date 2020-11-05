@@ -1,20 +1,24 @@
 package com.esmartit.seendevicesdatastore.application.event_store
 
-import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiReactiveRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.minute.ScanApiStoreService
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria.where
+import org.springframework.data.mongodb.core.query.Query.query
+import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
 class EventStoreScheduler(
-    private val repository: ScanApiReactiveRepository,
-    private val service: ScanApiStoreService
+    private val repository: StoredEventReactiveRepository,
+    private val service: ScanApiStoreService,
+    private val template: ReactiveMongoTemplate
 ) {
 
     @Value("\${eventStore.processEvents.batchSize}")
-    private var batchSize: Long = 1000
+    private var batchSize: Int = 1000
 
     @Value("\${eventStore.processEvents.enabled}")
     private var processEventsEnabled: Boolean = true
@@ -34,11 +38,9 @@ class EventStoreScheduler(
     fun processEvent() {
         if (processEventsEnabled) {
             println("processing events...")
-            repository.findByProcessed(false)
-                .limitRequest(batchSize)
+            template.find(query(where("processed").isEqualTo(false)).limit(batchSize), StoredEvent::class.java)
                 .flatMap { event ->
-                    service.save(event)
-                        .flatMap { repository.save(event.copy(processed = true)) }
+                    service.save(event.payload).flatMap { repository.save(event.copy(processed = true)) }
                 }
                 .count()
                 .block()
