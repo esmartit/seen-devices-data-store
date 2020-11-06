@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.3](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.2...v3.10.3) (2020-11-06)
+
+
+### Bug Fixes
+
+* Parameter specified as non-null is null acctTerminateCause ([#54](https://github.com/esmartit/seen-devices-data-store/issues/54)) ([a6be47b](https://github.com/esmartit/seen-devices-data-store/commit/a6be47bd62913630dbee08ba4cebea6ea1d39346))
+
 ## [3.10.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.1...v3.10.2) (2020-11-06)
 
 
