@@ -1,6 +1,17 @@
 version: '3'
 services:
 
+#  datastore:
+#    image: liccioni/seen-data-store:latest
+#    ports:
+#      - "9000:9000"
+#    depends_on:
+#      - kafka
+#    environment:
+#      KAFKA_BROKER_HOST: "kafka:9092"
+#      MONGODB_HOST: "mongo:27017"
+#      MONGODB_PASSWORD: "spring"
+
   endpoint:
     image: esmartit/access-point-incoming-endpoint:2.1.0
     ports:
@@ -22,12 +33,14 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     depends_on:
       - zookeeper
+
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=zookeeper
+
   mongo:
     image: bitnami/mongodb:4.4.1-debian-10-r0
     ports:
