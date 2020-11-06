@@ -22,9 +22,9 @@ data class RadiusActivityInfo(
     @Indexed(name = "eventTimeStamp_idx")
     val eventTimeStamp: Instant,
     val serviceType: String,
-    val acctTerminateCause: String,
-    val nasIpAddress: String,
-    val acctSessionTime: String,
-    val acctInputOctets: String,
-    val acctOutputOctets: String
+    val acctTerminateCause: String = "",
+    val nasIpAddress: String = "",
+    val acctSessionTime: String = "",
+    val acctInputOctets: String = "",
+    val acctOutputOctets: String = ""
 )
