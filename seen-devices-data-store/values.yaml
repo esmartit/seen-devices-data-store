@@ -67,8 +67,17 @@ tolerations: []
 
 affinity: {}
 
+resources:
+  requests:
+    cpu: 1000m
+    memory: 1280Mi
+
 mongodb:
   enabled: true
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 4096Mi
   architecture: replicaset
   systemLogVerbosity: 3
   replicaCount: 3
