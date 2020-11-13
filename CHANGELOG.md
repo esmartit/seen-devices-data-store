@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.4...v3.10.5) (2020-11-13)
+
+
+### Bug Fixes
+
+* merge ([#55](https://github.com/esmartit/seen-devices-data-store/issues/55)) ([80baba0](https://github.com/esmartit/seen-devices-data-store/commit/80baba0b7222b0fac334d76fcc8769ee163f2293))
+
 ## [3.10.4](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.3...v3.10.4) (2020-11-06)
 
 
