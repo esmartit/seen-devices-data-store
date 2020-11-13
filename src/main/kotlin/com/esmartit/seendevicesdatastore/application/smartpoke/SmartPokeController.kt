@@ -1,13 +1,9 @@
 package com.esmartit.seendevicesdatastore.application.smartpoke
 
-import com.esmartit.seendevicesdatastore.domain.DailyDevices
-import com.esmartit.seendevicesdatastore.domain.FilterRequest
-import com.esmartit.seendevicesdatastore.domain.NowPresence
-import com.esmartit.seendevicesdatastore.domain.TotalDevices
-import com.esmartit.seendevicesdatastore.services.ClockService
-import com.esmartit.seendevicesdatastore.services.CommonService
-import com.esmartit.seendevicesdatastore.services.QueryService
-import com.esmartit.seendevicesdatastore.services.ScanApiService
+import com.esmartit.seendevicesdatastore.domain.*
+import com.esmartit.seendevicesdatastore.services.*
+import com.esmartit.seendevicesdatastore.v2.application.filter.*
+import org.bson.Document
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Flux.interval
+import reactor.core.publisher.GroupedFlux
+import reactor.core.publisher.Mono
+import java.time.Duration
 import java.time.Duration.ofSeconds
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -82,11 +81,43 @@ class SmartPokeController(
     }
 
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getConnectedRegistered(requestFilters: FilterRequest): Flux<TimeAndCounters> {
-        TODO()
+    fun getConnectedRegistered(
+            filters: FilterRequest
+    ): Flux<MutableList<DeviceConnectedRegistered>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getConnectRegister(createContext)
+                .map { DeviceConnectedRegistered(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(DeviceConnectedRegistered(isLast = true))))
+    }
+
+    @GetMapping(path = ["/total-traffic"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getTraffic(
+            filters: FilterRequest
+    ): Flux<MutableList<TotalDevicesTraffic>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getTotalDevicesTraffic(createContext)
+                .map { TotalDevicesTraffic(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(TotalDevicesTraffic(isLast = true))))
+    }
+
+    @GetMapping(path = ["/total-time"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getUserTime(
+            filters: FilterRequest
+    ): Flux<MutableList<TotalUsersTime>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getTotalUsersTime(createContext)
+                .map { TotalUsersTime(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(TotalUsersTime(isLast = true))))
     }
 }
 
+data class DeviceConnectedRegistered(val body: Document? = null, val isLast: Boolean = false)
 
 data class TimeAndCounters(
     val time: String,
@@ -96,4 +127,6 @@ data class TimeAndCounters(
     val isLast: Boolean = false
 )
 
+data class TotalDevicesTraffic(val body: Document? = null, val isLast: Boolean = false)
 
+data class TotalUsersTime(val body: Document? = null, val isLast: Boolean = false)

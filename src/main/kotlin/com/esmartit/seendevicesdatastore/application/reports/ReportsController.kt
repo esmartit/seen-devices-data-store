@@ -51,6 +51,19 @@ class ReportsController(private val queryService: QueryService) {
             .concatWith(Mono.just(listOf(DeviceWithPositionRecord(isLast = true))))
     }
 
+    @GetMapping(path = ["/list-radius"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getRadiusDateiled(
+            filters: FilterRequest
+    ): Flux<MutableList<RadiusDeviceRecord>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getRadiusDetailedReport(createContext)
+                .map { RadiusDeviceRecord(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(RadiusDeviceRecord(isLast = true))))
+    }
 }
 
 data class DeviceWithPositionRecord(val body: Document? = null, val isLast: Boolean = false)
+
+data class RadiusDeviceRecord(val body: Document? = null, val isLast: Boolean = false)

@@ -23,6 +23,7 @@ import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.FilterContext
 import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.RadiusDateFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
 import org.bson.Document
@@ -38,8 +39,11 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.AggregationOptions.builder
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq.valueOf
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.IfNull.ifNull
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.CaseOperator.`when`
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.switchCases
+import org.springframework.data.mongodb.core.aggregation.LookupOperation
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Criteria.where
@@ -91,6 +95,41 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun findBigData(context: FilterContext): Flux<DeviceBigData> {
+
+        return findBigDataRaw(context)
+            .map {
+                DeviceBigData(
+                    group = it["groupDate", ""],
+                    clientMac = it["clientMac", ""],
+                    position = Position.byValue(it["statusNumeral", 0])
+                )
+            }
+    }
+
+    fun findBigDataRaw(context: FilterContext): Flux<Document> {
+        val filters = context.filterRequest
+        context.next()
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("clientMac")
+                .addToSet("dateAtZone").`as`("dateAtZone")
+                .addToSet(parse("{dateAtZone:\"\$dateAtZone\",groupDate:\"\$groupDate\",statusNumeral:\"\$statusNumeral\"}"))
+                .`as`("root"),
+            project("_id", "root").and("dateAtZone").size().`as`("presence"),
+            match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
+                ?: Criteria()),
+            unwind("root"),
+            project("root.dateAtZone", "root.groupDate", "root.statusNumeral").and("_id").`as`("clientMac")
+                .andExclude("_id"),
+            group("dateAtZone", "groupDate", "clientMac").max("statusNumeral").`as`("statusNumeral"),
+            project("_id.groupDate", "_id.clientMac", "statusNumeral").andExclude("_id"),
+            sort(Sort.Direction.ASC, "dateAtZone", "groupDate")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
     fun avgDwellTime(filters: FilterRequest): Flux<AveragePresence> {
         val context = createContext(filters)
         context.next()
@@ -108,18 +147,67 @@ class QueryService(
             .map { AveragePresence(value = it["avgDwellTime", 0.0]) }
     }
 
+    fun getConnectRegister(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            project("dateAtZone", "clientMac")
+                .and(ifNull("username").then("no_username")).`as`("userName")
+                .andExclude("_id"),
+            group("dateAtZone", "clientMac", "userName"),
+            LookupOperation.newLookup()
+                .from("registeredUser")
+                .localField("_id.userName")
+                .foreignField("info.username")
+                .`as`("userData"),
+            unwind("userData", true),
+            project("_id")
+                .and("_id.dateAtZone").`as`("dateAtZone")
+                .and("_id.clientMac").`as`("clientMac")
+                .and("_id.userName").`as`("userName")
+                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.seenTime\", timezone: \"${filters.timezone}\" } }")
+                .`as`("dateRegistered")
+                .andExclude("_id"),
+            group("dateAtZone", "clientMac", "userName", "dateRegistered"),
+            project("_id")
+                .and("_id.dateAtZone").`as`("dateAtZone")
+                .and("_id.dateRegistered").`as`("dateRegistered")
+                .and("_id.clientMac").`as`("clientMac")
+                .and("_id.userName").`as`("userName")
+//                        .andExpression("{ dateAtZone == dateRegistered }")
+//                        .`as`("register")
+                .and(
+                    ConditionalOperators.`when`(
+                        where("_id.dateRegistered")
+                            .`is`("\$_id.dateAtZone")
+                    )
+                        .then(1)
+                        .otherwise(0)
+                )
+                .`as`("register")
+                .andExclude("_id"),
+            group("dateAtZone")
+                .count().`as`("connected")
+                .sum("register").`as`("registered"),
+            sort(Sort.Direction.ASC, "_id")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
     fun getTotalDevicesBigData(filters: FilterRequest): Flux<TotalDevicesBigData> {
         val context = createContext(filters)
         context.next()
         val aggregation = newAggregation(
-                scanApiProjection(filters),
-                match(context.criteria),
-                group("clientMac"),
-                group().count().`as`("total")
+            scanApiProjection(filters),
+            match(context.criteria),
+            group("clientMac"),
+            group().count().`as`("total")
 
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
-                .map { TotalDevicesBigData(count = it["total", 0]) }
+            .map { TotalDevicesBigData(count = it["total", 0]) }
     }
 
     fun getDetailedReport(context: FilterContext): Flux<Document> {
@@ -141,6 +229,129 @@ class QueryService(
             group("groupDate", "username"),
             project("groupDate", "username").andExclude("_id"),
             match(where("username").exists(true))
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
+    fun getRadiusDetailedReport(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val radiusContext =
+            FilterContext(filterRequest = filters, chain = listOf(RadiusDateFilterBuilder())).apply { next() }
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            project("dateAtZone", "clientMac", "username")
+                .andExclude("_id"),
+            LookupOperation.newLookup()
+                .from("radiusActivity")
+                .localField("username")
+                .foreignField("info.username")
+                .`as`("userData"),
+            unwind("userData"),
+            project("_id", "username")
+                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d %H:%M:%S\", date: \"\$userData.info.eventTimeStamp\", timezone: \"${filters.timezone}\" } }")
+                .`as`("eventTimeStamp")
+                .andExpression("{ \$toLong: \"\$userData.info.acctSessionTime\" }").`as`("session")
+                .andExpression("{ \$toLong: \"\$userData.info.acctInputOctets\" }").`as`("inputOct")
+                .andExpression("{ \$toLong: \"\$userData.info.acctOutputOctets\" }").`as`("outputOct")
+                .and("userData.info.statusType").`as`("statusType")
+                .and("userData.info.serviceType").`as`("serviceType")
+                .and("userData.info.acctTerminateCause").`as`("acctTerminateCause")
+                .and("userData.info.calledStationId").`as`("calledStationId")
+                .and("userData.info.callingStationId").`as`("callingStationId")
+                .and("userData.info.eventTimeStamp").`as`("dateRadiusAct")
+                .andExclude("_id"),
+            match(radiusContext.criteria)
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
+    fun getTotalDevicesTraffic(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val radiusContext =
+            FilterContext(filterRequest = filters, chain = listOf(RadiusDateFilterBuilder())).apply { next() }
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            project("dateAtZone", "clientMac")
+                .and(ifNull("username").then("no_username")).`as`("userName")
+                .andExclude("_id"),
+            group("dateAtZone", "clientMac", "userName"),
+            LookupOperation.newLookup()
+                .from("radiusActivity")
+                .localField("_id.userName")
+                .foreignField("info.username")
+                .`as`("userData"),
+            unwind("userData"),
+            project("_id")
+                .and("_id.dateAtZone").`as`("dateAtZone")
+                .and("_id.clientMac").`as`("clientMac")
+                .and("_id.userName").`as`("userName")
+                .and("userData.info.eventTimeStamp").`as`("dateRadiusAct")
+                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.eventTimeStamp\", timezone: \"${filters.timezone}\" } }")
+                .`as`("dateRadius")
+                .andExpression("{ \$toLong: \"\$userData.info.acctInputOctets\" }").`as`("inputOct")
+                .andExpression("{ \$toLong: \"\$userData.info.acctOutputOctets\" }").`as`("outputOct")
+                .andExclude("_id"),
+            match(radiusContext.criteria),
+            group("dateRadius", "userName")
+                .max("inputOct").`as`("InputOcts")
+                .max("outputOct").`as`("OutputOcts"),
+            project("_id", "InputOcts", "OutputOcts")
+                .and("_id.dateRadius").`as`("dateRadius")
+                .andExclude("_id"),
+            group()
+                .sum("InputOcts").`as`("TotalInputOcts")
+                .sum("OutputOcts").`as`("TotalOutputOcts")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
+    fun getTotalUsersTime(context: FilterContext): Flux<Document> {
+        context.next()
+        val filters = context.filterRequest
+        val radiusContext =
+            FilterContext(filterRequest = filters, chain = listOf(RadiusDateFilterBuilder())).apply { next() }
+        val aggregation = newAggregation(
+            scanApiProjection(filters),
+            match(context.criteria),
+            project("dateAtZone", "clientMac")
+                .and(ifNull("username").then("no_username")).`as`("userName")
+                .andExclude("_id"),
+            group("dateAtZone", "clientMac", "userName"),
+            LookupOperation.newLookup()
+                .from("radiusActivity")
+                .localField("_id.userName")
+                .foreignField("info.username")
+                .`as`("userData"),
+            unwind("userData"),
+            project("_id")
+                .and("_id.dateAtZone").`as`("dateAtZone")
+                .and("_id.clientMac").`as`("clientMac")
+                .and("_id.userName").`as`("userName")
+                .and("userData.info.eventTimeStamp").`as`("dateRadiusAct")
+                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.eventTimeStamp\", timezone: \"${filters.timezone}\" } }")
+                .`as`("dateRadius")
+                .andExpression("{ \$toLong: \"\$userData.info.acctSessionTime\" }").`as`("session")
+                .andExpression("{ \$toLong: \"\$userData.info.acctInputOctets\" }").`as`("inputOct")
+                .andExpression("{ \$toLong: \"\$userData.info.acctOutputOctets\" }").`as`("outputOct")
+                .andExclude("_id"),
+            match(radiusContext.criteria),
+            group("dateRadius", "userName")
+                .max("session").`as`("sessionTime")
+                .max("inputOct").`as`("InputOcts")
+                .max("outputOct").`as`("OutputOcts"),
+            project("_id", "sessionTime", "InputOcts", "OutputOcts")
+                .and("_id.dateRadius").`as`("dateRadius")
+                .andExclude("_id"),
+            group("dateRadius")
+                .count().`as`("TotalUsers")
+                .avg("sessionTime").`as`("AvgSessionTime")
+                .sum("InputOcts").`as`("TotalInputOcts")
+                .sum("OutputOcts").`as`("TotalOutputOcts"),
+            sort(Sort.Direction.ASC, "_id.dateRadius")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
@@ -202,6 +413,14 @@ class QueryService(
             .map { TotalDevices(it.getInteger("total"), clockService.now()) }
     }
 
+    fun todayDetected(filters: FilterRequest): Flux<NowPresence> {
+        val context = createTodayContext(filters)
+        return find(context)
+            .groupBy { it.group }
+            .flatMap { g -> groupByTime(g) }
+            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
+    }
+
     fun getTodayDevicesGroupedByBrand(zoneId: ZoneId): Flux<List<BrandCount>> {
         val filters = FilterRequest(timezone = zoneId, groupBy = BY_DAY)
         val context = createTodayContext(filters).also { it.next() }
@@ -238,14 +457,6 @@ class QueryService(
             .map { CountryCount(it.getString("_id"), it.getInteger("count")) }
             .collectList()
             .toFlux()
-    }
-
-    fun todayDetected(filters: FilterRequest): Flux<NowPresence> {
-        val context = createTodayContext(filters)
-        return find(context)
-            .groupBy { it.group }
-            .flatMap { g -> groupByTime(g) }
-            .sort { o1, o2 -> o1.time.compareTo(o2.time) }
     }
 
     private fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<NowPresence> {
@@ -294,3 +505,5 @@ class QueryService(
 }
 
 data class DeviceAndPosition(val group: String, val clientMac: String, val position: Position)
+
+data class DeviceBigData(val group: String, val clientMac: String, val position: Position)
