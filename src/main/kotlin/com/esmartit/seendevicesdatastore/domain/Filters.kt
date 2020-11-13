@@ -17,6 +17,8 @@ data class FilterRequest(
     val cityId: String? = null,
     val spotId: String? = null,
     val sensorId: String? = null,
+    val zone: String? = null,
+    val ssid: String? = null,
     val zipCodeId: String? = null,
     val brands: String? = null,
     val status: String? = null,
@@ -55,6 +57,8 @@ data class FilterRequest(
             filter(cityId.checkIsNotBlank(), event.cityId) &&
             filter(zipCode.checkIsNotBlank(), event.zipCode) &&
             filter(sensorId.checkIsNotBlank(), event.sensorId) &&
+            filter(zone.checkIsNotBlank(), event.zone) &&
+            filter(ssid.checkIsNotBlank(), event.ssid) &&
             filter(status?.split(",")?.firstOrNull(), event.status) &&
             filter(gender, event.gender) &&
             filter(memberShip, event.gender) &&

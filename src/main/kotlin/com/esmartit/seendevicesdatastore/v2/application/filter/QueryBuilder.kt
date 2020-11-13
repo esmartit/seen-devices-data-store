@@ -76,6 +76,8 @@ class LocationFilterBuilder : QueryBuilder() {
         context.filterRequest.cityId?.takeUnless { it.isBlank() }?.also { criteria.and("cityId").isEqualTo(it) }
         context.filterRequest.spotId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
         context.filterRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
+        context.filterRequest.zone?.takeUnless { it.isBlank() }?.also { criteria.and("zone").isEqualTo(it) }
+        context.filterRequest.ssid?.takeUnless { it.isBlank() }?.also { criteria.and("ssid").isEqualTo(it) }
         context.filterRequest.zipCodeId?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("zipCode").`in`(it)
         }
@@ -123,5 +125,27 @@ class UserInfoFilterBuilder : QueryBuilder() {
 class CustomDateFilterBuilder(private val customDate: Instant) : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
         context.criteria.and("seenTime").gte(customDate)
+    }
+}
+
+class RadiusDateFilterBuilder : QueryBuilder() {
+    override fun internalBuild(context: FilterContext) {
+        val startDate = context.filterRequest.startDate?.takeUnless { it.isBlank() }
+                ?.let { LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone).toInstant() }
+        val endDate = context.filterRequest.endDate?.takeUnless { it.isBlank() }
+                ?.let {
+                    LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone)
+                            .plusDays(1)
+                            .minusSeconds(1)
+                            .toInstant()
+                }
+        val criteria = context.criteria
+        if (startDate != null && endDate != null) {
+            criteria.and("dateRadiusAct").gte(startDate).lte(endDate)
+        } else if (startDate != null) {
+            criteria.and("dateRadiusAct").gte(startDate)
+        } else if (endDate != null) {
+            criteria.and("dateRadiusAct").lte(endDate)
+        }
     }
 }
