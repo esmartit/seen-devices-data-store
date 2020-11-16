@@ -29,8 +29,10 @@ data class FilterRequest(
     val zipCode: String? = null,
     val groupBy: FilterDateGroup = FilterDateGroup.BY_DAY,
     val inRange: Boolean? = null,
-    val isConnected: Boolean? = null
-) {
+    val isConnected: Boolean? = null,
+    val startDateP: String? = null,
+    val endDateP: String? = null
+    ) {
 
     private fun filter(param: Any?, param2: Any?): Boolean {
         return param?.let { it == param2 } ?: true

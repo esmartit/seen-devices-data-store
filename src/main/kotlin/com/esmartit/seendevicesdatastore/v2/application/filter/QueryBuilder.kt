@@ -149,3 +149,25 @@ class RadiusDateFilterBuilder : QueryBuilder() {
         }
     }
 }
+
+class SmartPokeDateFilterBuilder : QueryBuilder() {
+    override fun internalBuild(context: FilterContext) {
+        val startDate = context.filterRequest.startDateP?.takeUnless { it.isBlank() }
+                ?.let { LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone).toInstant() }
+        val endDate = context.filterRequest.endDateP?.takeUnless { it.isBlank() }
+                ?.let {
+                    LocalDate.parse(it).atStartOfDay(context.filterRequest.timezone)
+                            .plusDays(1)
+                            .minusSeconds(1)
+                            .toInstant()
+                }
+        val criteria = context.criteria
+        if (startDate != null && endDate != null) {
+            criteria.and("presence.seenTime").gte(startDate).lte(endDate)
+        } else if (startDate != null) {
+            criteria.and("presence.seenTime").gte(startDate)
+        } else if (endDate != null) {
+            criteria.and("presence.seenTime").lte(endDate)
+        }
+    }
+}
