@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.5...v3.10.6) (2020-11-17)
+
+
+### Bug Fixes
+
+* solve duplicity on detailed hotspot, and add the smartpoke option (on & off site) ([#56](https://github.com/esmartit/seen-devices-data-store/issues/56)) ([68de3bc](https://github.com/esmartit/seen-devices-data-store/commit/68de3bc47bb505048c2d2874fc5d0a754488d4ae))
+
 ## [3.10.5](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.4...v3.10.5) (2020-11-13)
 
 
