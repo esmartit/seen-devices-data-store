@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.7](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.6...v3.10.7) (2020-11-17)
+
+
+### Bug Fixes
+
+* client helm values ([#57](https://github.com/esmartit/seen-devices-data-store/issues/57)) ([3fb8995](https://github.com/esmartit/seen-devices-data-store/commit/3fb8995400c0eb7c27c75f42bf4b9a9584836335))
+
 ## [3.10.6](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.5...v3.10.6) (2020-11-17)
 
 
