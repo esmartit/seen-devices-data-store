@@ -2,7 +2,6 @@ package com.esmartit.seendevicesdatastore.application.smartpoke
 
 import com.esmartit.seendevicesdatastore.domain.*
 import com.esmartit.seendevicesdatastore.services.*
-import com.esmartit.seendevicesdatastore.v2.application.filter.*
 import org.bson.Document
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Flux.interval
-import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
-import java.time.Duration
 import java.time.Duration.ofSeconds
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -115,6 +112,15 @@ class SmartPokeController(
                 .buffer(500)
                 .concatWith(Mono.just(listOf(TotalUsersTime(isLast = true))))
     }
+
+    @GetMapping(path = ["/find"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getFindSmartPoke(
+            filters: FilterRequest
+    ): Flux<SmartPokeDevice> {
+
+        return queryService.findSmartPokeRaw(filters)
+                .concatWith(Mono.just(SmartPokeDevice( isLast = true)))
+    }
 }
 
 data class DeviceConnectedRegistered(val body: Document? = null, val isLast: Boolean = false)
@@ -130,3 +136,10 @@ data class TimeAndCounters(
 data class TotalDevicesTraffic(val body: Document? = null, val isLast: Boolean = false)
 
 data class TotalUsersTime(val body: Document? = null, val isLast: Boolean = false)
+
+data class SmartPokeDevice (
+        val spot: String = "",
+        val sensor: String = "",
+        val userName: String = "",
+        val isLast: Boolean = false
+)

@@ -8,6 +8,7 @@ import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDa
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_MONTH
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_WEEK
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup.BY_YEAR
+import com.esmartit.seendevicesdatastore.application.smartpoke.SmartPokeDevice
 import com.esmartit.seendevicesdatastore.domain.BrandCount
 import com.esmartit.seendevicesdatastore.domain.CountryCount
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
@@ -17,15 +18,7 @@ import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
 import com.esmartit.seendevicesdatastore.domain.TotalDevices
 import com.esmartit.seendevicesdatastore.domain.TotalDevicesAll
-import com.esmartit.seendevicesdatastore.v2.application.filter.BrandFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.CustomDateFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.FilterContext
-import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.RadiusDateFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
-import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
+import com.esmartit.seendevicesdatastore.v2.application.filter.*
 import org.bson.Document
 import org.bson.Document.parse
 import org.springframework.data.domain.Sort
@@ -130,6 +123,43 @@ class QueryService(
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
 
+    fun findSmartPokeRaw(filters: FilterRequest): Flux<SmartPokeDevice> {
+        val context = createContext(filters)
+        context.next()
+        val smartpokeContext =
+                FilterContext(filterRequest = filters, chain = listOf(SmartPokeDateFilterBuilder())).apply { next() }
+        val aggregation = newAggregation(
+                scanApiProjection(filters),
+                match(context.criteria),
+                group("username"),
+                project("_id"),
+                // Lookup with pipeline
+
+                unwind("presence"),
+                match(smartpokeContext.criteria),
+                group("_id")
+                        .addToSet("presence.dateAtZone").`as`("dateAtZone")
+                        .addToSet(parse("{spotId:\"\$presence.spotId\",sensorId:\"\$presence.sensorId\",dateAtZone:\"\$dateAtZone\"}"))
+                        .`as`("root"),
+                project("_id", "root").and("dateAtZone").size().`as`("presence"),
+                match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
+                        ?: Criteria()),
+                unwind("root"),
+                project("root.spotId", "root.sensorId").and("_id").`as`("userName")
+                        .andExclude("_id"),
+                group("spotId", "sensorId", "userName"),
+                project("_id.spotId", "_id.sensorId", "_id.userName").andExclude("_id")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+                .map {
+                    SmartPokeDevice(
+                            spot = it["spotId", ""],
+                            sensor = it["sensorId", ""],
+                            userName = it["userName", ""]
+                    )
+                }
+    }
+
     fun avgDwellTime(filters: FilterRequest): Flux<AveragePresence> {
         val context = createContext(filters)
         context.next()
@@ -151,47 +181,48 @@ class QueryService(
         context.next()
         val filters = context.filterRequest
         val aggregation = newAggregation(
-            scanApiProjection(filters),
-            match(context.criteria),
-            project("dateAtZone", "clientMac")
-                .and(ifNull("username").then("no_username")).`as`("userName")
-                .andExclude("_id"),
-            group("dateAtZone", "clientMac", "userName"),
-            LookupOperation.newLookup()
-                .from("registeredUser")
-                .localField("_id.userName")
-                .foreignField("info.username")
-                .`as`("userData"),
-            unwind("userData", true),
-            project("_id")
-                .and("_id.dateAtZone").`as`("dateAtZone")
-                .and("_id.clientMac").`as`("clientMac")
-                .and("_id.userName").`as`("userName")
-                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.seenTime\", timezone: \"${filters.timezone}\" } }")
-                .`as`("dateRegistered")
-                .andExclude("_id"),
-            group("dateAtZone", "clientMac", "userName", "dateRegistered"),
-            project("_id")
-                .and("_id.dateAtZone").`as`("dateAtZone")
-                .and("_id.dateRegistered").`as`("dateRegistered")
-                .and("_id.clientMac").`as`("clientMac")
-                .and("_id.userName").`as`("userName")
-//                        .andExpression("{ dateAtZone == dateRegistered }")
-//                        .`as`("register")
-                .and(
-                    ConditionalOperators.`when`(
-                        where("_id.dateRegistered")
-                            .`is`("\$_id.dateAtZone")
-                    )
-                        .then(1)
-                        .otherwise(0)
-                )
-                .`as`("register")
-                .andExclude("_id"),
-            group("dateAtZone")
-                .count().`as`("connected")
-                .sum("register").`as`("registered"),
-            sort(Sort.Direction.ASC, "_id")
+                scanApiProjection(filters),
+                match(context.criteria),
+                project("dateAtZone", "clientMac")
+                        .and(ifNull("username").then("no_username")).`as`("userName")
+                        .andExclude("_id"),
+                group("dateAtZone", "clientMac", "userName"),
+                LookupOperation.newLookup()
+                        .from("registeredUser")
+                        .localField("_id.userName")
+                        .foreignField("info.username")
+                        .`as`("userData"),
+                unwind("userData", true),
+                project("_id")
+                        .and("_id.dateAtZone").`as`("dateAtZone")
+                        .and("_id.clientMac").`as`("clientMac")
+                        .and("_id.userName").`as`("userName")
+                        .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.seenTime\", timezone: \"${filters.timezone}\" } }")
+                        .`as`("dateRegistered")
+                        .andExclude("_id"),
+                group("dateAtZone", "clientMac", "userName", "dateRegistered"),
+                project("_id")
+                        .and("_id.dateAtZone").`as`("dateAtZone")
+                        .and("_id.dateRegistered").`as`("dateRegistered")
+                        .and("_id.clientMac").`as`("clientMac")
+                        .and("_id.userName").`as`("userName")
+                        .and(
+                                ConditionalOperators.`when`(
+                                        where("_id.dateRegistered")
+                                                .`is`("\$_id.dateAtZone")
+                                )
+                                        .then(1)
+                                        .otherwise(0)
+                        )
+                        .`as`("register")
+                        .andExclude("_id"),
+                group("dateAtZone")
+                        .count().`as`("connected")
+                        .sum("register").`as`("registered"),
+                project("connected", "registered")
+                        .and("_id").`as`("date")
+                        .andExclude("_id"),
+                sort(Sort.Direction.ASC, "date")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
@@ -204,7 +235,6 @@ class QueryService(
             match(context.criteria),
             group("clientMac"),
             group().count().`as`("total")
-
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
             .map { TotalDevicesBigData(count = it["total", 0]) }
@@ -239,30 +269,45 @@ class QueryService(
         val radiusContext =
             FilterContext(filterRequest = filters, chain = listOf(RadiusDateFilterBuilder())).apply { next() }
         val aggregation = newAggregation(
-            scanApiProjection(filters),
-            match(context.criteria),
-            project("dateAtZone", "clientMac", "username")
-                .andExclude("_id"),
-            LookupOperation.newLookup()
-                .from("radiusActivity")
-                .localField("username")
-                .foreignField("info.username")
-                .`as`("userData"),
-            unwind("userData"),
-            project("_id", "username")
-                .andExpression("{ \$dateToString: { format: \"%Y-%m-%d %H:%M:%S\", date: \"\$userData.info.eventTimeStamp\", timezone: \"${filters.timezone}\" } }")
-                .`as`("eventTimeStamp")
-                .andExpression("{ \$toLong: \"\$userData.info.acctSessionTime\" }").`as`("session")
-                .andExpression("{ \$toLong: \"\$userData.info.acctInputOctets\" }").`as`("inputOct")
-                .andExpression("{ \$toLong: \"\$userData.info.acctOutputOctets\" }").`as`("outputOct")
-                .and("userData.info.statusType").`as`("statusType")
-                .and("userData.info.serviceType").`as`("serviceType")
-                .and("userData.info.acctTerminateCause").`as`("acctTerminateCause")
-                .and("userData.info.calledStationId").`as`("calledStationId")
-                .and("userData.info.callingStationId").`as`("callingStationId")
-                .and("userData.info.eventTimeStamp").`as`("dateRadiusAct")
-                .andExclude("_id"),
-            match(radiusContext.criteria)
+                scanApiProjection(filters),
+                match(context.criteria),
+                group("dateAtZone", "clientMac", "username"),
+                LookupOperation.newLookup()
+                    .from("radiusActivity")
+                    .localField("_id.username")
+                    .foreignField("info.username")
+                    .`as`("userData"),
+                unwind("userData"),
+                project("_id")
+                    .and("_id.username").`as`("userName")
+                    .andExpression("{ \$dateToString: { format: \"%Y-%m-%d %H:%M:%S\", date: \"\$userData.info.eventTimeStamp\", timezone: \"${filters.timezone}\" } }")
+                    .`as`("eventTimeStamp")
+                    .andExpression("{ \$toLong: \"\$userData.info.acctSessionTime\" }").`as`("acctSessionTime")
+                    .andExpression("{ \$toLong: \"\$userData.info.acctInputOctets\" }").`as`("acctInputOctets")
+                    .andExpression("{ \$toLong: \"\$userData.info.acctOutputOctets\" }").`as`("acctOutputOctets")
+                    .and("userData.info.statusType").`as`("statusType")
+                    .and("userData.info.serviceType").`as`("serviceType")
+                    .and("userData.info.acctTerminateCause").`as`("acctTerminateCause")
+                    .and("userData.info.calledStationId").`as`("calledStationId")
+                    .and("userData.info.callingStationId").`as`("callingStationId")
+                    .and("userData.info.eventTimeStamp").`as`("dateRadiusAct")
+                    .andExclude("_id"),
+                match(radiusContext.criteria),
+                group("userName", "eventTimeStamp", "acctSessionTime", "acctInputOctets", "acctOutputOctets",
+                    "statusType", "serviceType", "acctTerminateCause", "calledStationId", "callingStationId"),
+                project( "_id")
+                    .and("_id.userName").`as`("userName")
+                    .and("_id.eventTimeStamp").`as`("eventTimeStamp")
+                    .and("_id.acctSessionTime").`as`("session")
+                    .and("_id.acctInputOctets").`as`("inputOct")
+                    .and("_id.acctOutputOctets").`as`("outputOct")
+                    .and("_id.statusType").`as`("statusType")
+                    .and("_id.serviceType").`as`("serviceType")
+                    .and("_id.acctTerminateCause").`as`("acctTerminateCause")
+                    .and("_id.calledStationId").`as`("calledStationId")
+                    .and("_id.callingStationId").`as`("callingStationId")
+                    .andExclude("_id"),
+                sort(Sort.Direction.ASC, "eventTimeStamp")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
@@ -304,7 +349,8 @@ class QueryService(
                 .andExclude("_id"),
             group()
                 .sum("InputOcts").`as`("TotalInputOcts")
-                .sum("OutputOcts").`as`("TotalOutputOcts")
+                .sum("OutputOcts").`as`("TotalOutputOcts"),
+            project("TotalInputOcts", "TotalOutputOcts").andExclude("_id")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
@@ -351,7 +397,10 @@ class QueryService(
                 .avg("sessionTime").`as`("AvgSessionTime")
                 .sum("InputOcts").`as`("TotalInputOcts")
                 .sum("OutputOcts").`as`("TotalOutputOcts"),
-            sort(Sort.Direction.ASC, "_id.dateRadius")
+            project("TotalUsers", "AvgSessionTime", "TotalInputOcts", "TotalOutputOcts")
+                    .and("_id").`as`("date")
+                    .andExclude("_id"),
+            sort(Sort.Direction.ASC, "date")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
