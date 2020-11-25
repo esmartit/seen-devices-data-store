@@ -131,16 +131,21 @@ class QueryService(
         val aggregation = newAggregation(
                 scanApiProjection(filters),
                 match(context.criteria),
-                group("username"),
-                project("_id"),
+                // group("username"),
+                // project("_id"),
                 // Lookup with pipeline
 
-                unwind("presence"),
-                match(smartpokeContext.criteria),
-                group("_id")
-                        .addToSet("presence.dateAtZone").`as`("dateAtZone")
-                        .addToSet(parse("{spotId:\"\$presence.spotId\",sensorId:\"\$presence.sensorId\",dateAtZone:\"\$dateAtZone\"}"))
-                        .`as`("root"),
+                // unwind("presence"),
+                // match(smartpokeContext.criteria),
+                // group("_id")
+                //        .addToSet("presence.dateAtZone").`as`("dateAtZone")
+                //        .addToSet(parse("{spotId:\"\$presence.spotId\",sensorId:\"\$presence.sensorId\",dateAtZone:\"\$dateAtZone\"}"))
+                //        .`as`("root"),
+                group("username")
+                       .addToSet("dateAtZone").`as`("dateAtZone")
+                       .addToSet(parse("{spotId:\"\$spotId\",sensorId:\"\$sensorId\",dateAtZone:\"\$dateAtZone\"}"))
+                       .`as`("root"),
+                match(where("_id").ne("")),
                 project("_id", "root").and("dateAtZone").size().`as`("presence"),
                 match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
                         ?: Criteria()),
