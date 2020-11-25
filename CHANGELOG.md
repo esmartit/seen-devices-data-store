@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.8](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.7...v3.10.8) (2020-11-25)
+
+
+### Bug Fixes
+
+* smartpoke On - Off Site with presence in the same range. ([#58](https://github.com/esmartit/seen-devices-data-store/issues/58)) ([0bf0679](https://github.com/esmartit/seen-devices-data-store/commit/0bf06795e5b80619156e25c5c0c6af694c12225f))
+
 ## [3.10.7](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.6...v3.10.7) (2020-11-17)
 
 
