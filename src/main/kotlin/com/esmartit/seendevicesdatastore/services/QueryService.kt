@@ -238,7 +238,11 @@ class QueryService(
         val aggregation = newAggregation(
             scanApiProjection(filters),
             match(context.criteria),
-            group("clientMac"),
+            group("clientMac")
+                .addToSet("dateAtZone").`as`("dateAtZone"),
+            project("_id").and("dateAtZone").size().`as`("presence"),
+            match(filters.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
+                ?: Criteria()),
             group().count().`as`("total")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
