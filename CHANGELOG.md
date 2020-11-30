@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.10.9](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.8...v3.10.9) (2020-11-30)
+
+
+### Bug Fixes
+
+* add presence to TotalDevicesBigData ([#59](https://github.com/esmartit/seen-devices-data-store/issues/59)) ([96ef167](https://github.com/esmartit/seen-devices-data-store/commit/96ef167c5a012e0f2d103555aeffe56d753a494c))
+
 ## [3.10.8](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.7...v3.10.8) (2020-11-25)
 
 
