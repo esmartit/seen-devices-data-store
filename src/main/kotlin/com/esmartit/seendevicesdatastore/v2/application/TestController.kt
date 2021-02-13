@@ -1,5 +1,6 @@
 package com.esmartit.seendevicesdatastore.v2.application
 
+import com.esmartit.seendevicesdatastore.application.smartpoke.SmartPokeDevice
 import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.Position.NO_POSITION
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
@@ -32,19 +33,9 @@ class TestController(
 ) {
 
     @GetMapping(path = ["/total-devices-all"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun totalCount(filters: FilterRequest) = queryService.findRaw(
-        FilterContext(
-            filterRequest = filters,
-            chain = listOf(
-                DateFilterBuilder(),
-                HourFilterBuilder(),
-                LocationFilterBuilder(),
-                BrandFilterBuilder(),
-                StatusFilterBuilder(),
-                UserInfoFilterBuilder()
-            )
-        )
-    )
+    fun totalCount(filters: FilterRequest): Flux<SmartPokeDevice> {
+        return queryService.findSmartPokeRaw(filters)
+    }
 
     @GetMapping(path = ["/total-devices-today"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun todayCount(

@@ -69,15 +69,15 @@ affinity: {}
 
 resources:
   requests:
-    cpu: 500m
-    memory: 1280Mi
+    cpu: 30m
+    memory: 563Mi
 
 mongodb:
   enabled: true
   resources:
     requests:
-      cpu: 2000m
-      memory: 4096Mi
+      cpu: 950m
+      memory: 3251Mi
   architecture: replicaset
   systemLogVerbosity: 3
   replicaCount: 3
@@ -103,16 +103,16 @@ mongodb:
     size: 8Gi
     accessModes:
       - ReadWriteOnce
-  affinity:
+#  affinity:
     # Try to put each mongo pod on a different node in the K8s cluster
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                    - strapi-mongo
-            topologyKey: kubernetes.io/hostname
+#    podAntiAffinity:
+#      preferredDuringSchedulingIgnoredDuringExecution:
+#        - weight: 100
+#          podAffinityTerm:
+#            labelSelector:
+#              matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                    - strapi-mongo
+#            topologyKey: kubernetes.io/hostname

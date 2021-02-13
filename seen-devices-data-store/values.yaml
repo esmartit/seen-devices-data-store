@@ -69,15 +69,15 @@ affinity: {}
 
 resources:
   requests:
-    cpu: 60m
-    memory: 896Mi
+    cpu: 20m
+    memory: 545Mi
 
 mongodb:
   enabled: true
   resources:
     requests:
       cpu: 160m
-      memory: 796Mi
+      memory: 1073Mi
   architecture: replicaset
   systemLogVerbosity: 3
   replicaCount: 1
@@ -86,7 +86,7 @@ mongodb:
     username: "spring"
     password: "spring"
     database: "smartpoke"
-#    replicaSetKey: "abcdefg"
+    replicaSetKey: "o4RWzKgUJo"
   pdb:
     create: true
     minAvailable: 1
@@ -103,16 +103,15 @@ mongodb:
     size: 8Gi
     accessModes:
       - ReadWriteOnce
-  affinity:
-    # Try to put each mongo pod on a different node in the K8s cluster
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                    - strapi-mongo
-            topologyKey: kubernetes.io/hostname
+#  affinity:
+#    podAntiAffinity:
+#      preferredDuringSchedulingIgnoredDuringExecution:
+#        - weight: 100
+#          podAffinityTerm:
+#            labelSelector:
+#              matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                    - strapi-mongo
+#            topologyKey: kubernetes.io/hostname
