@@ -97,7 +97,7 @@ class StatusFilterBuilder : QueryBuilder() {
     override fun internalBuild(context: FilterContext) {
         val criteria = context.criteria.and("status")
         context.filterRequest.status?.takeUnless { it.isBlank() }?.also { criteria.isEqualTo(it) }
-            ?: criteria.ne(Position.NO_POSITION)
+            ?: criteria.ne(Position.NO_POSITION.name)
     }
 }
 
