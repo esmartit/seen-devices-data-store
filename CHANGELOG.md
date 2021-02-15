@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+# [3.11.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.9...v3.11.0) (2021-02-15)
+
+
+### Features
+
+* adding json endpoints ([#61](https://github.com/esmartit/seen-devices-data-store/issues/61)) ([f1b67e1](https://github.com/esmartit/seen-devices-data-store/commit/f1b67e196f85a356b1bc459f6f9bdeabafc8a52f))
+
 ## [3.10.9](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.8...v3.10.9) (2020-11-30)
 
 
