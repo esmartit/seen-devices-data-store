@@ -35,3 +35,8 @@ mongodump --collection=hourlyScanApiActivity --db=smartpoke --gzip --archive=mig
 
 
 mongorestore --username spring --password spring --gzip --archive=/bitnami/mongodb/dailyScanApiActivity.gzip --db smartpoke --collection dailyScanApiActivity
+
+
+helm delploy example
+
+helm upgrade --install data-store -f seen-devices-data-store/values-demo.yaml esmartit-data-store/seen-devices-data-store --version=3.10.9
