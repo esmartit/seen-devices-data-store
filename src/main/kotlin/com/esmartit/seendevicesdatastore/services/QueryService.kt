@@ -420,10 +420,18 @@ class QueryService(
         val aggregation = newAggregation(
             scanApiProjection(filters),
             match(context.criteria),
+            group("spotId", "sensorId", "clientMac", "groupDate"),
+            project("spotId", "sensorId", "clientMac", "groupDate").andExclude("_id"),
             group("spotId", "sensorId", "groupDate")
                 .count().`as`("total"),
-            project("spotId", "sensorId", "groupDate", "total").andExclude("_id"),
-            sort(Sort.Direction.ASC, "spotId", "sensorId", "groupDate")
+            project("_id")
+                .and("_id.spotId").`as`("spotId")
+                .and("_id.sensorId").`as`("sensorId")
+                .and("_id.groupDate").`substring`(0,10).`as`("groupDate")
+                .and("_id.groupDate").`substring`(11,-1).`as`("groupTime")
+                .and("total").`as`("total")
+                .andExclude("_id"),
+            sort(Sort.Direction.ASC, "spotId", "sensorId", "groupDate", "groupTime")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }
