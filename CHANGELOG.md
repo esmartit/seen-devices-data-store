@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.11.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.0...v3.11.1) (2021-02-16)
+
+
+### Bug Fixes
+
+* split data / time and show uniques devices by hour. ([#62](https://github.com/esmartit/seen-devices-data-store/issues/62)) ([2e26213](https://github.com/esmartit/seen-devices-data-store/commit/2e26213b6700faaa7bfbdd0abcb5e681ea6d9305))
+
 # [3.11.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.10.9...v3.11.0) (2021-02-15)
 
 
