@@ -20,7 +20,7 @@ class RegisteredControllerJson(
 
     @GetMapping(path = ["/total-registered-count"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getAllSensorActivity(): TotalDevices? {
-        return registeredService.getTotalRegisteredCount()
+        return registeredService.getTotalRegisteredCount().defaultIfEmpty(0)
             .map { TotalDevices(it.toInt(), clock.now()) }
             .block()
     }
@@ -29,17 +29,15 @@ class RegisteredControllerJson(
     fun getDailyRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): List<DailyDevices>? {
-        return registeredService.getDailyRegisteredCount(zoneId).map {
-            DailyDevices(it, clock.now())
-        }.collectList().block()
+        return registeredService.getDailyRegisteredCount(zoneId).defaultIfEmpty(0)
+            .map { DailyDevices(it, clock.now()) }.collectList().block()
     }
 
     @GetMapping(path = ["/now-registered-count"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getNowRegisteredCount(
         @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
     ): List<DailyDevices>? {
-        return registeredService.getNowRegisteredCount(zoneId).map {
-            DailyDevices(it, clock.now())
-        }.collectList().block()
+        return registeredService.getNowRegisteredCount(zoneId).defaultIfEmpty(0)
+            .map { DailyDevices(it, clock.now()) }.collectList().block()
     }
 }
