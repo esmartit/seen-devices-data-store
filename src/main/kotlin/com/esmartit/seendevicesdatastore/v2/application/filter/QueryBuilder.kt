@@ -75,7 +75,7 @@ class LocationFilterBuilder : QueryBuilder() {
         context.filterRequest.stateId?.takeUnless { it.isBlank() }?.also { criteria.and("stateId").isEqualTo(it) }
         context.filterRequest.cityId?.takeUnless { it.isBlank() }?.also { criteria.and("cityId").isEqualTo(it) }
         context.filterRequest.spotId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
-        context.filterRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
+        context.filterRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("sensorId").isEqualTo(it) }
         context.filterRequest.zone?.takeUnless { it.isBlank() }?.also { criteria.and("zone").isEqualTo(it) }
         context.filterRequest.ssid?.takeUnless { it.isBlank() }?.also { criteria.and("ssid").isEqualTo(it) }
         context.filterRequest.zipCodeId?.takeUnless { it.isBlank() }?.split(",")?.also {
