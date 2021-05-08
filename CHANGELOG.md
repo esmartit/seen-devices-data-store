@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [3.11.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.1...v3.11.2) (2021-05-08)
+
+
+### Bug Fixes
+
+* change spotId by sensorId on LocationFilterBuilder. ([#64](https://github.com/esmartit/seen-devices-data-store/issues/64)) ([47342bc](https://github.com/esmartit/seen-devices-data-store/commit/47342bcf10657b07b51d8b624f78cec70c3a0c5c))
+
 ## [3.11.1](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.0...v3.11.1) (2021-02-16)
 
 
