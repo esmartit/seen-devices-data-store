@@ -55,3 +55,7 @@ class DetectedController(
 enum class FilterDateGroup {
     BY_MINUTE, BY_HOUR, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
 }
+
+enum class FilterGroup {
+    BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR
+}

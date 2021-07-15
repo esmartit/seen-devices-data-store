@@ -1,0 +1,118 @@
+# Default values for seen-devices-data-store.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 4
+
+image:
+  repository: esmartit/seen-devices-data-store
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "data-store"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
+
+app:
+  kafka:
+    host: "event-bus-kafka.silicius.svc.cluster.local:9092"
+  mongodb:
+    host: "data-store-mongodb-0.data-store-mongodb-headless.silicius.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.silicius.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.silicius.svc.cluster.local"
+    user: "spring"
+    passwordKeyref: "mongodb-user-secret"
+  eventStore:
+    processEvents:
+      enabled: "true"
+      initialDelay: "30000"
+      fixedDelay: "5000"
+      lockAtMostFor: "5m"
+      lockAtLeastFor: "10s"
+      batchSize: "1000"
+    deleteProcessed:
+      enabled: "false"
+      initialDelay: "240000"
+      fixedDelay: "60000"
+      lockAtMostFor: "10m"
+      lockAtLeastFor: "30s"
+#  kubectl create secret generic mongodb-user-secret --from-literal=password=password
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 9000
+
+ingress:
+  enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+resources:
+  requests:
+    cpu: 30m
+    memory: 563Mi
+
+mongodb:
+  enabled: true
+  resources:
+    requests:
+      cpu: 950m
+      memory: 3251Mi
+  architecture: replicaset
+  systemLogVerbosity: 3
+  replicaCount: 3
+  auth:
+    rootPassword: "password"
+    username: "spring"
+    password: "spring"
+    database: "smartpoke"
+#    replicaSetKey: "8PVSdKPPhc"
+  pdb:
+    create: true
+    minAvailable: 2
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9216"
+        prometheus.io/path: "/metrics"
+  persistence:
+    enabled: true
+    storageClass: "gp2"
+    size: 8Gi
+    accessModes:
+      - ReadWriteOnce
+#  affinity:
+    # Try to put each mongo pod on a different node in the K8s cluster
+#    podAntiAffinity:
+#      preferredDuringSchedulingIgnoredDuringExecution:
+#        - weight: 100
+#          podAffinityTerm:
+#            labelSelector:
+#              matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                    - strapi-mongo
+#            topologyKey: kubernetes.io/hostname
