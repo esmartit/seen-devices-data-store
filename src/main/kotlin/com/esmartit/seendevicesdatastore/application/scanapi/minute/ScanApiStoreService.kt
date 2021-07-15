@@ -73,7 +73,8 @@ class ScanApiStoreService(
             zipCode = sensorSetting?.tags?.get("zipcode"),
             groupName = sensorSetting?.tags?.get("groupname"),
             hotspot = sensorSetting?.tags?.get("hotspot"),
-            ssid = device.ssid
+            ssid = device.ssid,
+            location = device.location
         )
     }
 }
