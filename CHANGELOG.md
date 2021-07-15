@@ -1,5 +1,15 @@
 # Semantic Versioning Changelog
 
+# [4.0.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.2...v4.0.0) (2021-07-15)
+
+
+* Major change ([a7c07e1](https://github.com/esmartit/seen-devices-data-store/commit/a7c07e189f9a501e15f9e1f094147b141da3c19a))
+
+
+### BREAKING CHANGES
+
+* new release
+
 ## [3.11.2](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.1...v3.11.2) (2021-05-08)
 
 
