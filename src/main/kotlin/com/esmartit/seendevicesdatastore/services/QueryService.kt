@@ -23,21 +23,13 @@ import org.bson.Document
 import org.bson.Document.parse
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.data.mongodb.core.aggregation.Aggregation.count
-import org.springframework.data.mongodb.core.aggregation.Aggregation.group
-import org.springframework.data.mongodb.core.aggregation.Aggregation.match
-import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
-import org.springframework.data.mongodb.core.aggregation.Aggregation.project
-import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
-import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
+import org.springframework.data.mongodb.core.aggregation.*
+import org.springframework.data.mongodb.core.aggregation.Aggregation.*
 import org.springframework.data.mongodb.core.aggregation.AggregationOptions.builder
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq.valueOf
-import org.springframework.data.mongodb.core.aggregation.ConditionalOperators
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.IfNull.ifNull
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.CaseOperator.`when`
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators.Switch.switchCases
-import org.springframework.data.mongodb.core.aggregation.LookupOperation
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Criteria.where
 import org.springframework.stereotype.Component
@@ -84,6 +76,32 @@ class QueryService(
             group("groupDate", "clientMac").max("statusNumeral").`as`("statusNumeral"),
             project("_id.groupDate", "_id.clientMac", "statusNumeral").andExclude("_id"),
             sort(Sort.Direction.ASC, "groupDate")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
+    }
+
+    fun getDailyDeviceTotal(context: FilterContext): Flux<Document> {
+        val filters = context.filterRequest
+        context.next()
+        val aggregation = newAggregation(
+                scanApiProjection(filters),
+                match(context.criteria),
+                group(
+                        "dateAtZone", "clientMac", "status",
+                        "countryId", "stateId", "cityId", "zipCode",
+                        "username", "gender", "age", "memberShip", "userZipCode",
+                        "spotId", "sensorId", "hotspot", "brand", "zone", "ssid"
+                )
+                        .min("seenTime").`as`("minTime")
+                        .max("seenTime").`as`("maxTime"),
+                project("_id", "minTime", "maxTime")
+                        .and("_id.dateAtZone").`as`("dateAtZone").and("_id.clientMac").`as`("clientMac").and("_id.status").`as`("status")
+                        .and("_id.countryId").`as`("countryId").and("_id.stateId").`as`("stateId").and("_id.cityId").`as`("cityId").and("_id.zipCode").`as`("zipCode")
+                        .and("_id.username").`as`("username").and("_id.gender").`as`("gender").and("_id.age").`as`("age").and("_id.memberShip").`as`("membership").and("_id.userZipCode").`as`("userZipCode")
+                        .and("_id.spotId").`as`("spotId").and("_id.sensorId").`as`("sensorId").and("_id.hotspot").`as`("hotspot")
+                        .and("_id.brand").`as`("brand").and("_id.zone").`as`("zone").and("_id.ssid").`as`("ssid")
+                        .and(AggregationSpELExpression.expressionOf("cond(maxTime == minTime, 60000, maxTime - minTime)")).`as`("totalTime")
+                        .andExclude("_id")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivity::class.java, Document::class.java)
     }

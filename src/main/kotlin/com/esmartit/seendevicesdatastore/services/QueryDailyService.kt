@@ -138,6 +138,20 @@ class QueryDailyService(
                 .map { TotalDevicesDailyBigData(count = it["total", 0]) }
     }
 
+    fun getDailyDetailedbyUsername(dailyContext: FilterDailyContext): Flux<Document> {
+        dailyContext.next()
+        val filtersDaily = dailyContext.filterDailyRequest
+        val aggregation = newAggregation(
+                scanApiProjection(filtersDaily),
+                match(dailyContext.criteria),
+                group("groupDate", "username"),
+                project("groupDate", "username").andExclude("_id"),
+                match(Criteria.where("username").exists(true))
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+    }
+
+
     private fun scanApiProjection(filtersDaily: FilterDailyRequest): ProjectionOperation {
 
         val format = when (filtersDaily.groupBy) {

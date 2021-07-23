@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 
 
 @RestController
-@RequestMapping("/v2/smartpoke")
+@RequestMapping("/smartpoke/v2")
 
 class SmartPokeTotalController(
     private val queryDailyService: QueryDailyService

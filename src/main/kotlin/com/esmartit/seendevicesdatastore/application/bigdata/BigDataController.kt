@@ -12,6 +12,7 @@ import com.esmartit.seendevicesdatastore.v2.application.filter.HourFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.LocationFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.StatusFilterBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.UserInfoFilterBuilder
+import org.bson.Document
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -111,7 +112,6 @@ class BigDataController(
         return queryService.getTotalDevicesBigData(filters)
             .concatWith(Mono.just(TotalDevicesBigData(isLast = true)))
     }
-
 
     fun groupByTime(group: GroupedFlux<String, DeviceAndPosition>): Mono<BigDataPresence> {
         return group.reduce(
