@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.6](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.5...v4.0.6) (2021-08-27)
+
+
+### Bug Fixes
+
+* pipeline test ([a6719f1](https://github.com/esmartit/seen-devices-data-store/commit/a6719f17a475a199a4c84932106f8a75dec1308f))
+
 ## [4.0.5](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.4...v4.0.5) (2021-08-27)
 
 
