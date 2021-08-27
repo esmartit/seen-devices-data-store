@@ -8,15 +8,16 @@ data class Brand(val id: String = "", val name: String)
 class BrandsRepository {
 
     private val brands = listOf(
-        "Samsung",
-        "Xiaomi",
-        "Apple",
-        "Huawei",
-        "Oppo",
-        "LG",
-        "Sony Ericsson",
-        "Motorola",
-        "ZTE"
+            "Samsung",
+            "Xiaomi",
+            "Apple",
+            "Huawei",
+            "Oppo",
+            "LG",
+            "Sony Ericsson",
+            "Motorola",
+            "ZTE",
+            "MAC Dynamic"
     ).mapIndexed { index, brand -> Brand(index.toString(), brand) }
 
     fun findByName(name: String): Brand {
