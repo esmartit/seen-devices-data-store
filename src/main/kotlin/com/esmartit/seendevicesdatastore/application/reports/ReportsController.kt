@@ -39,6 +39,18 @@ class ReportsController(private val queryService: QueryService) {
             .concatWith(Mono.just(listOf(DeviceWithPositionRecord(isLast = true))))
     }
 
+    @GetMapping(path = ["/list-daily"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDailyTotal(
+            filters: FilterRequest
+    ): Flux<MutableList<DailyDeviceWithPositionTotal>> {
+
+        val createContext = queryService.createContext(filters)
+        return queryService.getDailyDeviceTotal(createContext)
+                .map { DailyDeviceWithPositionTotal(it) }
+                .buffer(500)
+                .concatWith(Mono.just(listOf(DailyDeviceWithPositionTotal(isLast = true))))
+    }
+
     @GetMapping(path = ["/listbyuser"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getDetailedbyUser(
             filters: FilterRequest
@@ -67,3 +79,5 @@ class ReportsController(private val queryService: QueryService) {
 data class DeviceWithPositionRecord(val body: Document? = null, val isLast: Boolean = false)
 
 data class RadiusDeviceRecord(val body: Document? = null, val isLast: Boolean = false)
+
+data class DailyDeviceWithPositionTotal(val body: Document? = null, val isLast: Boolean = false)
