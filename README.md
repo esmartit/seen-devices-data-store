@@ -1,6 +1,6 @@
 # seen-devices-data-store
 
-testing 4.0.6
+testing 4.0.7
 new release
 
 
