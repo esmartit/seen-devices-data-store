@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.8](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.7...v4.0.8) (2021-08-28)
+
+
+### Bug Fixes
+
+* new jenkins library ([9febf46](https://github.com/esmartit/seen-devices-data-store/commit/9febf46df474916bc6e56d54a6c2861d24eee120))
+
 ## [4.0.7](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.6...v4.0.7) (2021-08-28)
 
 
