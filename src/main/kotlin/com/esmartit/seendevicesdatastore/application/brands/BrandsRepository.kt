@@ -16,7 +16,8 @@ class BrandsRepository {
         "LG",
         "Sony Ericsson",
         "Motorola",
-        "ZTE"
+        "ZTE",
+        "MAC Dynamic"
     ).mapIndexed { index, brand -> Brand(index.toString(), brand) }
 
     fun findByName(name: String): Brand {

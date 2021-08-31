@@ -1,5 +1,61 @@
 # Semantic Versioning Changelog
 
+## [4.0.8](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.7...v4.0.8) (2021-08-28)
+
+
+### Bug Fixes
+
+* new jenkins library ([9febf46](https://github.com/esmartit/seen-devices-data-store/commit/9febf46df474916bc6e56d54a6c2861d24eee120))
+
+## [4.0.7](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.6...v4.0.7) (2021-08-28)
+
+
+### Bug Fixes
+
+* pipeline test ([fccd40d](https://github.com/esmartit/seen-devices-data-store/commit/fccd40d9d67602be1e9ffd949046024ffead3489))
+
+## [4.0.6](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.5...v4.0.6) (2021-08-27)
+
+
+### Bug Fixes
+
+* pipeline test ([a6719f1](https://github.com/esmartit/seen-devices-data-store/commit/a6719f17a475a199a4c84932106f8a75dec1308f))
+
+## [4.0.5](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.4...v4.0.5) (2021-08-27)
+
+
+### Bug Fixes
+
+* pipeline test ([142c425](https://github.com/esmartit/seen-devices-data-store/commit/142c4258fbc25373e6a6af85a06fabcbff89e7b5))
+
+## [4.0.4](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.3...v4.0.4) (2021-08-27)
+
+
+### Bug Fixes
+
+* pipeline test ([29cee00](https://github.com/esmartit/seen-devices-data-store/commit/29cee00cf2edcf7a60264ea913bd9dace91324df))
+
+## [4.0.3](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.2...v4.0.3) (2021-08-27)
+
+
+### Bug Fixes
+
+* pipeline test ([92b7673](https://github.com/esmartit/seen-devices-data-store/commit/92b7673a4f386c8746566800723d8cb7e15f6a0c))
+
+## [4.0.2](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.1...v4.0.2) (2021-08-27)
+
+
+### Bug Fixes
+
+* add MAC Dynamic as a new brand ([4012497](https://github.com/esmartit/seen-devices-data-store/commit/4012497ea29023617f42d18bc0f2ed95c342dd85))
+
+## [4.0.1](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.0...v4.0.1) (2021-07-28)
+
+
+### Bug Fixes
+
+* version fix ([#66](https://github.com/esmartit/seen-devices-data-store/issues/66)) ([0d968ac](https://github.com/esmartit/seen-devices-data-store/commit/0d968ac289410d4ef652fcbaed3c35cd18a8aba6))
+
 # [4.0.0](https://github.com/esmartit/seen-devices-data-store/compare/v3.11.2...v4.0.0) (2021-07-15)
 
 
