@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.9](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.8...v4.0.9) (2021-08-31)
+
+
+### Bug Fixes
+
+* modify smartpoke offline, add listbyuser and create a process getDailyTotal ([#69](https://github.com/esmartit/seen-devices-data-store/issues/69)) ([cb3cc1f](https://github.com/esmartit/seen-devices-data-store/commit/cb3cc1f51cf4ad5a1dc0f015780227a6f1f24ef9))
+
 ## [4.0.8](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.7...v4.0.8) (2021-08-28)
 
 
