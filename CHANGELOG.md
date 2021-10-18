@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.10](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.9...v4.0.10) (2021-10-18)
+
+
+### Bug Fixes
+
+* add new manufacturer Unknown ([#70](https://github.com/esmartit/seen-devices-data-store/issues/70)) ([f6595ab](https://github.com/esmartit/seen-devices-data-store/commit/f6595abf1477ef3b4f3900e6ecfa2f4692fc8c2b))
+
 ## [4.0.9](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.8...v4.0.9) (2021-08-31)
 
 
