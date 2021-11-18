@@ -77,7 +77,7 @@ mongodb:
   resources:
     requests:
       cpu: 950m
-      memory: 10251Mi
+      memory: 11251Mi
   architecture: replicaset
   systemLogVerbosity: 3
   replicaCount: 3
