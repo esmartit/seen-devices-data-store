@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.12](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.11...v4.0.12) (2021-11-18)
+
+
+### Bug Fixes
+
+* memory addition to silicius ([#73](https://github.com/esmartit/seen-devices-data-store/issues/73)) ([0ef9fdb](https://github.com/esmartit/seen-devices-data-store/commit/0ef9fdbecc0ba5060da9b41000bb1dcc0918a2bd))
+
 ## [4.0.11](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.10...v4.0.11) (2021-11-17)
 
 
