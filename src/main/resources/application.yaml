@@ -41,7 +41,6 @@ management:
       exposure:
         include: metrics, health, prometheus
 
-
 eventStore:
   processEvents:
     enabled: "${PROCESS_EVENTS_ENABLED:true}"
@@ -56,31 +55,3 @@ eventStore:
     fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
     lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"
     lockAtLeastFor: "${DELETE_EVENTS_LOCK_AT_LEAST:30s}"
-
-
-inbound:
-  failed:
-    path: /app/inbound/failed
-  file:
-    poller:
-      fixed:
-        delay: 1000
-      max:
-        messages:
-          per:
-            poll: 5
-      thread:
-        pool:
-          size: 4
-  filename:
-    regex: ([^\s]+(\.(?i)(json))$)
-  out:
-    path: /app/inbound/out
-  processed:
-    path: /app/inbound/processed
-  read:
-    path: /app/inbound/read
-out:
-  filename:
-    dateFormat: yyyy_MM_dd_HH_mm_ss_SSS
-    suffix: .txt
