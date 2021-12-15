@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.13](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.12...v4.0.13) (2021-12-15)
+
+
+### Bug Fixes
+
+* add Zone to ScanActivity ([#75](https://github.com/esmartit/seen-devices-data-store/issues/75)) ([442198a](https://github.com/esmartit/seen-devices-data-store/commit/442198a27ab8684c4e30639fa91b33e16d97b3fb))
+
 ## [4.0.12](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.11...v4.0.12) (2021-11-18)
 
 
