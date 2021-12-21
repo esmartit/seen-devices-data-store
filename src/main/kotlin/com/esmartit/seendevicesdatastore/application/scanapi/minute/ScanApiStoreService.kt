@@ -4,6 +4,7 @@ import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository
 import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
+import com.esmartit.seendevicesdatastore.application.scanapi.daily.ScanApiActivityDailyRepository
 import com.esmartit.seendevicesdatastore.domain.UniqueDevice
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.Position
@@ -25,17 +26,29 @@ class ScanApiStoreService(
     private val uniqueDeviceRepository: UniqueDeviceReactiveRepository,
     private val clock: Clock,
     private val sensorSettingRepository: SensorSettingRepository,
-    private val brandsRepository: BrandsRepository
+    private val brandsRepository: BrandsRepository,
+    private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository
 ) {
 
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
         val newScanApiEvent = event.toScanApiActivity()
         return createScanApiActivity(newScanApiEvent)
+//                .doOnNext{saveScanActivityDaily(it)}
             .flatMap { saveUniqueDevice(newScanApiEvent) }
             .onErrorResume(DuplicateKeyException::class.java) {
                 Mono.just(UniqueDevice(id = newScanApiEvent.clientMac))
             }
     }
+
+//    private fun saveScanActivityDaily(scanApiActivity: ScanApiActivity) {
+//        scanApiActivityDailyRepository.findbyloquesea()
+//        si no existe
+//          creo variable
+//        else
+//          update variable
+//        val scanApiDaily = scanApiActivity
+//        scanApiActivityDailyRepository.save(scanApiDaily)
+//    }
 
     fun createScanApiActivity(event: ScanApiActivity): Mono<ScanApiActivity> {
 
@@ -46,6 +59,9 @@ class ScanApiStoreService(
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
         val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
+        if ("Others".equals(scanApiEvent.brand, true)) {
+            return Mono.empty()
+        }
         return repository.save(scanApiEvent)
     }
 
