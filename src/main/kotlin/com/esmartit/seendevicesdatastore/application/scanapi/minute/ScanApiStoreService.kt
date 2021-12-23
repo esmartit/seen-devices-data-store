@@ -59,7 +59,7 @@ class ScanApiStoreService(
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
         val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
-        if ("Others".equals(scanApiEvent.brand, true)) {
+        if (event.brand.equals("Others", true)) {
             return Mono.empty()
         }
         return repository.save(scanApiEvent)
