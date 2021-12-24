@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.17](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.16...v4.0.17) (2021-12-24)
+
+
+### Bug Fixes
+
+* exclude Others v5 ([#80](https://github.com/esmartit/seen-devices-data-store/issues/80)) ([1e4df43](https://github.com/esmartit/seen-devices-data-store/commit/1e4df43d9294ba2f604918653b58ff7ccccebefc))
+
 ## [4.0.16](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.15...v4.0.16) (2021-12-24)
 
 
