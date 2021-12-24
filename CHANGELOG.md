@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.15](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.14...v4.0.15) (2021-12-23)
+
+
+### Bug Fixes
+
+* exclude Others and include BQ brands v2 ([#77](https://github.com/esmartit/seen-devices-data-store/issues/77)) ([094f99f](https://github.com/esmartit/seen-devices-data-store/commit/094f99fbb4eb66b8c6272c85a9e88e8ebee829d2))
+
 ## [4.0.14](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.13...v4.0.14) (2021-12-21)
 
 
