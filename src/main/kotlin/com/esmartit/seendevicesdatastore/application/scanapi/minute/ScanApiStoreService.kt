@@ -53,13 +53,15 @@ class ScanApiStoreService(
     fun createScanApiActivity(event: ScanApiActivity): Mono<ScanApiActivity> {
 
         val clientMac = event.clientMac
+        val checkBrand = event.brand
         val clientMacNormalized = clientMac.replace(":", "").toLowerCase()
         val radiusActivity = radiusActivityRepository.findLastByClientMac(clientMacNormalized, PageRequest.of(0, 1))
         val registeredInfo =
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
+        val resultCheck = checkBrand.equals("Others", true)
         val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
-        if (event.brand.equals("Others", true)) {
+        if (resultCheck) {
             return Mono.empty()
         }
         return repository.save(scanApiEvent)
