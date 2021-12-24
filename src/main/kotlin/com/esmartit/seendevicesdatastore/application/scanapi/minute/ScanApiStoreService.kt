@@ -61,6 +61,7 @@ class ScanApiStoreService(
 
         val resultCheck = checkBrand.equals("Others", true)
         val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
+
         if (resultCheck) {
             return Mono.empty()
         }
