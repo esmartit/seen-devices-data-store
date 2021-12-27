@@ -1,20 +1,22 @@
 package com.esmartit.seendevicesdatastore.application.scanapi.minute
 
 import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository
+import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository.Companion.OTHERS_BRAND
 import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
-import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.ScanApiActivityDailyRepository
-import com.esmartit.seendevicesdatastore.domain.UniqueDevice
+import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.Position
 import com.esmartit.seendevicesdatastore.domain.RegisteredInfo
 import com.esmartit.seendevicesdatastore.domain.ScanApiActivity
+import com.esmartit.seendevicesdatastore.domain.UniqueDevice
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import java.time.Clock
 import java.time.ZoneOffset
 
@@ -31,13 +33,17 @@ class ScanApiStoreService(
 ) {
 
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
-        val newScanApiEvent = event.toScanApiActivity()
-        return createScanApiActivity(newScanApiEvent)
+
+        val scanApiActivity = event.toScanApiActivity()
+        return scanApiActivity.toMono()
+            .filter { !OTHERS_BRAND.equals(it.brand) }
+            .flatMap { createScanApiActivity(it) }
+//        createScanApiActivity(newScanApiEvent)
 //            .doOnNext{saveScanActivityDaily(it)}
-                .flatMap { saveUniqueDevice(newScanApiEvent) }
-                .onErrorResume(DuplicateKeyException::class.java) {
-                    Mono.just(UniqueDevice(id = newScanApiEvent.clientMac))
-                }
+            .flatMap { saveUniqueDevice(it) }
+            .onErrorResume(DuplicateKeyException::class.java) {
+                Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
+            }.defaultIfEmpty(UniqueDevice("no device"))
     }
 
 //    private fun saveScanActivityDaily(scanApiActivity: ScanApiActivity) {
@@ -59,7 +65,6 @@ class ScanApiStoreService(
             radiusActivity.firstOrNull()?.info?.username?.let { registeredUserRepository.findByInfoUsername(it)?.info }
 
         val scanApiEvent = event.toScanApiActivity(clock, registeredInfo)
-        scanApiEvent.brand.let { if (it == "Others") return Mono.empty() }
 
         return repository.save(scanApiEvent)
     }
