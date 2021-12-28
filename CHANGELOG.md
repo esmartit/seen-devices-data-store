@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.20](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.19...v4.0.20) (2021-12-28)
+
+
+### Bug Fixes
+
+* updating event to processed when device brand is others ([#83](https://github.com/esmartit/seen-devices-data-store/issues/83)) ([5718f83](https://github.com/esmartit/seen-devices-data-store/commit/5718f831bc90f5fc33c9a7488b79b84121c87a02))
+
 ## [4.0.19](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.18...v4.0.19) (2021-12-24)
 
 
