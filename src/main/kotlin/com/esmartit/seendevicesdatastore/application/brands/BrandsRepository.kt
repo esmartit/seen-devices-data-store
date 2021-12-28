@@ -7,6 +7,10 @@ data class Brand(val id: String = "", val name: String)
 @Service
 class BrandsRepository {
 
+    companion object {
+        val OTHERS_BRAND = Brand("", "Others")
+    }
+
     private val brands = listOf(
         "Samsung",
         "Xiaomi",
@@ -24,6 +28,6 @@ class BrandsRepository {
     fun findByName(name: String): Brand {
         return brands.firstOrNull {
             it.name.contains(name, true) || name.contains(it.name, true)
-        } ?: Brand("", "Others")
+        } ?: OTHERS_BRAND
     }
 }
