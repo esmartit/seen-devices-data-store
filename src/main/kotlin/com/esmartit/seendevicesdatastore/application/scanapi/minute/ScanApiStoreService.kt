@@ -36,9 +36,8 @@ class ScanApiStoreService(
 
         val scanApiActivity = event.toScanApiActivity()
         return scanApiActivity.toMono()
-            .filter { !OTHERS_BRAND.equals(it.brand) }
+            .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
             .flatMap { createScanApiActivity(it) }
-//        createScanApiActivity(newScanApiEvent)
 //            .doOnNext{saveScanActivityDaily(it)}
             .flatMap { saveUniqueDevice(it) }
             .onErrorResume(DuplicateKeyException::class.java) {
