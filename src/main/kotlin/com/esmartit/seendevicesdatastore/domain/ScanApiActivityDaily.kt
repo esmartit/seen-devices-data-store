@@ -7,8 +7,8 @@ import java.time.Instant
 
 @Document
 @CompoundIndex(
-        unique = false,
-        def = "{'clientMac':1, 'dateAtZone':1}", name = "scan_api_activity_clientMac_dateAtZone_idx"
+        unique = true,
+        def = "{'clientMac':1, 'dateAtZone':1, spotId:1, sensorId:1, status:1}", name = "scan_api_activity_clientMac_dateAtZone_idx"
 )
 data class ScanApiActivityDaily(
         val id: String,
@@ -16,7 +16,7 @@ data class ScanApiActivityDaily(
         val dateAtZone: Instant,
         @Indexed(name = "clientMac_idx")
         val clientMac: String,
-        val status: String,
+        val status: Position,
         val countryId: String? = null,
         val stateId: String? = null,
         val cityId: String? = null,
