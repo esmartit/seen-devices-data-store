@@ -60,7 +60,7 @@ class QueryDailyService(
                 project("_id.groupDate", "_id.clientMac", "statusNumeral").andExclude("_id"),
                 sort(Sort.Direction.ASC, "dateAtZone", "groupDate")
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
     }
 
     fun findTotalSmartPokeRaw(filtersDaily: FilterDailyRequest): Flux<SmartPokeDailyDevice> {
@@ -85,7 +85,7 @@ class QueryDailyService(
                 group("spotId", "sensorId", "userName"),
                 project("_id.spotId", "_id.sensorId", "_id.userName").andExclude("_id")
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
                 .map {
                     SmartPokeDailyDevice(
                             spot = it["spotId", ""],
@@ -102,7 +102,7 @@ class QueryDailyService(
                 scanApiProjection(filtersDaily),
                 match(dailyContext.criteria)
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
     }
 
 
@@ -117,7 +117,7 @@ class QueryDailyService(
                         .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
                 group().avg("dwellTime").`as`("avgDwellTime")
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
                 .map { AverageDailyPresence(value = it["avgDwellTime", 0.0]) }
     }
 
@@ -134,7 +134,7 @@ class QueryDailyService(
                         ?: Criteria()),
                 group().count().`as`("total")
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
                 .map { TotalDevicesDailyBigData(count = it["total", 0]) }
     }
 
@@ -148,7 +148,7 @@ class QueryDailyService(
                 project("groupDate", "username").andExclude("_id"),
                 match(Criteria.where("username").exists(true))
         ).withOptions(builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, ScanApiActivityDaily::class.java, Document::class.java)
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
     }
 
 
@@ -161,7 +161,7 @@ class QueryDailyService(
             FilterGroup.BY_YEAR -> "%Y"
         }
 
-        return project(ScanApiActivityDaily::class.java)
+        return project(ScanApiActivityD::class.java)
                 .andExclude("_id")
                 .andExpression("{ \$dateToString: { format: \"$format\", date: \"\$dateAtZone\" } }")
                 .`as`("groupDate")

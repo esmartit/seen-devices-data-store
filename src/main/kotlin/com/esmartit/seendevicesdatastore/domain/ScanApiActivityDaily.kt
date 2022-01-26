@@ -4,16 +4,17 @@ import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
+import java.time.LocalDateTime
 
 @Document
 @CompoundIndex(
         unique = true,
         def = "{'clientMac':1, 'dateAtZone':1, spotId:1, sensorId:1, status:1}", name = "scan_api_activity_clientMac_dateAtZone_idx"
 )
-data class ScanApiActivityDaily(
+data class ScanApiActivityD(
         val id: String,
         @Indexed(name = "dateAtZone_idx")
-        val dateAtZone: Instant,
+        val dateAtZone: LocalDateTime,
         val timeZone: String? = "Europe/Madrid",
         @Indexed(name = "clientMac_idx")
         val clientMac: String,

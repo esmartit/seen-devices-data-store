@@ -36,7 +36,7 @@ data class FilterDailyRequest(
         return param?.let { it == param2 } ?: true
     }
 
-    fun handle(event: ScanApiActivityDaily): Boolean {
+    fun handle(event: ScanApiActivityD): Boolean {
 
         val seenTimeAtZone = event.dateAtZone.atZone(timezone)
         val startHour = startTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 0

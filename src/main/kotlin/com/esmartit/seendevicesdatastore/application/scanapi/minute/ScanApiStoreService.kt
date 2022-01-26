@@ -45,14 +45,15 @@ class ScanApiStoreService(
             }.defaultIfEmpty(UniqueDevice("no device"))
     }
 
-    private fun saveScanActivityDaily(scanApiDaily: ScanApiActivity): ScanApiActivityDaily {
+    private fun saveScanActivityDaily(scanApiDaily: ScanApiActivity): ScanApiActivityD {
         val clientMac = scanApiDaily.clientMac
 
         val seenTime = scanApiDaily.seenTime
         val timeZone = "Europe/Madrid"
-//        val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
-//        val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.DAYS)
-        val dateAtZone = seenTime.truncatedTo(ChronoUnit.DAYS)
+        val systemZone = ZoneId.of(timeZone)
+        val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
+        val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.DAYS)
+        val zoneOffset = systemZone.getRules().getOffset(dateWithZone)
 
         val spotId: String? = scanApiDaily.spotId
         val sensorId: String? = scanApiDaily.sensorId
@@ -60,7 +61,7 @@ class ScanApiStoreService(
         var maxTime = scanApiDaily.seenTime
         var totalTime: Long = 60000
 
-        var activityDaily: ScanApiActivityDaily?
+        var activityDaily: ScanApiActivityD?
         activityDaily = scanApiActivityDailyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(clientMac, dateAtZone, spotId, sensorId, status)
 
         if (activityDaily != null) {
@@ -68,8 +69,8 @@ class ScanApiStoreService(
                 totalTime = ChronoUnit.SECONDS.between(activityDaily.minTime, maxTime)
             }
         }
-        val apiScanDaily = ScanApiActivityDaily(
-                id = "$clientMac;${dateAtZone.epochSecond};$spotId;$sensorId;$status",
+        val apiScanDaily = ScanApiActivityD(
+                id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
                 clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
                 spotId = spotId, sensorId = sensorId, status = status,
                 zone = scanApiDaily.zone,
