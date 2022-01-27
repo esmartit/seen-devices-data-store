@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.23](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.22...v4.0.23) (2022-01-27)
+
+
+### Bug Fixes
+
+* save totalTime in ScanApiActivity MILLIS instead of SECONDS ([#87](https://github.com/esmartit/seen-devices-data-store/issues/87)) ([9814f6d](https://github.com/esmartit/seen-devices-data-store/commit/9814f6d095f7c62dff7856c958766ab58123c01d))
+
 ## [4.0.22](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.21...v4.0.22) (2022-01-27)
 
 
