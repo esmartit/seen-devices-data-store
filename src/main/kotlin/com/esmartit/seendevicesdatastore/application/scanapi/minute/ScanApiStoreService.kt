@@ -68,7 +68,7 @@ class ScanApiStoreService(
         if (activityDaily != null) {
             if (activityDaily.minTime != maxTime) {
                 minTime = activityDaily.minTime
-                totalTime = ChronoUnit.SECONDS.between(minTime, maxTime)
+                totalTime = ChronoUnit.MILLIS.between(minTime, maxTime)
             }
         }
         val apiScanDaily = ScanApiActivityD(
