@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.22](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.21...v4.0.22) (2022-01-27)
+
+
+### Bug Fixes
+
+* ScanApiActivityD process fix message. ([#86](https://github.com/esmartit/seen-devices-data-store/issues/86)) ([9240ae0](https://github.com/esmartit/seen-devices-data-store/commit/9240ae0463b76e8f92dfa40e43bf3c1637ff4c7e))
+
 ## [4.0.21](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.20...v4.0.21) (2021-12-29)
 
 
