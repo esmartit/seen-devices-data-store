@@ -58,6 +58,7 @@ class ScanApiStoreService(
         val spotId: String? = scanApiDaily.spotId
         val sensorId: String? = scanApiDaily.sensorId
         val status = scanApiDaily.status
+        var minTime = scanApiDaily.seenTime
         var maxTime = scanApiDaily.seenTime
         var totalTime: Long = 60000
 
@@ -66,7 +67,8 @@ class ScanApiStoreService(
 
         if (activityDaily != null) {
             if (activityDaily.minTime != maxTime) {
-                totalTime = ChronoUnit.SECONDS.between(activityDaily.minTime, maxTime)
+                minTime = activityDaily.minTime
+                totalTime = ChronoUnit.SECONDS.between(minTime, maxTime)
             }
         }
         val apiScanDaily = ScanApiActivityD(
@@ -84,7 +86,7 @@ class ScanApiStoreService(
                 gender = scanApiDaily.gender,
                 memberShip = scanApiDaily.memberShip,
                 userZipCode = scanApiDaily.userZipCode,
-                minTime = scanApiDaily.seenTime,
+                minTime = minTime,
                 maxTime = maxTime,
                 totalTime = totalTime
         )
