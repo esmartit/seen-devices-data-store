@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.24](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.23...v4.0.24) (2022-01-28)
+
+
+### Bug Fixes
+
+* add new collection scanApiActivityHourly ([#88](https://github.com/esmartit/seen-devices-data-store/issues/88)) ([a4876d8](https://github.com/esmartit/seen-devices-data-store/commit/a4876d89f6b12baae3e7c37eedca79d508a33fd3))
+
 ## [4.0.23](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.22...v4.0.23) (2022-01-27)
 
 
