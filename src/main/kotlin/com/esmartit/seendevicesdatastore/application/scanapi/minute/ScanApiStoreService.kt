@@ -5,11 +5,11 @@ import com.esmartit.seendevicesdatastore.application.brands.BrandsRepository.Com
 import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivityRepository
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.ScanApiActivityDailyRepository
+import com.esmartit.seendevicesdatastore.application.scanapi.hourly.ScanApiActivityHourlyRepository
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.*
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
-import org.springframework.core.convert.converter.Converter
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
@@ -28,7 +28,8 @@ class ScanApiStoreService(
         private val clock: Clock,
         private val sensorSettingRepository: SensorSettingRepository,
         private val brandsRepository: BrandsRepository,
-        private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository
+        private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository,
+        private val scanApiActivityHourlyRepository: ScanApiActivityHourlyRepository
 ) {
 
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
@@ -38,11 +39,59 @@ class ScanApiStoreService(
             .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
             .flatMap { createScanApiActivity(it) }
             .doOnNext { saveScanActivityDaily(it) }
+            .doOnNext { saveScanActivityHourly(it) }
             .flatMap { saveUniqueDevice(it) }
             .onErrorResume(DuplicateKeyException::class.java) {
                 Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
             }.defaultIfEmpty(UniqueDevice("no device"))
     }
+
+    private fun saveScanActivityHourly(scanApiHourly: ScanApiActivity): ScanApiActivityH {
+        val clientMac = scanApiHourly.clientMac
+
+        val seenTime = scanApiHourly.seenTime
+        val timeZone = "UTC"
+        val dateAtZone = seenTime.truncatedTo(ChronoUnit.HOURS)
+
+        val spotId: String? = scanApiHourly.spotId
+        val sensorId: String? = scanApiHourly.sensorId
+        val status = scanApiHourly.status
+        var minTime = scanApiHourly.seenTime
+        var maxTime = scanApiHourly.seenTime
+        var totalTime: Long = 60000
+
+        var activityHourly: ScanApiActivityH?
+        activityHourly = scanApiActivityHourlyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(clientMac, dateAtZone, spotId, sensorId, status)
+
+        if (activityHourly != null) {
+            if (activityHourly.minTime != maxTime) {
+                minTime = activityHourly.minTime
+                totalTime = ChronoUnit.MILLIS.between(minTime, maxTime)
+            }
+        }
+        val apiScanHourly = ScanApiActivityH(
+                id = "$clientMac;${dateAtZone.epochSecond};$spotId;$sensorId;$status",
+                clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
+                spotId = spotId, sensorId = sensorId, status = status,
+                zone = scanApiHourly.zone,
+                countryId = scanApiHourly.countryId,
+                stateId = scanApiHourly.stateId,
+                cityId = scanApiHourly.cityId,
+                zipCode = scanApiHourly.zipCode,
+                brand = scanApiHourly.brand,
+                username = scanApiHourly.username,
+                age = scanApiHourly.age,
+                gender = scanApiHourly.gender,
+                memberShip = scanApiHourly.memberShip,
+                userZipCode = scanApiHourly.userZipCode,
+                minTime = minTime,
+                maxTime = maxTime,
+                totalTime = totalTime
+        )
+
+        return scanApiActivityHourlyRepository.save(apiScanHourly)
+    }
+
 
     private fun saveScanActivityDaily(scanApiDaily: ScanApiActivity): ScanApiActivityD {
         val clientMac = scanApiDaily.clientMac
