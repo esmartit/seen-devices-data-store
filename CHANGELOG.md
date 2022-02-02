@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.25](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.24...v4.0.25) (2022-02-02)
+
+
+### Bug Fixes
+
+* avoid NO POSITION ([#89](https://github.com/esmartit/seen-devices-data-store/issues/89)) ([f01b13c](https://github.com/esmartit/seen-devices-data-store/commit/f01b13c1882354dffc3ad765db120b822bc19704))
+
 ## [4.0.24](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.23...v4.0.24) (2022-01-28)
 
 
