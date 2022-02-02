@@ -37,6 +37,7 @@ class ScanApiStoreService(
         val scanApiActivity = event.toScanApiActivity()
         return scanApiActivity.toMono()
             .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
+            .filter { it -> it.status != Position.NO_POSITION }
             .flatMap { createScanApiActivity(it) }
             .doOnNext { saveScanActivityDaily(it) }
             .doOnNext { saveScanActivityHourly(it) }
