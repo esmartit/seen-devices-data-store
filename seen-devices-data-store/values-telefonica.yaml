@@ -32,9 +32,9 @@ securityContext: {}
 
 app:
   kafka:
-    host: "event-bus-kafka.silicius.svc.cluster.local:9092"
+    host: "event-bus-kafka.telefonica.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.silicius.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.silicius.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.silicius.svc.cluster.local"
+    host: "data-store-mongodb-0.data-store-mongodb-headless.telefonica.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.telefonica.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.telefonica.svc.cluster.local"
     user: "spring"
     passwordKeyref: "mongodb-user-secret"
   eventStore:
@@ -69,24 +69,24 @@ affinity: {}
 
 resources:
   requests:
-    cpu: 30m
-    memory: 563Mi
+    cpu: 20m
+    memory: 545Mi
 
 mongodb:
   enabled: true
   resources:
     requests:
-      cpu: 950m
-      memory: 11251Mi
+      cpu: 160m
+      memory: 1073Mi
   architecture: replicaset
   systemLogVerbosity: 3
-  replicaCount: 3
+  replicaCount: 1
   auth:
     rootPassword: "password"
     username: "spring"
     password: "spring"
     database: "smartpoke"
-#    replicaSetKey: "8PVSdKPPhc"
+  #    replicaSetKey: "8PVSdKPPhc"
   pdb:
     create: true
     minAvailable: 2
@@ -100,10 +100,10 @@ mongodb:
   persistence:
     enabled: true
     storageClass: "gp2"
-    size: 16Gi
+    size: 8Gi
     accessModes:
       - ReadWriteOnce
-#  affinity:
+    #  affinity:
     # Try to put each mongo pod on a different node in the K8s cluster
 #    podAntiAffinity:
 #      preferredDuringSchedulingIgnoredDuringExecution:
