@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.26](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.25...v4.0.26) (2022-02-03)
+
+
+### Bug Fixes
+
+* add telefonica.yaml ([#90](https://github.com/esmartit/seen-devices-data-store/issues/90)) ([b800dfd](https://github.com/esmartit/seen-devices-data-store/commit/b800dfdcc181a368b0879c56a4352d7127ae951f))
+
 ## [4.0.25](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.24...v4.0.25) (2022-02-02)
 
 
