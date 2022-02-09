@@ -54,7 +54,7 @@ class ScanApiStoreService(
         val timeZone = "Europe/Madrid"
         val systemZone = ZoneId.of(timeZone)
         val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
-        val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.DAYS)
+        val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.HOURS)
         val zoneOffset = systemZone.getRules().getOffset(dateWithZone)
 
         val spotId: String? = scanApiHourly.spotId
