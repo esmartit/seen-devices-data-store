@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.28](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.27...v4.0.28) (2022-02-09)
+
+
+### Bug Fixes
+
+* scanApiStoreService change chronoUnit to HOURS ([#92](https://github.com/esmartit/seen-devices-data-store/issues/92)) ([1be1da3](https://github.com/esmartit/seen-devices-data-store/commit/1be1da32492c66073f59d2177894965106168fed))
+
 ## [4.0.27](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.26...v4.0.27) (2022-02-09)
 
 
