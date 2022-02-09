@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.27](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.26...v4.0.27) (2022-02-09)
+
+
+### Bug Fixes
+
+* modify dateAtZone and timeZone on scanApiActivityH. ([#91](https://github.com/esmartit/seen-devices-data-store/issues/91)) ([3842d5b](https://github.com/esmartit/seen-devices-data-store/commit/3842d5b31d9039a9f08e2f8b2d7751d48177ebf7))
+
 ## [4.0.26](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.25...v4.0.26) (2022-02-03)
 
 
