@@ -9,6 +9,7 @@ import com.esmartit.seendevicesdatastore.v2.application.filter.*
 import org.bson.Document
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
@@ -22,10 +23,15 @@ import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.GroupedFlux
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
+import java.util.*
 
 @Service
 class QueryDailyService(
-        private val template: ReactiveMongoTemplate
+        private val template: ReactiveMongoTemplate,
+        private val clockService: ClockService
 ) {
 
     fun findBigData(dailyContext: FilterDailyContext): Flux<DeviceTotalBigData> {
@@ -138,6 +144,63 @@ class QueryDailyService(
                 .map { TotalDevicesDailyBigData(count = it["total", 0]) }
     }
 
+    fun todayDetected(dailyFilters: FilterDailyRequest): Flux<NowPresence> {
+        val dailyContext = createContext(dailyFilters)
+        return findBigData(dailyContext)
+                .groupBy { it.group }
+                .flatMap { g -> groupByTime(g) }
+                .sort { o1, o2 -> o1.time.compareTo(o2.time) }
+    }
+
+    fun getTotalDevicesToday(dailyFilters: FilterDailyRequest): Flux<TotalDevices> {
+        val dailyContext = createContext(dailyFilters).also { it.next() }
+        val aggregation = newAggregation(
+                match(dailyContext.criteria),
+                group("clientMac"),
+                Aggregation.count().`as`("total")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
+                .map { TotalDevices(it.getInteger("total"), clockService.now()) }
+    }
+
+    fun getTodayDevicesGroupedByBrand(dailyFilters: FilterDailyRequest): Flux<List<BrandCount>> {
+//        val dailyFilters = FilterDailyRequest(timezone = zoneId, groupBy = FilterGroup.BY_DAY)
+        val dailyContext = createContext(dailyFilters).also { it.next() }
+
+        val aggregation = newAggregation(
+                scanApiProjection(dailyFilters),
+                match(dailyContext.criteria),
+                group("clientMac").addToSet("brand").`as`("brand"),
+                project("brand").andExclude("_id"),
+                unwind("brand"),
+                group("brand").count().`as`("count")
+        ).withOptions(builder().allowDiskUse(true).build())
+
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
+                .map { BrandCount(it.getString("_id"), it.getInteger("count")) }
+                .collectList()
+                .toFlux()
+    }
+
+    fun getTodayDevicesGroupedByCountry(dailyFilters: FilterDailyRequest): Flux<List<CountryCount>> {
+//        val dailyFilters = FilterDailyRequest(timezone = zoneId, groupBy = FilterGroup.BY_DAY)
+        val dailyContext = createContext(dailyFilters).also { it.next() }
+
+        val aggregation = newAggregation(
+                scanApiProjection(dailyFilters),
+                match(dailyContext.criteria),
+                group("clientMac").addToSet("countryId").`as`("countryId"),
+                project("countryId").andExclude("_id"),
+                unwind("countryId"),
+                group("countryId").count().`as`("count")
+        ).withOptions(builder().allowDiskUse(true).build())
+
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
+                .map { CountryCount(it.getString("_id"), it.getInteger("count")) }
+                .collectList()
+                .toFlux()
+    }
+
     fun getDailyDetailedbyUsername(dailyContext: FilterDailyContext): Flux<Document> {
         dailyContext.next()
         val filtersDaily = dailyContext.filterDailyRequest
@@ -151,6 +214,21 @@ class QueryDailyService(
         return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
     }
 
+    private fun groupByTime(group: GroupedFlux<String, DeviceTotalBigData>): Mono<NowPresence> {
+        return group.reduce(
+                NowPresence(
+                        id = UUID.randomUUID().toString(),
+                        time = group.key()!!
+                )
+        ) { acc, curr ->
+            when (curr.position) {
+                Position.IN -> acc.copy(inCount = acc.inCount + 1)
+                Position.LIMIT -> acc.copy(limitCount = acc.limitCount + 1)
+                Position.OUT -> acc.copy(outCount = acc.outCount + 1)
+                Position.NO_POSITION -> acc
+            }
+        }
+    }
 
     private fun scanApiProjection(filtersDaily: FilterDailyRequest): ProjectionOperation {
 
