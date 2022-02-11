@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.29](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.28...v4.0.29) (2022-02-11)
+
+
+### Bug Fixes
+
+* add SSID to collection Daily and Hourly ([#93](https://github.com/esmartit/seen-devices-data-store/issues/93)) ([86b3999](https://github.com/esmartit/seen-devices-data-store/commit/86b3999f4929a27192aa20a907166f14ff14e01e))
+
 ## [4.0.28](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.27...v4.0.28) (2022-02-09)
 
 
