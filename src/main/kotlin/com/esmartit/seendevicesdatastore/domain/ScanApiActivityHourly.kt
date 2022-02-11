@@ -27,6 +27,7 @@ data class ScanApiActivityH(
         val sensorId: String? = null,
         val zone: String? = null,
         val ssid: String? = null,
+        val isConnected: Boolean = false,
         val brand: String? = null,
         val username: String? = null,
         val gender: Gender? = null,

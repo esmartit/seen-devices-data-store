@@ -1,10 +1,10 @@
 package com.esmartit.seendevicesdatastore.services
 
-import com.esmartit.seendevicesdatastore.application.scanapi.daily.ScanApiDailyReactiveRepository
-import com.esmartit.seendevicesdatastore.domain.FilterDailyRequest
+import com.esmartit.seendevicesdatastore.application.scanapi.hourly.ScanApiHourlyReactiveRepository
+import com.esmartit.seendevicesdatastore.domain.FilterHourlyRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.domain.Position
-import com.esmartit.seendevicesdatastore.domain.ScanApiActivityD
+import com.esmartit.seendevicesdatastore.domain.ScanApiActivityH
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
@@ -13,34 +13,34 @@ import java.time.Instant
 import java.util.*
 
 @Service
-class ScanApiDailyService(
-        private val scanApiDailyReactiveRepository: ScanApiDailyReactiveRepository
+class ScanApiHourlyService(
+        private val scanApiHourlyReactiveRepository: ScanApiHourlyReactiveRepository
 ) {
 
     fun filteredFluxByTime(
             startDateTimeFilter: Instant? = null,
             endDateTimeFilter: Instant? = null,
-            filtersDaily: FilterDailyRequest? = null
-    ): Flux<ScanApiActivityD> {
+            filtersHourly: FilterHourlyRequest? = null
+    ): Flux<ScanApiActivityH> {
         return when {
             startDateTimeFilter != null && endDateTimeFilter != null -> {
-                scanApiDailyReactiveRepository.findByDateAtZoneBetween(startDateTimeFilter, endDateTimeFilter)
+                scanApiHourlyReactiveRepository.findByDateAtZoneBetween(startDateTimeFilter, endDateTimeFilter)
             }
             startDateTimeFilter != null -> {
-                scanApiDailyReactiveRepository.findByDateAtZoneGreaterThanEqual(startDateTimeFilter)
+                scanApiHourlyReactiveRepository.findByDateAtZoneGreaterThanEqual(startDateTimeFilter)
             }
             endDateTimeFilter != null -> {
-                scanApiDailyReactiveRepository.findByDateAtZoneLessThanEqual(endDateTimeFilter)
+                scanApiHourlyReactiveRepository.findByDateAtZoneLessThanEqual(endDateTimeFilter)
             }
             else -> {
-                scanApiDailyReactiveRepository.findAll()
+                scanApiHourlyReactiveRepository.findAll()
             }
         }.filter {
-            filtersDaily?.handle(it) ?: true
+            filtersHourly?.handle(it) ?: true
         }
     }
 
-    fun groupByTime(group: GroupedFlux<Instant, ScanApiActivityD>): Mono<NowPresence> {
+    fun groupByTime(group: GroupedFlux<Instant, ScanApiActivityH>): Mono<NowPresence> {
         return group.reduce(
                 NowPresence(
                         UUID.randomUUID().toString(),

@@ -1,11 +1,11 @@
 package com.esmartit.seendevicesdatastore.domain
 
-import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterGroup
+import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterDateGroup
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-data class FilterDailyRequest(
+data class FilterHourlyRequest(
         val timezone: ZoneId = ZoneId.of("UTC"),
         val startDate: String? = null,
         val endDate: String? = null,
@@ -27,7 +27,7 @@ data class FilterDailyRequest(
         val gender: Gender? = null,
         val memberShip: Boolean? = null,
         val zipCode: String? = null,
-        val groupBy: FilterGroup = FilterGroup.BY_DAY,
+        val groupBy: FilterDateGroup = FilterDateGroup.BY_HOUR,
         val isConnected: Boolean? = null,
         val startDateP: String? = null,
         val endDateP: String? = null
@@ -37,9 +37,10 @@ data class FilterDailyRequest(
         return param?.let { it == param2 } ?: true
     }
 
-    fun handle(event: ScanApiActivityD): Boolean {
+    fun handle(event: ScanApiActivityH): Boolean {
 
         val seenTimeAtZone = event.dateAtZone.atZone(timezone)
+        val sensorHour = seenTimeAtZone.hour
         val startHour = startTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 0
         val endHour = endTime.checkIsNotBlank()?.split(":")?.get(0)?.toInt() ?: 23
 
@@ -49,6 +50,8 @@ data class FilterDailyRequest(
 
         return startDateTime?.isBefore(seenTimeAtZone) ?: true &&
                 endDateTime?.plusDays(1)?.minusSeconds(1)?.isAfter(seenTimeAtZone) ?: true &&
+                sensorHour >= startHour &&
+                sensorHour <= endHour &&
                 ageStartFilter(event.age) && ageEndFilter(event.age) &&
                 filter(countryId.checkIsNotBlank(), event.countryId) &&
                 filter(stateId.checkIsNotBlank(), event.stateId) &&
