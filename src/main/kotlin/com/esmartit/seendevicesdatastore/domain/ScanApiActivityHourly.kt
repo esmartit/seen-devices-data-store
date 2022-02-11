@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 data class ScanApiActivityH(
         val id: String,
         @Indexed(name = "dateAtZone_idx")
-        val dateAtZone: Instant,
-        val timeZone: String? = "UTC",
+        val dateAtZone: LocalDateTime,
+        val timeZone: String? = "Europe/Madrid",
         @Indexed(name = "clientMac_idx")
         val clientMac: String,
         val status: Position,

@@ -1,5 +1,26 @@
 # Semantic Versioning Changelog
 
+## [4.0.29](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.28...v4.0.29) (2022-02-11)
+
+
+### Bug Fixes
+
+* add SSID to collection Daily and Hourly ([#93](https://github.com/esmartit/seen-devices-data-store/issues/93)) ([86b3999](https://github.com/esmartit/seen-devices-data-store/commit/86b3999f4929a27192aa20a907166f14ff14e01e))
+
+## [4.0.28](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.27...v4.0.28) (2022-02-09)
+
+
+### Bug Fixes
+
+* scanApiStoreService change chronoUnit to HOURS ([#92](https://github.com/esmartit/seen-devices-data-store/issues/92)) ([1be1da3](https://github.com/esmartit/seen-devices-data-store/commit/1be1da32492c66073f59d2177894965106168fed))
+
+## [4.0.27](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.26...v4.0.27) (2022-02-09)
+
+
+### Bug Fixes
+
+* modify dateAtZone and timeZone on scanApiActivityH. ([#91](https://github.com/esmartit/seen-devices-data-store/issues/91)) ([3842d5b](https://github.com/esmartit/seen-devices-data-store/commit/3842d5b31d9039a9f08e2f8b2d7751d48177ebf7))
+
 ## [4.0.26](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.25...v4.0.26) (2022-02-03)
 
 

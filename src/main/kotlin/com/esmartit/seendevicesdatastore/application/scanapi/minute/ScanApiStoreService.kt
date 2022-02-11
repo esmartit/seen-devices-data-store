@@ -51,8 +51,11 @@ class ScanApiStoreService(
         val clientMac = scanApiHourly.clientMac
 
         val seenTime = scanApiHourly.seenTime
-        val timeZone = "UTC"
-        val dateAtZone = seenTime.truncatedTo(ChronoUnit.HOURS)
+        val timeZone = "Europe/Madrid"
+        val systemZone = ZoneId.of(timeZone)
+        val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
+        val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.HOURS)
+        val zoneOffset = systemZone.getRules().getOffset(dateWithZone)
 
         val spotId: String? = scanApiHourly.spotId
         val sensorId: String? = scanApiHourly.sensorId
@@ -71,7 +74,7 @@ class ScanApiStoreService(
             }
         }
         val apiScanHourly = ScanApiActivityH(
-                id = "$clientMac;${dateAtZone.epochSecond};$spotId;$sensorId;$status",
+                id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
                 clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
                 spotId = spotId, sensorId = sensorId, status = status,
                 zone = scanApiHourly.zone,
