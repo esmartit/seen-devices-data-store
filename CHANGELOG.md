@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.30](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.29...v4.0.30) (2022-02-11)
+
+
+### Bug Fixes
+
+* add Hourly and Daily endPoints. Modify some bugs. ([#94](https://github.com/esmartit/seen-devices-data-store/issues/94)) ([b6bd3fb](https://github.com/esmartit/seen-devices-data-store/commit/b6bd3fb9bdd060ef44eb275a18a64ee341067bf5))
+
 ## [4.0.29](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.28...v4.0.29) (2022-02-11)
 
 
