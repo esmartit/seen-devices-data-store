@@ -59,10 +59,11 @@ data class FilterHourlyRequest(
                 filter(zipCode.checkIsNotBlank(), event.zipCode) &&
                 filter(sensorId.checkIsNotBlank(), event.sensorId) &&
                 filter(zone.checkIsNotBlank(), event.zone) &&
-                filter(ssid.checkIsNotBlank(), event.ssid) &&
+                filter(ssid?.split(",")?.firstOrNull(), event.ssid) &&
                 filter(status?.split(",")?.firstOrNull(), event.status) &&
                 filter(gender, event.gender) &&
-                filter(memberShip, event.gender)
+                filter(memberShip, event.gender) &&
+                filter(isConnected, event.isConnected)
     }
 
     val startDateTime: ZonedDateTime? by lazy {
