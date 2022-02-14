@@ -62,7 +62,9 @@ class LocationFilterDailyBuilder : QueryDailyBuilder() {
         context.filterDailyRequest.spotId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
         context.filterDailyRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("sensorId").isEqualTo(it) }
         context.filterDailyRequest.zone?.takeUnless { it.isBlank() }?.also { criteria.and("zone").isEqualTo(it) }
-        context.filterDailyRequest.ssid?.takeUnless { it.isBlank() }?.also { criteria.and("ssid").isEqualTo(it) }
+        context.filterDailyRequest.ssid?.takeUnless { it.isBlank() }?.split(",")?.also {
+            criteria.and("ssid").`in`(it)
+        }
         context.filterDailyRequest.zipCodeId?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("zipCode").`in`(it)
         }
@@ -99,6 +101,7 @@ class UserInfoFilterDailyBuilder : QueryDailyBuilder() {
             criteria.and("age").lte(ageEnd)
         }
         context.filterDailyRequest.memberShip?.also { criteria.and("memberShip").isEqualTo(it) }
+        context.filterDailyRequest.isConnected?.also { criteria.and("isConnected").isEqualTo(it) }
         context.filterDailyRequest.gender?.also { criteria.and("gender").isEqualTo(it) }
         context.filterDailyRequest.zipCode?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("userZipCode").`in`(it)

@@ -1,7 +1,6 @@
 package com.esmartit.seendevicesdatastore.application.smartpoke
 
 import com.esmartit.seendevicesdatastore.domain.FilterHourlyRequest
-import com.esmartit.seendevicesdatastore.domain.FilterRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
 import com.esmartit.seendevicesdatastore.services.QueryHourlyService
 import org.springframework.http.MediaType
@@ -32,7 +31,6 @@ class SmartPokeHourlyController(
                             queryHourlyService.todayDetected(isConnected).last(NowPresence(id = UUID.randomUUID().toString()))
                         })
     }
-
 
     @GetMapping(path = ["/find-online"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun findHourlySmartPokeRaw(

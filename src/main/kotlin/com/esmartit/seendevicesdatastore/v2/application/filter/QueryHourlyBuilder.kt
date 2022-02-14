@@ -77,7 +77,9 @@ class LocationFilterHourlyBuilder : QueryHourlyBuilder() {
         context.filterHourlyRequest.spotId?.takeUnless { it.isBlank() }?.also { criteria.and("spotId").isEqualTo(it) }
         context.filterHourlyRequest.sensorId?.takeUnless { it.isBlank() }?.also { criteria.and("sensorId").isEqualTo(it) }
         context.filterHourlyRequest.zone?.takeUnless { it.isBlank() }?.also { criteria.and("zone").isEqualTo(it) }
-        context.filterHourlyRequest.ssid?.takeUnless { it.isBlank() }?.also { criteria.and("ssid").isEqualTo(it) }
+        context.filterHourlyRequest.ssid?.takeUnless { it.isBlank() }?.split(",")?.also {
+            criteria.and("ssid").`in`(it)
+        }
         context.filterHourlyRequest.zipCodeId?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("zipCode").`in`(it)
         }
@@ -114,6 +116,7 @@ class UserInfoFilterHourlyBuilder : QueryHourlyBuilder() {
             criteria.and("age").lte(ageEnd)
         }
         context.filterHourlyRequest.memberShip?.also { criteria.and("memberShip").isEqualTo(it) }
+        context.filterHourlyRequest.isConnected?.also { criteria.and("isConnected").isEqualTo(it) }
         context.filterHourlyRequest.gender?.also { criteria.and("gender").isEqualTo(it) }
         context.filterHourlyRequest.zipCode?.takeUnless { it.isBlank() }?.split(",")?.also {
             criteria.and("userZipCode").`in`(it)
