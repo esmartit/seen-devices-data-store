@@ -136,6 +136,17 @@ class QueryHourlyService(
                 .sort { o1, o2 -> o1.time.compareTo(o2.time) }
     }
 
+    fun getTotalDevicesHourly(hourlyFilters: FilterHourlyRequest): Flux<HourlyDevices> {
+        val hourlyContext = createContext(hourlyFilters).also { it.next() }
+        val aggregation = newAggregation(
+                match(hourlyContext.criteria),
+                group("clientMac"),
+                Aggregation.count().`as`("total")
+        ).withOptions(builder().allowDiskUse(true).build())
+        return template.aggregate(aggregation, ScanApiActivityH::class.java, Document::class.java)
+                .map { HourlyDevices(it.getInteger("total"), clockService.now()) }
+    }
+
     private fun groupByTime(group: GroupedFlux<String, DeviceTotalHourly>): Mono<NowPresence> {
         return group.reduce(
                 NowPresence(

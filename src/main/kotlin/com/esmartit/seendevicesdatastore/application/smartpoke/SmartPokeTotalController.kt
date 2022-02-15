@@ -32,22 +32,6 @@ class SmartPokeTotalController(
         return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15)).flatMap { queryDailyService.getTotalDevicesToday(isConnected) }
     }
 
-    @GetMapping(path = ["/now-connected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getNowConnectedCount(
-            @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
-    ): Flux<DailyDevices> {
-
-        return Flux.interval(Duration.ofSeconds(0L), Duration.ofSeconds(15))
-                .flatMap {
-                    commonDailyService.timeDailyFlux(zoneId, 5L)
-                            .filter { it.isConnected }
-                            .map { it.clientMac }
-                            .distinct()
-                            .count()
-                }
-                .map { DailyDevices(it, clock.now()) }
-    }
-
     @GetMapping(path = ["/connected-registered"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun getConnectedRegistered(
             filtersDaily: FilterDailyRequest

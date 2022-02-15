@@ -2,6 +2,7 @@ package com.esmartit.seendevicesdatastore.application.smartpoke
 
 import com.esmartit.seendevicesdatastore.domain.FilterHourlyRequest
 import com.esmartit.seendevicesdatastore.domain.NowPresence
+import com.esmartit.seendevicesdatastore.domain.HourlyDevices
 import com.esmartit.seendevicesdatastore.services.QueryHourlyService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,6 +31,14 @@ class SmartPokeHourlyController(
                         .flatMap {
                             queryHourlyService.todayDetected(isConnected).last(NowPresence(id = UUID.randomUUID().toString()))
                         })
+    }
+
+    @GetMapping(path = ["/now-connected-count"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getHourlyConnectedCount(
+            filtersHourly: FilterHourlyRequest
+    ): Flux<HourlyDevices> {
+        val isConnected = filtersHourly.copy(isConnected = true)
+        return Flux.interval(Duration.ofSeconds(0), Duration.ofSeconds(15)).flatMap { queryHourlyService.getTotalDevicesHourly(isConnected) }
     }
 
     @GetMapping(path = ["/find-online"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
