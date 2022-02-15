@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.32](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.31...v4.0.32) (2022-02-15)
+
+
+### Bug Fixes
+
+* connected now last hour ([#96](https://github.com/esmartit/seen-devices-data-store/issues/96)) ([bd5044f](https://github.com/esmartit/seen-devices-data-store/commit/bd5044fabf0e0d9ba2b6f8492d37f7d2f8a51e37))
+
 ## [4.0.31](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.30...v4.0.31) (2022-02-14)
 
 
