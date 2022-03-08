@@ -35,6 +35,7 @@ class ScanApiStoreService(
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
 
         val scanApiActivity = event.toScanApiActivity()
+        val cl = Clock.systemUTC();
         return scanApiActivity.toMono()
             .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
             .filter { it -> it.status != Position.NO_POSITION }
@@ -43,8 +44,8 @@ class ScanApiStoreService(
             .doOnNext { saveScanActivityHourly(it) }
             .flatMap { saveUniqueDevice(it) }
             .onErrorResume(DuplicateKeyException::class.java) {
-                Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
-            }.defaultIfEmpty(UniqueDevice("no device"))
+                Mono.just(UniqueDevice(id = scanApiActivity.clientMac, seenTime = scanApiActivity.seenTime))
+            }.defaultIfEmpty(UniqueDevice("no device", seenTime = Instant.now(cl)))
     }
 
     private fun saveScanActivityHourly(scanApiHourly: ScanApiActivity): ScanApiActivityH {
@@ -164,7 +165,7 @@ class ScanApiStoreService(
     }
 
     private fun saveUniqueDevice(event: ScanApiActivity): Mono<UniqueDevice> {
-        return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac))
+        return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac, seenTime = event.seenTime))
     }
 
     private fun SensorActivityEvent.toScanApiActivity(): ScanApiActivity {
