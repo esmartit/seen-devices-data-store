@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.33](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.32...v4.0.33) (2022-03-08)
+
+
+### Bug Fixes
+
+* add seenTime to uniqueDevice ([#97](https://github.com/esmartit/seen-devices-data-store/issues/97)) ([ae507bb](https://github.com/esmartit/seen-devices-data-store/commit/ae507bbebd53fcdfcf37c61871d7d5aaf7cdfaee))
+
 ## [4.0.32](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.31...v4.0.32) (2022-02-15)
 
 
