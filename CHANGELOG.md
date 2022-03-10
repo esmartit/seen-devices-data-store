@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.34](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.33...v4.0.34) (2022-03-10)
+
+
+### Bug Fixes
+
+* create new detected today and dwell time with presence ([#98](https://github.com/esmartit/seen-devices-data-store/issues/98)) ([41d3971](https://github.com/esmartit/seen-devices-data-store/commit/41d39710f8548297413e7470fe352f5aac3efb51))
+
 ## [4.0.33](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.32...v4.0.33) (2022-03-08)
 
 
