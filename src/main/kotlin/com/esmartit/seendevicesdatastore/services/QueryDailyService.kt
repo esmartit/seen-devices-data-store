@@ -109,12 +109,37 @@ class QueryDailyService(
     }
 
 
-    fun avgDwellTime(dailyFilters: FilterDailyRequest): Flux<AverageDailyPresence> {
-        val dailyContext = createContext(dailyFilters)
+//    fun avgDwellTime(filtersDaily: FilterDailyRequest): Flux<AverageDailyPresence> {
+//        val dailyContext = createContext(filtersDaily)
+//        dailyContext.next()
+//        val aggregation = newAggregation(
+//                scanApiProjection(filtersDaily),
+//                match(dailyContext.criteria),
+//                group("dateAtZone", "clientMac", "totalTime"),
+//                project("_id")
+//                        .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
+//                group().avg("dwellTime").`as`("avgDwellTime")
+//        ).withOptions(builder().allowDiskUse(true).build())
+//        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
+//                .map { AverageDailyPresence(value = it["avgDwellTime", 0.0]) }
+//    }
+
+    fun avgDwellTime(filtersDaily: FilterDailyRequest): Flux<AverageDailyPresence> {
+        val dailyContext = createContext(filtersDaily)
         dailyContext.next()
         val aggregation = newAggregation(
-                scanApiProjection(dailyFilters),
+                scanApiProjection(filtersDaily),
                 match(dailyContext.criteria),
+                group("clientMac")
+                        .addToSet("dateAtZone").`as`("dateAtZone")
+                        .addToSet(Document.parse("{dateAtZone:\"\$dateAtZone\",groupDate:\"\$groupDate\",statusNumeral:\"\$statusNumeral\",totalTime:\"\$totalTime\"}"))
+                        .`as`("root"),
+                project("_id", "root").and("dateAtZone").size().`as`("presence"),
+                match(filtersDaily.presence?.takeUnless { it.isBlank() }?.toInt()?.let { Criteria("presence").gte(it) }
+                        ?: Criteria()),
+                unwind("root"),
+                project("root.dateAtZone", "root.groupDate", "root.statusNumeral", "root.totalTime").and("_id").`as`("clientMac")
+                        .andExclude("_id"),
                 group("dateAtZone", "clientMac", "totalTime"),
                 project("_id")
                         .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
@@ -122,7 +147,9 @@ class QueryDailyService(
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
                 .map { AverageDailyPresence(value = it["avgDwellTime", 0.0]) }
+
     }
+
 
     fun getTotalDevicesBigData(dailyFilters: FilterDailyRequest): Flux<TotalDevicesDailyBigData> {
         val dailyContext = createContext(dailyFilters)
@@ -389,7 +416,6 @@ class QueryDailyService(
                 filterDailyRequest = dailyFilters,
                 chain = listOf(
                         DateFilterDailyBuilder(),
-                        LocationFilterDailyBuilder(),
                         BrandFilterDailyBuilder(),
                         StatusFilterDailyBuilder(),
                         UserInfoFilterDailyBuilder()
