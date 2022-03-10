@@ -44,7 +44,8 @@ class ScanApiStoreService(
             .doOnNext { saveScanActivityHourly(it) }
             .flatMap { saveUniqueDevice(it) }
             .onErrorResume(DuplicateKeyException::class.java) {
-                Mono.just(UniqueDevice(id = scanApiActivity.clientMac, seenTime = scanApiActivity.seenTime))
+//                Mono.just(UniqueDevice(id = scanApiActivity.clientMac, seenTime = scanApiActivity.seenTime))
+                Mono.empty()
             }.defaultIfEmpty(UniqueDevice("no device", seenTime = Instant.now(cl)))
     }
 
