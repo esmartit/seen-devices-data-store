@@ -18,7 +18,7 @@ data class FilterUniqueRequest(
         return param?.let { it == param2 } ?: true
     }
 
-    fun handle(event: UniqueDevice): Boolean {
+    fun handle(event: UniqueDeviceYearly): Boolean {
 
         val seenTimeAtZone = event.seenTime.atZone(timezone)
         val detectedHour = seenTimeAtZone.hour

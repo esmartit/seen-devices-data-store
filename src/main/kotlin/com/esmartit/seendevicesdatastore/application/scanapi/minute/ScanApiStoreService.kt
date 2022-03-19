@@ -6,6 +6,7 @@ import com.esmartit.seendevicesdatastore.application.radius.online.RadiusActivit
 import com.esmartit.seendevicesdatastore.application.radius.registered.RegisteredUserRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.daily.ScanApiActivityDailyRepository
 import com.esmartit.seendevicesdatastore.application.scanapi.hourly.ScanApiActivityHourlyRepository
+import com.esmartit.seendevicesdatastore.application.scanapi.unique.UniqueDeviceYearlyRepository
 import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettingRepository
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.*
@@ -29,24 +30,24 @@ class ScanApiStoreService(
         private val sensorSettingRepository: SensorSettingRepository,
         private val brandsRepository: BrandsRepository,
         private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository,
-        private val scanApiActivityHourlyRepository: ScanApiActivityHourlyRepository
+        private val scanApiActivityHourlyRepository: ScanApiActivityHourlyRepository,
+        private val uniqueDeviceYearlyRepository: UniqueDeviceYearlyRepository
 ) {
 
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
 
         val scanApiActivity = event.toScanApiActivity()
-        val cl = Clock.systemUTC();
         return scanApiActivity.toMono()
             .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
             .filter { it -> it.status != Position.NO_POSITION }
             .flatMap { createScanApiActivity(it) }
             .doOnNext { saveScanActivityDaily(it) }
             .doOnNext { saveScanActivityHourly(it) }
+            .doOnNext { saveUniqueDeviceYearly(it) }
             .flatMap { saveUniqueDevice(it) }
             .onErrorResume(DuplicateKeyException::class.java) {
-//                Mono.just(UniqueDevice(id = scanApiActivity.clientMac, seenTime = scanApiActivity.seenTime))
-                Mono.empty()
-            }.defaultIfEmpty(UniqueDevice("no device", seenTime = Instant.now(cl)))
+                Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
+            }.defaultIfEmpty(UniqueDevice("no device"))
     }
 
     private fun saveScanActivityHourly(scanApiHourly: ScanApiActivity): ScanApiActivityH {
@@ -165,8 +166,32 @@ class ScanApiStoreService(
         return repository.save(scanApiEvent)
     }
 
+    private fun saveUniqueDeviceYearly(uniqueDevice: ScanApiActivity): UniqueDeviceYearly {
+        val clientMac = uniqueDevice.clientMac
+
+        var seenTime = uniqueDevice.seenTime
+//        var yearSeenTime = seenTime.truncatedTo(ChronoUnit.YEARS)
+        var yearSeenTime = Calendar.getInstance().get(Calendar.YEAR)
+
+        val uniqueYearly: UniqueDeviceYearly?
+        uniqueYearly = uniqueDeviceYearlyRepository.findByClientMacAndYearSeenTime(clientMac, yearSeenTime)
+
+        if (uniqueYearly != null) {
+            seenTime = uniqueYearly.seenTime
+            yearSeenTime = uniqueYearly.yearSeenTime
+        }
+        val uniqueDeviceY = UniqueDeviceYearly(
+                id = "$clientMac;${yearSeenTime}",
+                clientMac = clientMac,
+                seenTime = seenTime,
+                yearSeenTime = yearSeenTime
+        )
+
+        return uniqueDeviceYearlyRepository.save(uniqueDeviceY)
+    }
+
     private fun saveUniqueDevice(event: ScanApiActivity): Mono<UniqueDevice> {
-        return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac, seenTime = event.seenTime))
+        return uniqueDeviceRepository.save(UniqueDevice(id = event.clientMac))
     }
 
     private fun SensorActivityEvent.toScanApiActivity(): ScanApiActivity {
