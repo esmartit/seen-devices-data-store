@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.35](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.34...v4.0.35) (2022-03-19)
+
+
+### Bug Fixes
+
+* create callection and new detected today ([#99](https://github.com/esmartit/seen-devices-data-store/issues/99)) ([39b5e4d](https://github.com/esmartit/seen-devices-data-store/commit/39b5e4da2b0637ab7e9e00eba305e613bea63226))
+
 ## [4.0.34](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.33...v4.0.34) (2022-03-10)
 
 
