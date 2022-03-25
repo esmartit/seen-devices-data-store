@@ -205,14 +205,22 @@ class QueryDailyService(
         val aggregation = newAggregation(
                 scanApiProjection(dailyFilters),
                 match(dailyContext.criteria),
-                group("clientMac").addToSet("zone").`as`("zone"),
-                project("zone").andExclude("_id"),
-                unwind("zone"),
-                group("zone").count().`as`("count")
-        ).withOptions(builder().allowDiskUse(true).build())
+                group("spotId", "zone").addToSet("clientMac").`as`("clientMac"),
+                project("clientMac")
+                        .and("_id.spotId").`as`("spotId")
+                        .and("_id.zone").`as`("zone")
+                        .andExclude("_id"),
+                unwind("clientMac"),
+                group("spotId", "zone").count().`as`("count"),
+                project("count")
+                        .and("_id.spotId").`as`("spotId")
+                        .and("_id.zone").`as`("zone")
+                        .andExclude("_id"),
+                sort(Sort.Direction.DESC, "count")
+                ).withOptions(builder().allowDiskUse(true).build())
 
         return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
-                .map { ZoneCount(it.getString("_id"), it.getInteger("count")) }
+                .map { ZoneCount(it.getString("spotId"), it.getString("zone"), it.getInteger("count")) }
                 .collectList()
                 .toFlux()
     }
