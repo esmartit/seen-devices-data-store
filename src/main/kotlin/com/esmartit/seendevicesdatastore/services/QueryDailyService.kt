@@ -198,6 +198,26 @@ class QueryDailyService(
                 .toFlux()
     }
 
+    fun getTodayDevicesGroupedByZone(dailyFilters: FilterDailyRequest): Flux<List<ZoneCount>> {
+//        val dailyFilters = FilterDailyRequest(timezone = zoneId, groupBy = FilterGroup.BY_DAY)
+        val dailyContext = createContext(dailyFilters).also { it.next() }
+
+        val aggregation = newAggregation(
+                scanApiProjection(dailyFilters),
+                match(dailyContext.criteria),
+                group("clientMac").addToSet("zone").`as`("zone"),
+                project("zone").andExclude("_id"),
+                unwind("zone"),
+                group("zone").count().`as`("count")
+        ).withOptions(builder().allowDiskUse(true).build())
+
+        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
+                .map { ZoneCount(it.getString("_id"), it.getInteger("count")) }
+                .collectList()
+                .toFlux()
+    }
+
+
     fun getTodayDevicesGroupedByCountry(dailyFilters: FilterDailyRequest): Flux<List<CountryCount>> {
 //        val dailyFilters = FilterDailyRequest(timezone = zoneId, groupBy = FilterGroup.BY_DAY)
         val dailyContext = createContext(dailyFilters).also { it.next() }

@@ -36,6 +36,15 @@ class DetectedTotalController(
         return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryDailyService.getTodayDevicesGroupedByBrand(dailyFilters) }
     }
 
+
+    @GetMapping(path = ["/today-zones"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getDailyZones(
+            dailyFilters: FilterDailyRequest
+    ): Flux<List<ZoneCount>> {
+        return interval(ofSeconds(0), ofSeconds(15)).flatMap { queryDailyService.getTodayDevicesGroupedByZone(dailyFilters) }
+    }
+
+
 //    @GetMapping(path = ["/today-countries"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
 //    fun getDailyCountries(
 //            @RequestParam(name = "timezone", defaultValue = "UTC") zoneId: ZoneId
