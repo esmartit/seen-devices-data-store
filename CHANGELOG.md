@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.37](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.36...v4.0.37) (2022-03-25)
+
+
+### Bug Fixes
+
+* modify endpoint Devices by Zone ([#101](https://github.com/esmartit/seen-devices-data-store/issues/101)) ([b2e1e21](https://github.com/esmartit/seen-devices-data-store/commit/b2e1e21f31675ca7cb39a1b592721d4da76e4bb6))
+
 ## [4.0.36](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.35...v4.0.36) (2022-03-25)
 
 
