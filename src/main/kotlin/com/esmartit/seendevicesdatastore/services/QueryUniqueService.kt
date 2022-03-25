@@ -3,7 +3,7 @@ package com.esmartit.seendevicesdatastore.services
 import com.esmartit.seendevicesdatastore.application.dashboard.detected.FilterGroup
 import com.esmartit.seendevicesdatastore.domain.FilterUniqueRequest
 import com.esmartit.seendevicesdatastore.domain.TotalDevices
-import com.esmartit.seendevicesdatastore.domain.UniqueDevice
+import com.esmartit.seendevicesdatastore.domain.UniqueDeviceYearly
 import com.esmartit.seendevicesdatastore.v2.application.filter.DateFilterUniqueBuilder
 import com.esmartit.seendevicesdatastore.v2.application.filter.FilterUniqueContext
 import org.bson.Document
@@ -30,7 +30,7 @@ class QueryUniqueService(
                 match(uniqueContext.criteria),
                 group("dateAtZone").count().`as`("total")
         ).withOptions(AggregationOptions.builder().allowDiskUse(true).build())
-        return template.aggregate(aggregation, UniqueDevice::class.java, Document::class.java)
+        return template.aggregate(aggregation, UniqueDeviceYearly::class.java, Document::class.java)
                 .map { TotalDevices(it.getInteger("total"), clockService.now()) }
     }
 
@@ -43,7 +43,7 @@ class QueryUniqueService(
             FilterGroup.BY_YEAR -> "%Y"
         }
 
-        return Aggregation.project(UniqueDevice::class.java)
+        return Aggregation.project(UniqueDeviceYearly::class.java)
                 .andExclude("_id")
                 .andExpression("\"\$_id\"").`as`("clientMac")
                 .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$seenTime\", timezone: \"${filtersUnique.timezone}\" } }")
