@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.36](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.35...v4.0.36) (2022-03-25)
+
+
+### Bug Fixes
+
+* uniqueNewDeviceByDay and Devices by Zone ([#100](https://github.com/esmartit/seen-devices-data-store/issues/100)) ([27690b8](https://github.com/esmartit/seen-devices-data-store/commit/27690b8073c9c9f1c8ffb0380c2c96eac9032724))
+
 ## [4.0.35](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.34...v4.0.35) (2022-03-19)
 
 
