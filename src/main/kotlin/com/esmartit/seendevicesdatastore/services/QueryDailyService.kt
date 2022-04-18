@@ -108,22 +108,6 @@ class QueryDailyService(
         return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
     }
 
-
-//    fun avgDwellTime(filtersDaily: FilterDailyRequest): Flux<AverageDailyPresence> {
-//        val dailyContext = createContext(filtersDaily)
-//        dailyContext.next()
-//        val aggregation = newAggregation(
-//                scanApiProjection(filtersDaily),
-//                match(dailyContext.criteria),
-//                group("dateAtZone", "clientMac", "totalTime"),
-//                project("_id")
-//                        .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
-//                group().avg("dwellTime").`as`("avgDwellTime")
-//        ).withOptions(builder().allowDiskUse(true).build())
-//        return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
-//                .map { AverageDailyPresence(value = it["avgDwellTime", 0.0]) }
-//    }
-
     fun avgDwellTime(filtersDaily: FilterDailyRequest): Flux<AverageDailyPresence> {
         val dailyContext = createContext(filtersDaily)
         dailyContext.next()
@@ -168,9 +152,12 @@ class QueryDailyService(
                 .map { TotalDevicesDailyBigData(count = it["total", 0]) }
     }
 
+
     fun getTotalDevicesToday(dailyFilters: FilterDailyRequest): Flux<TotalDevices> {
-        val dailyContext = createContext(dailyFilters).also { it.next() }
+        val dailyContext = createContext(dailyFilters)
+        dailyContext.next()
         val aggregation = newAggregation(
+                scanApiProjection(dailyFilters),
                 match(dailyContext.criteria),
                 group("clientMac"),
                 Aggregation.count().`as`("total")
@@ -275,7 +262,8 @@ class QueryDailyService(
                         .`as`("userData"),
                 unwind("userData", true),
                 project("_id")
-                        .and("_id.dateAtZone").`as`("dateAtZone")
+                        .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$_id.dateAtZone\", timezone: \"${filtersDaily.timezone}\" } }")
+                        .`as`("dateAtZone")
                         .and("_id.clientMac").`as`("clientMac")
                         .and("_id.userName").`as`("userName")
                         .andExpression("{ \$dateToString: { format: \"%Y-%m-%d\", date: \"\$userData.info.seenTime\", timezone: \"${filtersDaily.timezone}\" } }")
@@ -444,6 +432,7 @@ class QueryDailyService(
                 filterDailyRequest = dailyFilters,
                 chain = listOf(
                         DateFilterDailyBuilder(),
+                        LocationFilterDailyBuilder(),
                         BrandFilterDailyBuilder(),
                         StatusFilterDailyBuilder(),
                         UserInfoFilterDailyBuilder()
