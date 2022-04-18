@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.38](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.37...v4.0.38) (2022-04-18)
+
+
+### Bug Fixes
+
+* modify endpoint daily add ssid and spot ([#102](https://github.com/esmartit/seen-devices-data-store/issues/102)) ([9db2221](https://github.com/esmartit/seen-devices-data-store/commit/9db2221dd1d6a48c1fc906515e6c2aaf548e5a95))
+
 ## [4.0.37](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.36...v4.0.37) (2022-03-25)
 
 
