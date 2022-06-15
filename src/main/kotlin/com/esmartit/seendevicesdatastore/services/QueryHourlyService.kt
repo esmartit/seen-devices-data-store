@@ -122,6 +122,7 @@ class QueryHourlyService(
                 group("dateAtZone", "clientMac", "totalTime"),
                 project("_id")
                         .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
+                match(Criteria("dwellTime").gt(60)),
                 group().avg("dwellTime").`as`("avgHourlyDwellTime")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivityH::class.java, Document::class.java)
