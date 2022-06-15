@@ -127,7 +127,7 @@ class QueryDailyService(
                 group("dateAtZone", "clientMac", "totalTime"),
                 project("_id")
                         .andExpression("_id.totalTime / 1000").`as`("dwellTime"),
-                match(Criteria("dwellTime").gt(1)),
+                match(Criteria("dwellTime").gt(60)),
                 group().avg("dwellTime").`as`("avgDwellTime")
         ).withOptions(builder().allowDiskUse(true).build())
         return template.aggregate(aggregation, ScanApiActivityD::class.java, Document::class.java)
