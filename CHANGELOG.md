@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.40](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.39...v4.0.40) (2022-06-15)
+
+
+### Bug Fixes
+
+* Avg dewell time ([#105](https://github.com/esmartit/seen-devices-data-store/issues/105)) ([ff8990d](https://github.com/esmartit/seen-devices-data-store/commit/ff8990dc954e001d4602edf08038749a666a8f46))
+
 ## [4.0.39](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.38...v4.0.39) (2022-06-15)
 
 
