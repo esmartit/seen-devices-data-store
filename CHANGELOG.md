@@ -1,5 +1,12 @@
 # Semantic Versioning Changelog
 
+## [4.0.39](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.38...v4.0.39) (2022-06-15)
+
+
+### Bug Fixes
+
+* take off dwellTime = 1 ([#103](https://github.com/esmartit/seen-devices-data-store/issues/103)) ([5c32e67](https://github.com/esmartit/seen-devices-data-store/commit/5c32e6797010c92efc741dd562c41054149dc101))
+
 ## [4.0.38](https://github.com/esmartit/seen-devices-data-store/compare/v4.0.37...v4.0.38) (2022-04-18)
 
 
