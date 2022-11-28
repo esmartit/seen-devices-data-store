@@ -54,7 +54,7 @@ class ScanApiStoreService(
         val clientMac = scanApiHourly.clientMac
 
         val seenTime = scanApiHourly.seenTime
-        val timeZone = "Europe/Madrid"
+        val timeZone = "America/Lima"
         val systemZone = ZoneId.of(timeZone)
         val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
         val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.HOURS)
@@ -106,7 +106,7 @@ class ScanApiStoreService(
         val clientMac = scanApiDaily.clientMac
 
         val seenTime = scanApiDaily.seenTime
-        val timeZone = "Europe/Madrid"
+        val timeZone = "America/Lima"
         val systemZone = ZoneId.of(timeZone)
         val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
         val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.DAYS)
