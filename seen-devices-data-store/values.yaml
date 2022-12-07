@@ -7,26 +7,35 @@ replicaCount: 1
 image:
   repository: esmartit/seen-devices-data-store
   pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: "data-store"
 
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
+  # Annotations to add to the service account
+  annotations: { }
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: ""
 
-podSecurityContext: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: /actuator/prometheus
+  prometheus.io/port: "9000"
+
+podSecurityContext: { }
 # fsGroup: 2000
 
-securityContext: {}
+securityContext: { }
   # capabilities:
   #   drop:
-#   - ALL
-# readOnlyRootFilesystem: true
+  #   - ALL
+  # readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
 
@@ -60,12 +69,32 @@ service:
 
 ingress:
   enabled: false
+  className: ""
+  annotations: { }
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: [ ]
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
-nodeSelector: {}
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
-tolerations: []
+nodeSelector: { }
 
-affinity: {}
+tolerations: [ ]
+
+affinity: { }
 
 resources:
   requests:
@@ -83,9 +112,12 @@ mongodb:
   replicaCount: 1
   auth:
     rootPassword: "password"
-    username: "spring"
-    password: "spring"
-    database: "smartpoke"
+    usernames:
+      - "spring"
+    passwords:
+      - "spring"
+    databases:
+      - "smartpoke"
     replicaSetKey: "o4RWzKgUJo"
   pdb:
     create: true
@@ -99,19 +131,7 @@ mongodb:
         prometheus.io/path: "/metrics"
   persistence:
     enabled: true
-    storageClass: "gp2"
+#    storageClass: "gp2"
     size: 8Gi
     accessModes:
       - ReadWriteOnce
-#  affinity:
-#    podAntiAffinity:
-#      preferredDuringSchedulingIgnoredDuringExecution:
-#        - weight: 100
-#          podAffinityTerm:
-#            labelSelector:
-#              matchExpressions:
-#                - key: app
-#                  operator: In
-#                  values:
-#                    - strapi-mongo
-#            topologyKey: kubernetes.io/hostname

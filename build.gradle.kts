@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+	id("com.github.jmongard.git-semver-plugin") version "0.4.2"
+	id("com.google.cloud.tools.jib") version "3.2.0"
 	id("org.springframework.boot") version "2.3.3.RELEASE"
 	id("io.spring.dependency-management") version "1.0.10.RELEASE"
 	kotlin("jvm") version "1.3.72"
@@ -8,7 +10,7 @@ plugins {
 }
 
 group = "com.esmartit"
-version = "0.0.1-SNAPSHOT"
+version = semver.version
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -65,4 +67,9 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "1.8"
 	}
+}
+
+jib.to {
+	image = "esmartit/seen-devices-data-store"
+	tags = setOf("latest", project.version.toString())
 }
