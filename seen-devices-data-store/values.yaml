@@ -45,7 +45,7 @@ app:
   mongodb:
     host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local"
     user: "spring"
-    passwordKeyref: "mongodb-user-secret"
+    schema: "dev-env"
   eventStore:
     processEvents:
       enabled: "true"
@@ -100,38 +100,3 @@ resources:
   requests:
     cpu: 20m
     memory: 545Mi
-
-mongodb:
-  enabled: true
-  resources:
-    requests:
-      cpu: 160m
-      memory: 1073Mi
-  architecture: replicaset
-  systemLogVerbosity: 3
-  replicaCount: 1
-  auth:
-    rootPassword: "password"
-    usernames:
-      - "spring"
-    passwords:
-      - "spring"
-    databases:
-      - "smartpoke"
-    replicaSetKey: "o4RWzKgUJo"
-  pdb:
-    create: true
-    minAvailable: 1
-  metrics:
-    enabled: true
-    service:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9216"
-        prometheus.io/path: "/metrics"
-  persistence:
-    enabled: true
-#    storageClass: "gp2"
-    size: 8Gi
-    accessModes:
-      - ReadWriteOnce

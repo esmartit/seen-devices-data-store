@@ -22,10 +22,3 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
-dependencies:
-  - name: mongodb
-    version: 13.6.0
-    repository: https://charts.bitnami.com/bitnami
-    condition: mongodb.enabled
-    tags:
-      - seen-devices-data-store-database

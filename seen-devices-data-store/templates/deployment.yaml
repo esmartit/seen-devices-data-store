@@ -62,11 +62,13 @@ spec:
               value: {{ .Values.app.mongodb.host }}
             - name: "MONGODB_USER"
               value: {{ .Values.app.mongodb.user }}
+            - name: "MONGODB_SCHEMA_NAME"
+              value: {{ .Values.app.mongodb.schema }}
             - name: "MONGODB_PASSWORD"
               valueFrom:
                 secretKeyRef:
-                  key: mongodb-passwords
-                  name: "{{ .Values.fullnameOverride }}-mongodb"
+                  name: "data-store-mongodb-secret"
+                  key: password
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
