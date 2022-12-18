@@ -8,7 +8,7 @@ image:
   repository: esmartit/seen-devices-data-store
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -41,11 +41,11 @@ securityContext: { }
 
 app:
   kafka:
-    host: "event-bus-kafka.dev-env.svc.cluster.local:9092"
+    host: "event-bus-kafka.realplaza.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.dev-env.svc.cluster.local"
-    user: "spring"
-    schema: "dev-env"
+    host: "theHost"
+    user: "theUser"
+    schema: "theDB"
   eventStore:
     processEvents:
       enabled: "true"
