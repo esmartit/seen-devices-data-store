@@ -2,22 +2,59 @@ logging:
   level:
     org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+spring.application.name: smartpoke-data-store
+server.port: "${SERVER_PORT:9000}"
 spring:
+  jmx:
+    enabled: false
   data:
     mongodb:
-#      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:spring}@${MONGODB_HOST:localhost:27017}/smartpoke"
+      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?authSource=admin&authMechanism=SCRAM-SHA-1"
+      auto-index-creation: true
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: "${KAFKA_BROKER_HOST}"
+          auto-add-partitions: false
+          auto-create-topics: false
+          consumer-properties:
+            max.poll.records: 100
+      #            max.poll.interval.ms: 300000
+      #            auto.offset.reset: earliest
+      bindings:
+        input:
+          destination: "smartpoke-device-presence"
+          consumer.concurrency: 4
+          group: "smartpoke.data-store"
+        registered-device-input:
+          destination: "smartpoke-registered-users"
+          group: "smartpoke.data-store"
+        radius-activity-input:
+          destination: "smartpoke-session-activity"
+          group: "smartpoke.data-store"
+        restream-output:
+          destination: "smartpoke-device-presence"
+
+management:
+  health:
+    probes:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: metrics, health, prometheus
 
 eventStore:
   processEvents:
-    enabled: "true"
-    initialDelay: "2000"
-    fixedDelay: "5000"
-    lockAtMostFor: "5m"
-    lockAtLeastFor: "10s"
-    batchSize: "1000"
+    enabled: "${PROCESS_EVENTS_ENABLED:true}"
+    initialDelay: "${PROCESS_EVENTS_INITIAL_DELAY:30000}"
+    fixedDelay: "${PROCESS_EVENTS_FIXED_DELAY:40000}"
+    lockAtMostFor: "${PROCESS_EVENTS_LOCK_AT_MOST:5m}"
+    lockAtLeastFor: "${PROCESS_EVENTS_LOCK_AT_LEAST:30s}"
+    batchSize: "${PROCESS_EVENTS_BATCH_SIZE:1000}"
   deleteProcessed:
-    enabled: "false"
+    enabled: "${DELETED_EVENTS_ENABLED:true}"
     initialDelay: "${DELETE_EVENTS_INITIAL_DELAY:240000}"
     fixedDelay: "${DELETE_EVENTS_FIXED_DELAY:60000}"
     lockAtMostFor: "${DELETE_EVENTS_LOCK_AT_MOST:10m}"

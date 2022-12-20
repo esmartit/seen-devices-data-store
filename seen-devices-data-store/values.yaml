@@ -32,20 +32,22 @@ podSecurityContext: { }
 # fsGroup: 2000
 
 securityContext: { }
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
 
 app:
+  sensor:
+    timezone: "UTC"
   kafka:
     host: "event-bus-kafka.realplaza.svc.cluster.local:9092"
   mongodb:
-    host: "theHost"
-    user: "theUser"
-    schema: "theDB"
+    host: ""
+    user: ""
+    schema: ""
   eventStore:
     processEvents:
       enabled: "true"

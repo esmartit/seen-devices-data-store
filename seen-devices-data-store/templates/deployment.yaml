@@ -69,6 +69,8 @@ spec:
                 secretKeyRef:
                   name: "data-store-mongodb-secret"
                   key: password
+            - name: "SENSOR_TIME_ZONE"
+              value: {{ .Values.app.sensor.timezone }}
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}

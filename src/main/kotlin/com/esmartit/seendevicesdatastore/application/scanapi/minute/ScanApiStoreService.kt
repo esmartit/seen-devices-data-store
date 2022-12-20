@@ -11,27 +11,32 @@ import com.esmartit.seendevicesdatastore.application.sensorsettings.SensorSettin
 import com.esmartit.seendevicesdatastore.application.uniquedevices.UniqueDeviceReactiveRepository
 import com.esmartit.seendevicesdatastore.domain.*
 import com.esmartit.seendevicesdatastore.domain.incomingevents.SensorActivityEvent
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
-import java.time.*
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Component
 class ScanApiStoreService(
-        private val repository: ScanApiReactiveRepository,
-        private val radiusActivityRepository: RadiusActivityRepository,
-        private val registeredUserRepository: RegisteredUserRepository,
-        private val uniqueDeviceRepository: UniqueDeviceReactiveRepository,
-        private val clock: Clock,
-        private val sensorSettingRepository: SensorSettingRepository,
-        private val brandsRepository: BrandsRepository,
-        private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository,
-        private val scanApiActivityHourlyRepository: ScanApiActivityHourlyRepository,
-        private val uniqueDeviceYearlyRepository: UniqueDeviceYearlyRepository
+    private val repository: ScanApiReactiveRepository,
+    private val radiusActivityRepository: RadiusActivityRepository,
+    private val registeredUserRepository: RegisteredUserRepository,
+    private val uniqueDeviceRepository: UniqueDeviceReactiveRepository,
+    private val clock: Clock,
+    private val sensorSettingRepository: SensorSettingRepository,
+    private val brandsRepository: BrandsRepository,
+    private val scanApiActivityDailyRepository: ScanApiActivityDailyRepository,
+    private val scanApiActivityHourlyRepository: ScanApiActivityHourlyRepository,
+    private val uniqueDeviceYearlyRepository: UniqueDeviceYearlyRepository,
+    @Value("\${SENSOR_TIME_ZONE}") private var sensorTimeZone: String
 ) {
 
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
@@ -54,7 +59,7 @@ class ScanApiStoreService(
         val clientMac = scanApiHourly.clientMac
 
         val seenTime = scanApiHourly.seenTime
-        val timeZone = "America/Lima"
+        val timeZone = sensorTimeZone
         val systemZone = ZoneId.of(timeZone)
         val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
         val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.HOURS)
@@ -68,7 +73,13 @@ class ScanApiStoreService(
         var totalTime: Long = 60000
 
         var activityHourly: ScanApiActivityH?
-        activityHourly = scanApiActivityHourlyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(clientMac, dateAtZone, spotId, sensorId, status)
+        activityHourly = scanApiActivityHourlyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(
+            clientMac,
+            dateAtZone,
+            spotId,
+            sensorId,
+            status
+        )
 
         if (activityHourly != null) {
             if (activityHourly.minTime != maxTime) {
@@ -77,25 +88,25 @@ class ScanApiStoreService(
             }
         }
         val apiScanHourly = ScanApiActivityH(
-                id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
-                clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
-                spotId = spotId, sensorId = sensorId, status = status,
-                zone = scanApiHourly.zone,
-                countryId = scanApiHourly.countryId,
-                stateId = scanApiHourly.stateId,
-                cityId = scanApiHourly.cityId,
-                zipCode = scanApiHourly.zipCode,
-                brand = scanApiHourly.brand,
-                username = scanApiHourly.username,
-                ssid = scanApiHourly.ssid,
-                isConnected = scanApiHourly.isConnected,
-                age = scanApiHourly.age,
-                gender = scanApiHourly.gender,
-                memberShip = scanApiHourly.memberShip,
-                userZipCode = scanApiHourly.userZipCode,
-                minTime = minTime,
-                maxTime = maxTime,
-                totalTime = totalTime
+            id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
+            clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
+            spotId = spotId, sensorId = sensorId, status = status,
+            zone = scanApiHourly.zone,
+            countryId = scanApiHourly.countryId,
+            stateId = scanApiHourly.stateId,
+            cityId = scanApiHourly.cityId,
+            zipCode = scanApiHourly.zipCode,
+            brand = scanApiHourly.brand,
+            username = scanApiHourly.username,
+            ssid = scanApiHourly.ssid,
+            isConnected = scanApiHourly.isConnected,
+            age = scanApiHourly.age,
+            gender = scanApiHourly.gender,
+            memberShip = scanApiHourly.memberShip,
+            userZipCode = scanApiHourly.userZipCode,
+            minTime = minTime,
+            maxTime = maxTime,
+            totalTime = totalTime
         )
 
         return scanApiActivityHourlyRepository.save(apiScanHourly)
@@ -106,7 +117,7 @@ class ScanApiStoreService(
         val clientMac = scanApiDaily.clientMac
 
         val seenTime = scanApiDaily.seenTime
-        val timeZone = "America/Lima"
+        val timeZone = sensorTimeZone
         val systemZone = ZoneId.of(timeZone)
         val dateWithZone = LocalDateTime.ofInstant(seenTime, ZoneId.of(timeZone))
         val dateAtZone = dateWithZone.truncatedTo(ChronoUnit.DAYS)
@@ -120,7 +131,13 @@ class ScanApiStoreService(
         var totalTime: Long = 60000
 
         var activityDaily: ScanApiActivityD?
-        activityDaily = scanApiActivityDailyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(clientMac, dateAtZone, spotId, sensorId, status)
+        activityDaily = scanApiActivityDailyRepository.findByClientMacAndDateAtZoneAndSpotIdAndSensorIdAndStatus(
+            clientMac,
+            dateAtZone,
+            spotId,
+            sensorId,
+            status
+        )
 
         if (activityDaily != null) {
             if (activityDaily.minTime != maxTime) {
@@ -129,25 +146,25 @@ class ScanApiStoreService(
             }
         }
         val apiScanDaily = ScanApiActivityD(
-                id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
-                clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
-                spotId = spotId, sensorId = sensorId, status = status,
-                zone = scanApiDaily.zone,
-                countryId = scanApiDaily.countryId,
-                stateId = scanApiDaily.stateId,
-                cityId = scanApiDaily.cityId,
-                zipCode = scanApiDaily.zipCode,
-                brand = scanApiDaily.brand,
-                username = scanApiDaily.username,
-                ssid = scanApiDaily.ssid,
-                isConnected = scanApiDaily.isConnected,
-                age = scanApiDaily.age,
-                gender = scanApiDaily.gender,
-                memberShip = scanApiDaily.memberShip,
-                userZipCode = scanApiDaily.userZipCode,
-                minTime = minTime,
-                maxTime = maxTime,
-                totalTime = totalTime
+            id = "$clientMac;${dateAtZone.toEpochSecond(zoneOffset)};$spotId;$sensorId;$status",
+            clientMac = clientMac, dateAtZone = dateAtZone, timeZone = timeZone,
+            spotId = spotId, sensorId = sensorId, status = status,
+            zone = scanApiDaily.zone,
+            countryId = scanApiDaily.countryId,
+            stateId = scanApiDaily.stateId,
+            cityId = scanApiDaily.cityId,
+            zipCode = scanApiDaily.zipCode,
+            brand = scanApiDaily.brand,
+            username = scanApiDaily.username,
+            ssid = scanApiDaily.ssid,
+            isConnected = scanApiDaily.isConnected,
+            age = scanApiDaily.age,
+            gender = scanApiDaily.gender,
+            memberShip = scanApiDaily.memberShip,
+            userZipCode = scanApiDaily.userZipCode,
+            minTime = minTime,
+            maxTime = maxTime,
+            totalTime = totalTime
         )
 
         return scanApiActivityDailyRepository.save(apiScanDaily)
@@ -181,10 +198,10 @@ class ScanApiStoreService(
             yearSeenTime = uniqueYearly.yearSeenTime
         }
         val uniqueDeviceY = UniqueDeviceYearly(
-                id = "$clientMac;${yearSeenTime}",
-                clientMac = clientMac,
-                seenTime = seenTime,
-                yearSeenTime = yearSeenTime
+            id = "$clientMac;${yearSeenTime}",
+            clientMac = clientMac,
+            seenTime = seenTime,
+            yearSeenTime = yearSeenTime
         )
 
         return uniqueDeviceYearlyRepository.save(uniqueDeviceY)
@@ -198,37 +215,37 @@ class ScanApiStoreService(
         val sensorSetting = sensorSettingRepository.findByApMac(apMac)
         val brand = brandsRepository.findByName(device.manufacturer ?: "")
         return ScanApiActivity(
-                id = "${device.clientMac};${device.seenTime.epochSecond}",
-                clientMac = device.clientMac,
-                seenTime = device.seenTime,
-                brand = brand.name,
-                manufacturer = device.manufacturer,
-                isConnected = !device.ssid.isNullOrBlank(),
-                rssi = device.rssi,
-                status = sensorSetting?.presence(device.rssi) ?: Position.NO_POSITION,
-                spotId = sensorSetting?.tags?.get("spot_id"),
-                sensorId = sensorSetting?.tags?.get("sensorname"),
-                countryId = sensorSetting?.tags?.get("country"),
-                stateId = sensorSetting?.tags?.get("state"),
-                cityId = sensorSetting?.tags?.get("city"),
-                zipCode = sensorSetting?.tags?.get("zipcode"),
-                zone = sensorSetting?.tags?.get("zone"),
-                groupName = sensorSetting?.tags?.get("groupname"),
-                hotspot = sensorSetting?.tags?.get("hotspot"),
-                ssid = device.ssid,
-                location = device.location
+            id = "${device.clientMac};${device.seenTime.epochSecond}",
+            clientMac = device.clientMac,
+            seenTime = device.seenTime,
+            brand = brand.name,
+            manufacturer = device.manufacturer,
+            isConnected = !device.ssid.isNullOrBlank(),
+            rssi = device.rssi,
+            status = sensorSetting?.presence(device.rssi) ?: Position.NO_POSITION,
+            spotId = sensorSetting?.tags?.get("spot_id"),
+            sensorId = sensorSetting?.tags?.get("sensorname"),
+            countryId = sensorSetting?.tags?.get("country"),
+            stateId = sensorSetting?.tags?.get("state"),
+            cityId = sensorSetting?.tags?.get("city"),
+            zipCode = sensorSetting?.tags?.get("zipcode"),
+            zone = sensorSetting?.tags?.get("zone"),
+            groupName = sensorSetting?.tags?.get("groupname"),
+            hotspot = sensorSetting?.tags?.get("hotspot"),
+            ssid = device.ssid,
+            location = device.location
         )
     }
 }
 
 private fun ScanApiActivity.toScanApiActivity(
-        clock: Clock,
-        userInfo: RegisteredInfo?
+    clock: Clock,
+    userInfo: RegisteredInfo?
 ): ScanApiActivity {
     return this.copy(age = userInfo?.dateOfBirth?.let { clock.instant().atZone(ZoneOffset.UTC).year - it.year } ?: 1900,
-            gender = userInfo?.gender,
-            memberShip = userInfo?.memberShip,
-            username = userInfo?.username,
-            userZipCode = userInfo?.zipCode)
+        gender = userInfo?.gender,
+        memberShip = userInfo?.memberShip,
+        username = userInfo?.username,
+        userZipCode = userInfo?.zipCode)
 }
 

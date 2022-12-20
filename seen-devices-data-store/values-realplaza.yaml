@@ -2,13 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 4
+replicaCount: 1
 
 image:
   repository: esmartit/seen-devices-data-store
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets: [ ]
 nameOverride: ""
@@ -32,20 +32,22 @@ podSecurityContext: { }
 # fsGroup: 2000
 
 securityContext: { }
-  # capabilities:
-  #   drop:
-  #   - ALL
+# capabilities:
+#   drop:
+#   - ALL
 # readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
 
 app:
+  sensor:
+    timezone: "America/Lima"
   kafka:
     host: "event-bus-kafka.realplaza.svc.cluster.local:9092"
   mongodb:
-    host: "data-store-mongodb-0.data-store-mongodb-headless.realplaza.svc.cluster.local,data-store-mongodb-1.data-store-mongodb-headless.realplaza.svc.cluster.local,data-store-mongodb-2.data-store-mongodb-headless.realplaza.svc.cluster.local"
-    user: "spring"
-    passwordKeyref: "mongodb-user-secret"
+    host: ""
+    user: ""
+    schema: ""
   eventStore:
     processEvents:
       enabled: "true"
@@ -100,38 +102,3 @@ resources:
   requests:
     cpu: 20m
     memory: 545Mi
-
-mongodb:
-  enabled: true
-  resources:
-    requests:
-      cpu: 950m
-      memory: 3251Mi
-  architecture: replicaset
-  systemLogVerbosity: 3
-  replicaCount: 3
-  auth:
-    rootPassword: "password"
-    usernames:
-      - "spring"
-    passwords:
-      - "spring"
-    databases:
-      - "smartpoke"
-    replicaSetKey: "8PVSdKPPhc"
-  pdb:
-    create: true
-    minAvailable: 2
-  metrics:
-    enabled: true
-    service:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9216"
-        prometheus.io/path: "/metrics"
-  persistence:
-    enabled: true
-    storageClass: "gp2"
-    size: 8Gi
-    accessModes:
-      - ReadWriteOnce
