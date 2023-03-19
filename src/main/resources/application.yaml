@@ -5,7 +5,8 @@ spring:
     enabled: false
   data:
     mongodb:
-      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost:2017}/${MONGODB_SCHEMA_NAME:smartpoke}"
+#      uri: "mongodb://${MONGODB_USER:spring}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost:2017}/${MONGODB_SCHEMA_NAME:smartpoke}"
+      uri: "mongodb://${MONGODB_USER:root}:${MONGODB_PASSWORD:password}@${MONGODB_HOST:localhost}:27017/smartpoke?replicaSet=rs0&readPreference=secondaryPreferred&maxStalenessSeconds=120"
       auto-index-creation: true
   cloud:
     stream:
