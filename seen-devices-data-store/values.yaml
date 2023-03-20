@@ -41,13 +41,13 @@ securityContext: { }
 
 app:
   sensor:
-    timezone: "UTC"
+    timezone: "Europe/Madrid"
   kafka:
-    host: "event-bus-kafka.realplaza.svc.cluster.local:9092"
+    host: "event-bus-kafka.dev-env.svc.cluster.local:9092"
   mongodb:
-    host: ""
-    user: ""
-    schema: ""
+    host: "192.168.89.105,192.168.89.223,192.168.97.90"
+    user: "userMongoDevEnv"
+    schema: "dbDevEnv"
   eventStore:
     processEvents:
       enabled: "true"
