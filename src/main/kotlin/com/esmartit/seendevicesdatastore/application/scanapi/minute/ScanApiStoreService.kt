@@ -39,20 +39,34 @@ class ScanApiStoreService(
     @Value("\${SENSOR_TIME_ZONE}") private var sensorTimeZone: String
 ) {
 
+//    fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
+//
+//        val scanApiActivity = event.toScanApiActivity()
+//        return scanApiActivity.toMono()
+//            .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
+//            .filter { it -> it.status != Position.NO_POSITION }
+//            .flatMap { createScanApiActivity(it) }
+//            .doOnNext { saveScanActivityDaily(it) }
+//            .doOnNext { saveScanActivityHourly(it) }
+//            .doOnNext { saveUniqueDeviceYearly(it) }
+//            .flatMap { saveUniqueDevice(it) }
+//            .onErrorResume(DuplicateKeyException::class.java) {
+//                Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
+//            }.defaultIfEmpty(UniqueDevice("no device"))
+//    }
+
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
 
         val scanApiActivity = event.toScanApiActivity()
         return scanApiActivity.toMono()
-            .filter { !OTHERS_BRAND.name.equals(it.brand, true) }
-            .filter { it -> it.status != Position.NO_POSITION }
-            .flatMap { createScanApiActivity(it) }
-            .doOnNext { saveScanActivityDaily(it) }
-            .doOnNext { saveScanActivityHourly(it) }
-            .doOnNext { saveUniqueDeviceYearly(it) }
-            .flatMap { saveUniqueDevice(it) }
-            .onErrorResume(DuplicateKeyException::class.java) {
-                Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
-            }.defaultIfEmpty(UniqueDevice("no device"))
+                .flatMap { createScanApiActivity(it) }
+                .doOnNext { saveScanActivityDaily(it) }
+                .doOnNext { saveScanActivityHourly(it) }
+                .doOnNext { saveUniqueDeviceYearly(it) }
+                .flatMap { saveUniqueDevice(it) }
+                .onErrorResume(DuplicateKeyException::class.java) {
+                    Mono.just(UniqueDevice(id = scanApiActivity.clientMac))
+                }.defaultIfEmpty(UniqueDevice("no device"))
     }
 
     private fun saveScanActivityHourly(scanApiHourly: ScanApiActivity): ScanApiActivityH {
