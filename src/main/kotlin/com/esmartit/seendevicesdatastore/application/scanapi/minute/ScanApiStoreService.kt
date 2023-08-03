@@ -55,6 +55,8 @@ class ScanApiStoreService(
 //            }.defaultIfEmpty(UniqueDevice("no device"))
 //    }
 
+//    There are not considered the position and brand filters 03.08.2023 AZ
+
     fun save(event: SensorActivityEvent): Mono<UniqueDevice> {
 
         val scanApiActivity = event.toScanApiActivity()
