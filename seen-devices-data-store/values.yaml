@@ -41,7 +41,7 @@ securityContext: { }
 
 app:
   sensor:
-    timezone: "UTC"
+    timezone: "Europe/Madrid"
   kafka:
     host: "event-bus-kafka.demo.svc.cluster.local:9092"
   mongodb:
